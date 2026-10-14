@@ -1,18 +1,25 @@
+import { ContactForm } from '@/components/site/contact-form';
 import { SocialIcon } from '@/components/site/social-icon';
 import { ButtonLink } from '@/components/ui/button';
 import { SectionHeading } from '@/components/ui/section-heading';
 import type { Profile } from '@/content/types';
+import { sendContact } from '@/app/actions/contact';
+import { isContactFormEnabled } from '@/lib/features';
 
 export function ContactSection({ profile }: { profile: Profile }) {
+  const formEnabled = isContactFormEnabled();
   return (
     <section id="contact" aria-labelledby="contact-title" className="scroll-mt-20 py-12">
       <SectionHeading id="contact-title">Contact</SectionHeading>
       <div className="space-y-6">
         <p className="max-w-prose leading-relaxed text-fg-muted">
-          Have a backend project or role in mind? Send me an email and I will get back to you.
+          {formEnabled
+            ? 'Have a backend project or role in mind? Send me a message below or email me directly.'
+            : 'Have a backend project or role in mind? Email me and I will get back to you.'}
         </p>
         <div className="flex flex-wrap items-center gap-3">
-          <ButtonLink href={`mailto:${profile.email}`}>{profile.email}</ButtonLink>
+          <ButtonLink href={`mailto:${profile.email}`}>Email me</ButtonLink>
+          <span className="select-all font-mono text-sm text-fg-muted">{profile.email}</span>
           <ul className="flex items-center gap-2">
             {profile.socials.map((s) => (
               <li key={s.label}>
@@ -28,7 +35,7 @@ export function ContactSection({ profile }: { profile: Profile }) {
             ))}
           </ul>
         </div>
-        {/* Contact form lands here in Task 12. */}
+        {formEnabled ? <ContactForm action={sendContact} /> : null}
       </div>
     </section>
   );
