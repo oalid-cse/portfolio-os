@@ -18,6 +18,10 @@ describe('content schemas', () => {
     skillGroups.forEach((g) => expect(() => skillGroupSchema.parse(g)).not.toThrow());
     education.forEach((e) => expect(() => educationSchema.parse(e)).not.toThrow());
   });
+  it('keeps every AI-Assisted Development bullet from the CV', () =>
+    expect(skillGroups.find((g) => g.id === 'ai')?.skills).toContain(
+      'Accelerated development workflows and reduced delivery time',
+    ));
   it('rejects experience with malformed date', () =>
     expect(() => experienceSchema.parse({ ...experience[0], start: 'March 2025' })).toThrow());
   it('accepts end: "present"', () =>

@@ -17,6 +17,7 @@ const skillGroups = z.array(skillGroupSchema).parse([
       'Antigravity',
       'Prompt engineering for code generation and debugging',
       'Automated code scaffolding, refactoring, and test generation',
+      'Accelerated development workflows and reduced delivery time',
     ],
   },
 ]);
