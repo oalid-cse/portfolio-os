@@ -1,0 +1,63 @@
+/* Shared OS app styling. Skins theme the apps by setting the --os-* variables on an ancestor. */
+.os-app {
+  height: 100%;
+  overflow: auto;
+  padding: 1rem;
+  font-family: var(--os-font, ui-sans-serif, system-ui, sans-serif);
+  background: var(--os-bg, #1b1b1f);
+  color: var(--os-fg, #ececf1);
+  line-height: 1.5;
+  font-size: 0.9375rem;
+}
+.os-app h1 { font-size: 1.375rem; font-weight: 700; margin: 0; }
+.os-app h2 { font-size: 1.0625rem; font-weight: 600; margin: 0; }
+.os-app h3 { font-size: 0.9375rem; font-weight: 600; margin: 0; }
+.os-app p { margin: 0; }
+.os-app ul { margin: 0; padding: 0; list-style: none; }
+.os-app a { color: var(--os-accent, #4cc2ff); text-decoration: underline; }
+.os-muted { color: var(--os-muted, #9a9aa5); }
+.os-stack { display: flex; flex-direction: column; gap: 1rem; }
+.os-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+.os-card {
+  border: 1px solid var(--os-border, #3a3a42);
+  border-radius: var(--os-radius, 8px);
+  padding: 0.75rem 1rem;
+}
+.os-chip {
+  display: inline-block;
+  border: 1px solid var(--os-border, #3a3a42);
+  border-radius: var(--os-radius, 8px);
+  padding: 0.125rem 0.5rem;
+  font-size: 0.8125rem;
+}
+.os-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+.os-btn:hover, .os-btn:focus-visible { border-color: var(--os-accent, #4cc2ff); }
+.os-btn-inline {
+  font: inherit;
+  color: var(--os-accent, #4cc2ff);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.os-avatar { border-radius: 9999px; object-fit: cover; width: 96px; height: 96px; border: 1px solid var(--os-border, #3a3a42); }
+.os-frame { width: 100%; flex: 1; min-height: 320px; border: 1px solid var(--os-border, #3a3a42); border-radius: var(--os-radius, 8px); background: #fff; }
+.os-mono { font-family: var(--os-mono, ui-monospace, SFMono-Regular, Menlo, monospace); }
+.os-app input, .os-app textarea {
+  width: 100%; font: inherit; color: var(--os-fg, #ececf1); background: transparent;
+  border: 1px solid var(--os-border, #3a3a42); border-radius: var(--os-radius, 8px); padding: 0.4rem 0.6rem;
+}
+.os-app button[type='submit'] {
+  font: inherit; color: var(--os-bg, #1b1b1f); background: var(--os-accent, #4cc2ff);
+  border: 0; border-radius: var(--os-radius, 8px); padding: 0.4rem 0.9rem; cursor: pointer;
+}
+.os-app label { color: var(--os-muted, #9a9aa5); }

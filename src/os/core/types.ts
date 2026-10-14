@@ -24,3 +24,5 @@ export type OsSkinMeta = {
   /** Absent until images exist; the gallery renders a styled placeholder tile. */
   thumbnail?: string;
 };
+
+export type AppIconName = AppId;
