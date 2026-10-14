@@ -33,6 +33,11 @@ describe('Window', () => {
     expect(screen.getByText('body')).toBeInTheDocument();
   });
 
+  it('tells the chrome which app it frames', () => {
+    setup();
+    expect(screen.getByTestId('titlebar')).toHaveAttribute('data-app-id', 'about');
+  });
+
   it('moves focus into the window on open', () => {
     setup();
     expect(screen.getByRole('dialog', { name: 'About' })).toHaveFocus();

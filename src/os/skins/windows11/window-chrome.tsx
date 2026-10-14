@@ -6,8 +6,6 @@ import { apps } from '@/os/core/apps';
 import type { WindowChromeProps } from '@/os/core/desktop/window';
 import { AppTile } from './icons';
 
-const appByTitle = (title: string) => Object.values(apps).find((a) => a.title === title);
-
 function CaptionButton({
   label,
   onClick,
@@ -41,9 +39,8 @@ function CaptionButton({
  * Windows 11-style window frame. The engine renders the app body below the title bar, so the
  * Mica surface (background, stroke, radius, shadow) is an absolutely positioned layer behind both.
  */
-export function Win11WindowChrome({ title, focused, mode, onClose, onMinimize, onToggleMaximize, dragHandleProps }: WindowChromeProps) {
+export function Win11WindowChrome({ appId, title, focused, mode, onClose, onMinimize, onToggleMaximize, dragHandleProps }: WindowChromeProps) {
   const maximized = mode === 'maximized';
-  const app = appByTitle(title);
 
   return (
     <>
@@ -59,7 +56,7 @@ export function Win11WindowChrome({ title, focused, mode, onClose, onMinimize, o
         className={`flex h-10 shrink-0 items-stretch overflow-hidden ${maximized ? '' : 'rounded-t-lg'} ${dragHandleProps.className ?? ''}`}
       >
         <div className={`flex min-w-0 flex-1 items-center gap-3 pl-3.5 text-xs ${focused ? 'text-(--os-fg)' : 'text-(--os-muted) opacity-80'}`}>
-          {app && <AppTile app={app.icon} size="sm" />}
+          <AppTile app={apps[appId].icon} size="sm" />
           <span className="truncate">{title}</span>
         </div>
         <div className={`flex ${focused ? 'text-(--os-fg)' : 'text-(--os-muted)'}`}>

@@ -2,9 +2,11 @@
 
 import { motion } from 'framer-motion';
 import { type ComponentType, type CSSProperties, type HTMLAttributes, type PointerEvent, type ReactNode, useEffect, useRef } from 'react';
+import type { AppId } from '../types';
 import { type Geometry, MIN_H, MIN_W, type WinState } from './window-store';
 
 export type WindowChromeProps = {
+  appId: AppId;
   title: string;
   focused: boolean;
   mode: WinState['mode'];
@@ -142,6 +144,7 @@ export function Window(props: WindowProps) {
       transition={{ duration, ease: 'easeOut' }}
     >
       <Chrome
+        appId={win.appId}
         title={win.title}
         focused={focused}
         mode={win.mode}
