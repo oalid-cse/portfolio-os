@@ -33,4 +33,24 @@ describe('ContactForm', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Send message' }));
     expect(await screen.findByText('Something went wrong. Please email me directly.')).toBeInTheDocument();
   });
+  it('keeps entered values after an error response', async () => {
+    const values = { name: 'Ada', email: 'ada@example.com', message: 'short' };
+    const action = vi.fn(
+      async (): Promise<ContactState> => ({
+        status: 'error',
+        message: 'Please fix the highlighted fields.',
+        fieldErrors: { message: 'Message must be at least 10 characters.' },
+        values,
+      }),
+    );
+    render(<ContactForm action={action} />);
+    await userEvent.type(screen.getByLabelText('Name'), values.name);
+    await userEvent.type(screen.getByLabelText('Email'), values.email);
+    await userEvent.type(screen.getByLabelText('Message'), values.message);
+    await userEvent.click(screen.getByRole('button', { name: 'Send message' }));
+    await screen.findByText('Message must be at least 10 characters.');
+    expect(screen.getByLabelText('Name')).toHaveValue(values.name);
+    expect(screen.getByLabelText('Email')).toHaveValue(values.email);
+    expect(screen.getByLabelText('Message')).toHaveValue(values.message);
+  });
 });

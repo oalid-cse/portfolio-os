@@ -12,13 +12,17 @@ export function ContactForm({ action }: Props) {
   const [state, formAction, pending] = useActionState(action, { status: 'idle' } as ContactState);
   const fieldErrors = state.status === 'error' ? (state.fieldErrors ?? {}) : {};
 
+  const values = state.status === 'error' ? state.values : undefined;
+  // Changing key re-mounts the inputs so the preserved values survive React's post-action form reset.
+  const formKey = values ? `${values.name}\n${values.email}\n${values.message}` : state.status;
+
   const fields = [
     { id: 'name', label: 'Name', type: 'text', autoComplete: 'name' },
     { id: 'email', label: 'Email', type: 'email', autoComplete: 'email' },
   ] as const;
 
   return (
-    <form action={formAction} noValidate className="space-y-4 font-mono">
+    <form key={formKey} action={formAction} noValidate className="space-y-4 font-mono">
       {fields.map(({ id, label, type, autoComplete }) => {
         const error = fieldErrors[id];
         return (
@@ -31,6 +35,7 @@ export function ContactForm({ action }: Props) {
               name={id}
               type={type}
               required
+              defaultValue={values?.[id]}
               autoComplete={autoComplete}
               aria-invalid={error ? true : undefined}
               aria-describedby={error ? `contact-${id}-error` : undefined}
@@ -52,6 +57,7 @@ export function ContactForm({ action }: Props) {
           id="contact-message"
           name="message"
           rows={5}
+          defaultValue={values?.message}
           required
           aria-invalid={fieldErrors.message ? true : undefined}
           aria-describedby={fieldErrors.message ? 'contact-message-error' : undefined}
@@ -64,7 +70,7 @@ export function ContactForm({ action }: Props) {
         ) : null}
       </div>
       {/* Honeypot: hidden from people and assistive tech; bots fill it in. */}
-      <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+      <div aria-hidden="true" className="sr-only">
         <label htmlFor="contact-website">Website</label>
         <input id="contact-website" name="website" type="text" tabIndex={-1} autoComplete="off" />
       </div>

@@ -20,6 +20,7 @@ describe('createSendContact', () => {
     const res = await createSendContact(send)(idle, fd({ ...valid, message: 'short' }));
     expect(res.status).toBe('error');
     expect(res.status === 'error' && res.fieldErrors?.message).toBeTruthy();
+    expect(res.status === 'error' && res.values).toEqual({ name: 'Ada', email: 'ada@example.com', message: 'short' });
     expect(send).not.toHaveBeenCalled();
   });
   it('honeypot filled returns success without calling send', async () => {
@@ -32,6 +33,7 @@ describe('createSendContact', () => {
     expect(await createSendContact(send)(idle, fd(valid))).toEqual({
       status: 'error',
       message: 'Something went wrong. Please email me directly.',
+      values: { name: 'Ada', email: 'ada@example.com', message: valid.message },
     });
   });
 });

@@ -24,5 +24,7 @@ export type ContactState =
   | {
       status: 'error';
       message: string;
+      /** Submitted values, echoed back so the form can keep what the visitor typed. */
+      values?: { name: string; email: string; message: string };
       fieldErrors?: Partial<Record<'name' | 'email' | 'message', string>>;
     };

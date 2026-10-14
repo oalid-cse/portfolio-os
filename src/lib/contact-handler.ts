@@ -17,10 +17,9 @@ export function createSendContact(send: ContactSender) {
     // Honeypot: pretend success so bots learn nothing.
     if (field(formData, 'website') !== '') return { status: 'success' };
 
+    const values = { name: field(formData, 'name'), email: field(formData, 'email'), message: field(formData, 'message') };
     const parsed = contactSchema.safeParse({
-      name: field(formData, 'name'),
-      email: field(formData, 'email'),
-      message: field(formData, 'message'),
+      ...values,
       website: '',
     });
     if (!parsed.success) {
@@ -31,7 +30,7 @@ export function createSendContact(send: ContactSender) {
           fieldErrors[key] = issue.message;
         }
       }
-      return { status: 'error', message: 'Please fix the highlighted fields.', fieldErrors };
+      return { status: 'error', message: 'Please fix the highlighted fields.', fieldErrors, values };
     }
 
     try {
@@ -39,7 +38,7 @@ export function createSendContact(send: ContactSender) {
       await send({ name, email, message });
       return { status: 'success' };
     } catch {
-      return { status: 'error', message: CONTACT_ERROR_MESSAGE };
+      return { status: 'error', message: CONTACT_ERROR_MESSAGE, values };
     }
   };
 }
