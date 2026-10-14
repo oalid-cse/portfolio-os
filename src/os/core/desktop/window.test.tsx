@@ -15,7 +15,7 @@ function setup(win: Partial<WinState> = {}, focused = true) {
     onMinimize: vi.fn(),
     onToggleMaximize: vi.fn(),
     onMove: vi.fn(),
-    onResize: vi.fn(),
+    onSetBounds: vi.fn(),
   };
   render(
     <Window win={{ ...baseWin, ...win }} focused={focused} Chrome={TestChrome} reducedMotion {...handlers}>
@@ -48,10 +48,10 @@ describe('Window', () => {
     const h = setup();
     const bar = screen.getByTestId('titlebar');
     fireEvent.pointerDown(bar, { clientX: 200, clientY: 100, pointerId: 1, button: 0 });
-    fireEvent.pointerMove(bar, { clientX: 250, clientY: 130, pointerId: 1 });
+    fireEvent.pointerMove(bar, { clientX: 250, clientY: 130, pointerId: 1, buttons: 1 });
     expect(h.onMove).toHaveBeenLastCalledWith(150, 110);
     fireEvent.pointerUp(bar, { clientX: 250, clientY: 130, pointerId: 1 });
-    fireEvent.pointerMove(bar, { clientX: 400, clientY: 400, pointerId: 1 });
+    fireEvent.pointerMove(bar, { clientX: 400, clientY: 400, pointerId: 1, buttons: 1 });
     expect(h.onMove).toHaveBeenCalledTimes(1);
   });
 
@@ -59,12 +59,12 @@ describe('Window', () => {
     const h = setup({ mode: 'maximized' });
     const bar = screen.getByTestId('titlebar');
     fireEvent.pointerDown(bar, { clientX: 200, clientY: 100, pointerId: 1, button: 0 });
-    fireEvent.pointerMove(bar, { clientX: 250, clientY: 130, pointerId: 1 });
+    fireEvent.pointerMove(bar, { clientX: 250, clientY: 130, pointerId: 1, buttons: 1 });
     cleanup();
     const h2 = setup();
     const close = screen.getByRole('button', { name: 'Close' });
     fireEvent.pointerDown(close, { clientX: 200, clientY: 100, pointerId: 1, button: 0 });
-    fireEvent.pointerMove(close, { clientX: 250, clientY: 130, pointerId: 1 });
+    fireEvent.pointerMove(close, { clientX: 250, clientY: 130, pointerId: 1, buttons: 1 });
     expect(h.onMove).not.toHaveBeenCalled();
     expect(h2.onMove).not.toHaveBeenCalled();
   });
@@ -87,20 +87,19 @@ describe('Window', () => {
     expect(h.onToggleMaximize).toHaveBeenCalled();
   });
 
-  it('east edge resizes width; west edge resizes and moves', () => {
+  it('east edge resizes width; west edge resizes and moves atomically', () => {
     const h = setup();
     const dialog = screen.getByRole('dialog', { name: 'About' });
     const east = dialog.querySelector('[data-resize="e"]')!;
     fireEvent.pointerDown(east, { clientX: 700, clientY: 200, pointerId: 1, button: 0 });
-    fireEvent.pointerMove(east, { clientX: 760, clientY: 260, pointerId: 1 });
-    expect(h.onResize).toHaveBeenLastCalledWith(660, 400);
+    fireEvent.pointerMove(east, { clientX: 760, clientY: 260, pointerId: 1, buttons: 1 });
+    expect(h.onSetBounds).toHaveBeenLastCalledWith({ x: 100, y: 80, w: 660, h: 400 });
     fireEvent.pointerUp(east, { pointerId: 1 });
 
     const west = dialog.querySelector('[data-resize="w"]')!;
     fireEvent.pointerDown(west, { clientX: 100, clientY: 200, pointerId: 1, button: 0 });
-    fireEvent.pointerMove(west, { clientX: 60, clientY: 200, pointerId: 1 });
-    expect(h.onResize).toHaveBeenLastCalledWith(640, 400);
-    expect(h.onMove).toHaveBeenLastCalledWith(60, 80);
+    fireEvent.pointerMove(west, { clientX: 60, clientY: 200, pointerId: 1, buttons: 1 });
+    expect(h.onSetBounds).toHaveBeenLastCalledWith({ x: 60, y: 80, w: 640, h: 400 });
   });
 
   it('has 8 resize handles of 8px, hidden while maximized', () => {
@@ -117,5 +116,48 @@ describe('Window', () => {
   it('minimized windows are hidden from assistive tech and focus', () => {
     setup({ mode: 'minimized' }, false);
     expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('north edge keeps the bottom edge fixed and respects the minimum height', () => {
+    const h = setup();
+    const north = screen.getByRole('dialog').querySelector('[data-resize="n"]')!;
+    fireEvent.pointerDown(north, { clientX: 300, clientY: 80, pointerId: 1, button: 0 });
+    fireEvent.pointerMove(north, { clientX: 300, clientY: 20, pointerId: 1, buttons: 1 });
+    expect(h.onSetBounds).toHaveBeenLastCalledWith({ x: 100, y: 20, w: 600, h: 460 });
+    fireEvent.pointerMove(north, { clientX: 300, clientY: 900, pointerId: 1, buttons: 1 });
+    expect(h.onSetBounds).toHaveBeenLastCalledWith({ x: 100, y: 280, w: 600, h: 200 });
+  });
+
+  it('losing pointer capture ends the drag', () => {
+    const h = setup();
+    const bar = screen.getByTestId('titlebar');
+    fireEvent.pointerDown(bar, { clientX: 200, clientY: 100, pointerId: 1, button: 0 });
+    fireEvent.lostPointerCapture(bar, { pointerId: 1 });
+    fireEvent.pointerMove(bar, { clientX: 250, clientY: 130, pointerId: 1, buttons: 1 });
+    expect(h.onMove).not.toHaveBeenCalled();
+  });
+
+  it('losing pointer capture ends a resize', () => {
+    const h = setup();
+    const east = screen.getByRole('dialog').querySelector('[data-resize="e"]')!;
+    fireEvent.pointerDown(east, { clientX: 700, clientY: 200, pointerId: 1, button: 0 });
+    fireEvent.lostPointerCapture(east, { pointerId: 1 });
+    fireEvent.pointerMove(east, { clientX: 760, clientY: 200, pointerId: 1, buttons: 1 });
+    expect(h.onSetBounds).not.toHaveBeenCalled();
+  });
+
+  it('a move with no buttons pressed ends a stuck drag', () => {
+    const h = setup();
+    const bar = screen.getByTestId('titlebar');
+    fireEvent.pointerDown(bar, { clientX: 200, clientY: 100, pointerId: 1, button: 0 });
+    fireEvent.pointerMove(bar, { clientX: 250, clientY: 130, pointerId: 1, buttons: 0 });
+    fireEvent.pointerMove(bar, { clientX: 300, clientY: 160, pointerId: 1, buttons: 1 });
+    expect(h.onMove).not.toHaveBeenCalled();
+  });
+
+  it('the drag handle is non-selectable while the content area allows text selection', () => {
+    setup();
+    expect(screen.getByTestId('titlebar')).toHaveClass('select-none', 'touch-none');
+    expect(screen.getByText('body').parentElement).toHaveClass('select-text');
   });
 });

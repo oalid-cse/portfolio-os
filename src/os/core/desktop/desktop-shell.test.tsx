@@ -141,7 +141,7 @@ describe('DesktopShell', () => {
     fireEvent.doubleClick(screen.getByRole('button', { name: 'About' }));
     const bar = within(dialog('About')).getByTestId('titlebar');
     fireEvent.pointerDown(bar, { clientX: 400, clientY: 100, pointerId: 1, button: 0 });
-    fireEvent.pointerMove(bar, { clientX: 1400, clientY: 100, pointerId: 1 });
+    fireEvent.pointerMove(bar, { clientX: 1400, clientY: 100, pointerId: 1, buttons: 1 });
     fireEvent.pointerUp(bar, { pointerId: 1 });
     expect(dialog('About').style.left).toBe(`${1280 - 120}px`);
     act(() => {
@@ -159,5 +159,41 @@ describe('DesktopShell', () => {
     expect(screen.getByRole('link', { name: 'Back to classic view' })).toHaveAttribute('href', '/');
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(screen.queryByRole('button', { name: 'About' })).toBeNull();
+  });
+
+  it('north-edge resize with topInset=28 clamps at the inset without moving the bottom edge', () => {
+    render(<DesktopShell data={data} skin={{ ...skin, insets: { top: 28, bottom: 48 } }} />);
+    fireEvent.doubleClick(screen.getByRole('button', { name: 'About' }));
+    const win = dialog('About');
+    const bottomEdge = parseFloat(win.style.top) + parseFloat(win.style.height);
+    const north = win.querySelector('[data-resize="n"]')!;
+    fireEvent.pointerDown(north, { clientX: 400, clientY: 200, pointerId: 1, button: 0 });
+    fireEvent.pointerMove(north, { clientX: 400, clientY: -500, pointerId: 1, buttons: 1 });
+    fireEvent.pointerUp(north, { pointerId: 1 });
+    expect(win.style.top).toBe('28px');
+    expect(parseFloat(win.style.top) + parseFloat(win.style.height)).toBe(bottomEdge);
+  });
+
+  it('text selection is blocked on desktop furniture but not on the shell root', () => {
+    const { container } = render(<DesktopShell data={data} skin={skin} />);
+    expect(container.firstElementChild).not.toHaveClass('select-none');
+    expect(screen.getByTestId('wallpaper').parentElement).toHaveClass('select-none');
+    expect(screen.getByRole('button', { name: 'About' }).parentElement).toHaveClass('select-none');
+    expect(screen.getByRole('navigation', { name: 'Taskbar' }).parentElement).toHaveClass('select-none');
+  });
+
+  it('open windows survive crossing the 768px breakpoint', () => {
+    render(<DesktopShell data={data} skin={skin} />);
+    fireEvent.doubleClick(screen.getByRole('button', { name: 'About' }));
+    act(() => {
+      setViewport(500, 800);
+      window.dispatchEvent(new Event('resize'));
+    });
+    expect(screen.queryByRole('dialog')).toBeNull();
+    act(() => {
+      setViewport(1280, 800);
+      window.dispatchEvent(new Event('resize'));
+    });
+    expect(dialog('About')).toBeInTheDocument();
   });
 });

@@ -32,6 +32,8 @@ export type WindowStoreState = {
   toggleMaximize(id: string): void;
   move(id: string, x: number, y: number): void;
   resize(id: string, w: number, h: number): void;
+  /** Atomic move+resize (edge drags): keeps the bottom edge fixed when the top is clamped to topInset. */
+  setBounds(id: string, bounds: Geometry): void;
   clampAll(): void;
 };
 
@@ -43,7 +45,7 @@ export type WindowStoreOptions = {
   bottomInset?: number;
 };
 
-type Geometry = Pick<WinState, 'x' | 'y' | 'w' | 'h'>;
+export type Geometry = Pick<WinState, 'x' | 'y' | 'w' | 'h'>;
 
 export function createWindowStore({ viewport, topInset = 0, bottomInset = 0 }: WindowStoreOptions): WindowStore {
   let seq = 0;
@@ -60,10 +62,21 @@ export function createWindowStore({ viewport, topInset = 0, bottomInset = 0 }: W
     };
   };
 
-  const maximizedGeometry = (): Geometry => {
-    const { w: vw, h: vh } = viewport();
-    return { x: 0, y: topInset, w: vw, h: vh - topInset - bottomInset };
-  };
+  const workHeight = () => viewport().h - topInset - bottomInset;
+
+  /** Fits a size to the work area while respecting the minimum window size. */
+  const fitSize = (w: number, h: number) => ({
+    w: Math.max(MIN_W, Math.min(w, viewport().w)),
+    h: Math.max(MIN_H, Math.min(h, workHeight())),
+  });
+
+  const maximizedGeometry = (): Geometry => ({ x: 0, y: topInset, w: viewport().w, h: Math.max(MIN_H, workHeight()) });
+
+  /** Centred inside the work area: the first window's position and where the cascade wraps back to. */
+  const cascadeStart = (w: number, h: number) => ({
+    x: Math.round((viewport().w - w) / 2),
+    y: topInset + Math.max(0, Math.round((workHeight() - h) / 2)),
+  });
 
   const maxZ = (windows: WinState[]) => windows.reduce((m, w) => Math.max(m, w.z), 0);
 
@@ -91,15 +104,12 @@ export function createWindowStore({ viewport, topInset = 0, bottomInset = 0 }: W
         const existing = get().windows.find((w) => w.appId === appId);
         if (existing) return focus(existing.id);
         const { w: vw, h: vh } = viewport();
-        const w = Math.min(900, vw - 80);
-        const h = Math.min(600, vh - 120);
+        const w = Math.max(MIN_W, Math.min(900, vw - 80));
+        const h = Math.max(MIN_H, Math.min(600, vh - 120));
         const last = get().windows.at(-1);
-        const start = last
-          ? { x: last.x + CASCADE, y: last.y + CASCADE }
-          : {
-              x: Math.round((vw - w) / 2),
-              y: topInset + Math.max(0, Math.round((vh - topInset - bottomInset - h) / 2)),
-            };
+        let start = last ? { x: last.x + CASCADE, y: last.y + CASCADE } : cascadeStart(w, h);
+        // Wrap the cascade back to the start once the next window would leave the work area.
+        if (start.x + w > vw || start.y + h > vh - bottomInset) start = cascadeStart(w, h);
         const id = `${appId}-${++seq}`;
         const win: WinState = { id, appId, title, ...clampPos(start.x, start.y, w), w, h, z: maxZ(get().windows) + 1, mode: 'normal' };
         set((s) => ({ windows: [...s.windows, win], focusedId: id }));
@@ -128,9 +138,11 @@ export function createWindowStore({ viewport, topInset = 0, bottomInset = 0 }: W
         const win = get().windows.find((w) => w.id === id);
         if (!win) return;
         if (win.mode === 'maximized') {
-          const prev = prevGeometry.get(id);
+          const prev = prevGeometry.get(id) ?? win;
           prevGeometry.delete(id);
-          patch(id, () => ({ ...(prev ?? {}), mode: 'normal' }));
+          // The viewport may have changed while maximized: fit and clamp the restored geometry.
+          const size = fitSize(prev.w, prev.h);
+          patch(id, () => ({ ...size, ...clampPos(prev.x, prev.y, size.w), mode: 'normal' }));
         } else {
           prevGeometry.set(id, { x: win.x, y: win.y, w: win.w, h: win.h });
           patch(id, () => ({ ...maximizedGeometry(), mode: 'maximized' }));
@@ -144,6 +156,20 @@ export function createWindowStore({ viewport, topInset = 0, bottomInset = 0 }: W
 
       resize(id, w, h) {
         patch(id, () => ({ w: Math.max(MIN_W, w), h: Math.max(MIN_H, h) }));
+      },
+
+      setBounds(id, { x, y, w, h }) {
+        patch(id, (win) => {
+          if (win.mode === 'maximized') return {};
+          let top = y;
+          let height = h;
+          if (top < topInset) {
+            height -= topInset - top; // keep the bottom edge where it was asked to be
+            top = topInset;
+          }
+          const width = Math.max(MIN_W, w);
+          return { w: width, h: Math.max(MIN_H, height), ...clampPos(x, top, width) };
+        });
       },
 
       clampAll() {

@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { type ComponentType, type CSSProperties, type HTMLAttributes, type PointerEvent, type ReactNode, useEffect, useRef } from 'react';
-import { MIN_H, MIN_W, type WinState } from './window-store';
+import { type Geometry, MIN_H, MIN_W, type WinState } from './window-store';
 
 export type WindowChromeProps = {
   title: string;
@@ -11,6 +11,10 @@ export type WindowChromeProps = {
   onClose(): void;
   onMinimize(): void;
   onToggleMaximize(): void;
+  /**
+   * Pointer, double-click and class props that make an element the window's drag handle.
+   * Chromes must spread these onto the title bar element (and merge, not replace, `className`).
+   */
   dragHandleProps: HTMLAttributes<HTMLElement>;
 };
 
@@ -24,7 +28,8 @@ export type WindowProps = {
   onMinimize(): void;
   onToggleMaximize(): void;
   onMove(x: number, y: number): void;
-  onResize(w: number, h: number): void;
+  /** Atomic geometry update used by edge/corner resizing. */
+  onSetBounds(bounds: Geometry): void;
   children: ReactNode;
 };
 
@@ -73,6 +78,11 @@ export function Window(props: WindowProps) {
   const track = (e: PointerEvent<HTMLElement>) => {
     const g = gesture.current;
     if (!g) return;
+    if (e.buttons === 0) {
+      // The button was released without us seeing pointerup (e.g. outside the window): stop.
+      gesture.current = null;
+      return;
+    }
     const dx = e.clientX - g.px;
     const dy = e.clientY - g.py;
     if (g.kind === 'move') return props.onMove(g.x + dx, g.y + dy);
@@ -87,8 +97,7 @@ export function Window(props: WindowProps) {
       h = Math.max(MIN_H, g.h - dy);
       y = g.y + g.h - h;
     }
-    props.onResize(w, h);
-    if (x !== g.x || y !== g.y) props.onMove(x, y);
+    props.onSetBounds({ x, y, w, h });
   };
 
   const end = (e: PointerEvent<HTMLElement>) => {
@@ -96,16 +105,16 @@ export function Window(props: WindowProps) {
     gesture.current = null;
     if (e.currentTarget.hasPointerCapture?.(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
   };
+  const pointerEnd = { onPointerUp: end, onPointerCancel: end, onLostPointerCapture: end };
 
   const dragHandleProps: HTMLAttributes<HTMLElement> = {
     onPointerDown: beginMove,
     onPointerMove: track,
-    onPointerUp: end,
-    onPointerCancel: end,
+    ...pointerEnd,
     onDoubleClick: (e) => {
       if (!fromButton(e)) onToggleMaximize();
     },
-    style: { touchAction: 'none' },
+    className: 'touch-none select-none',
   };
 
   const duration = reducedMotion ? 0 : 0.15;
@@ -141,19 +150,18 @@ export function Window(props: WindowProps) {
         onToggleMaximize={onToggleMaximize}
         dragHandleProps={dragHandleProps}
       />
-      <div className="min-h-0 flex-1">{children}</div>
+      <div className="min-h-0 flex-1 select-text">{children}</div>
       {!maximized &&
         EDGES.map((edge) => (
           <div
             key={edge}
             aria-hidden
             data-resize={edge}
-            className="absolute"
-            style={{ ...EDGE_STYLE[edge], touchAction: 'none' }}
+            className="absolute touch-none select-none"
+            style={EDGE_STYLE[edge]}
             onPointerDown={beginResize}
             onPointerMove={track}
-            onPointerUp={end}
-            onPointerCancel={end}
+            {...pointerEnd}
           />
         ))}
     </motion.div>

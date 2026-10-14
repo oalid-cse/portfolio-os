@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
+import type { AppId } from '../types';
 import { createWindowStore, MIN_H, MIN_W, TITLE_BAR_HEIGHT } from './window-store';
 
 let vw = 1440;
@@ -259,5 +260,69 @@ describe('createWindowStore', () => {
     s().toggleMaximize('nope');
     s().close('nope');
     expect(s().windows).toEqual(before);
+  });
+
+  it('restoring after a viewport shrink clamps the previous geometry', () => {
+    const { s, win } = setup();
+    s().open('about', 'About');
+    const id = s().focusedId!;
+    s().move(id, 1300, 700);
+    s().toggleMaximize(id);
+    vw = 1024;
+    vh = 600;
+    s().clampAll();
+    s().toggleMaximize(id);
+    const w = win(id);
+    expect(w.mode).toBe('normal');
+    expect(w.x).toBeLessThanOrEqual(vw - 120);
+    expect(w.y).toBeGreaterThanOrEqual(TOP);
+    expect(w.y).toBeLessThanOrEqual(vh - BOTTOM - TITLE_BAR_HEIGHT);
+    expect(w.w).toBeLessThanOrEqual(vw);
+    expect(w.h).toBeLessThanOrEqual(vh - TOP - BOTTOM);
+  });
+
+  it('setBounds clamps the top to topInset and keeps the bottom edge fixed (topInset=28)', () => {
+    const { s, win } = setup({ top: 28, bottom: 0 });
+    s().open('about', 'About');
+    const id = s().focusedId!;
+    s().setBounds(id, { x: 100, y: 100, w: 600, h: 400 });
+    expect(win(id)).toMatchObject({ x: 100, y: 100, w: 600, h: 400 });
+    // North-edge drag far above the inset: requested bottom edge stays at 500.
+    s().setBounds(id, { x: 100, y: -300, w: 600, h: 800 });
+    expect(win(id)).toMatchObject({ y: 28, h: 472 });
+    expect(win(id).y + win(id).h).toBe(500);
+  });
+
+  it('setBounds respects the 320x200 minimum', () => {
+    const { s, win } = setup();
+    s().open('about', 'About');
+    const id = s().focusedId!;
+    s().setBounds(id, { x: 100, y: 100, w: 10, h: 10 });
+    expect(win(id)).toMatchObject({ x: 100, y: 100, w: 320, h: 200 });
+  });
+
+  it('the cascade wraps back to the start when the next window would leave the work area', () => {
+    vw = 1000;
+    vh = 760;
+    const { s } = setup();
+    const ids: AppId[] = ['about', 'projects', 'experience', 'skills', 'resume', 'contact', 'terminal', 'browser'];
+    for (const id of ids) s().open(id, id);
+    const first = s().windows[0]!;
+    for (const w of s().windows) {
+      expect(w.x + w.w).toBeLessThanOrEqual(vw);
+      expect(w.y + w.h).toBeLessThanOrEqual(vh - BOTTOM);
+    }
+    expect(s().windows.some((w, i) => i > 0 && w.x === first.x && w.y === first.y)).toBe(true);
+  });
+
+  it('open and maximize respect the minimum size on tiny viewports', () => {
+    vw = 360;
+    vh = 250;
+    const { s, win } = setup();
+    s().open('about', 'About');
+    const id = s().focusedId!;
+    expect(win(id)).toMatchObject({ w: 320, h: 200 });
+    s().toggleMaximize(id);
+    expect(win(id).h).toBe(200);
   });
 });

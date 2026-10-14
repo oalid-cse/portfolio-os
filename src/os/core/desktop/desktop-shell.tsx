@@ -10,7 +10,7 @@ import { DesktopIcon } from './desktop-icon';
 import { SmallScreenNotice } from './small-screen-notice';
 import { useReducedMotion } from './use-reduced-motion';
 import { Window, type WindowChromeProps } from './window';
-import { createWindowStore, type WinState } from './window-store';
+import { createWindowStore, type WindowStore, type WinState } from './window-store';
 
 export type DesktopApi = {
   windows: WinState[];
@@ -53,15 +53,20 @@ const viewport = () => ({ w: window.innerWidth, h: window.innerHeight });
 
 export function DesktopShell({ data, skin, closeShortcut = altF4 }: DesktopShellProps) {
   const width = useSyncExternalStore(subscribeResize, getWidth, getServerWidth);
+  // One store per shell instance (never a module singleton). It lives here, above the breakpoint
+  // switch, so open windows survive a trip below 768px and back. Insets are read once.
+  const [store] = useState(() =>
+    createWindowStore({ viewport, topInset: skin.insets.top, bottomInset: skin.insets.bottom }),
+  );
   if (width === null) return null;
   if (width < DESKTOP_MIN_WIDTH) return <SmallScreenNotice mobileAlternative={skin.mobileAlternative} />;
-  return <Desktop data={data} skin={skin} closeShortcut={closeShortcut} />;
+  return <Desktop data={data} skin={skin} closeShortcut={closeShortcut} store={store} />;
 }
 
-function Desktop({ data, skin, closeShortcut }: Required<DesktopShellProps>) {
+type DesktopProps = Required<DesktopShellProps> & { store: WindowStore };
+
+function Desktop({ data, skin, closeShortcut, store }: DesktopProps) {
   const { top, bottom } = skin.insets;
-  // One store per desktop instance (never a module singleton).
-  const [store] = useState(() => createWindowStore({ viewport, topInset: top, bottomInset: bottom }));
   const windows = useStore(store, (s) => s.windows);
   const focusedId = useStore(store, (s) => s.focusedId);
   const reducedMotion = useReducedMotion();
@@ -71,6 +76,7 @@ function Desktop({ data, skin, closeShortcut }: Required<DesktopShellProps>) {
 
   useEffect(() => {
     const onResize = () => store.getState().clampAll();
+    onResize(); // the viewport may have changed while the desktop was unmounted
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, [store]);
@@ -94,11 +100,11 @@ function Desktop({ data, skin, closeShortcut }: Required<DesktopShellProps>) {
   const actions = store.getState();
 
   return (
-    <div className="fixed inset-0 overflow-hidden select-none">
-      <div className="absolute inset-0 z-0">{skin.wallpaper}</div>
+    <div className="fixed inset-0 overflow-hidden">
+      <div className="absolute inset-0 z-0 select-none">{skin.wallpaper}</div>
 
       <div
-        className="absolute inset-x-0 z-0 grid auto-cols-max grid-flow-col content-start gap-1 p-2"
+        className="absolute inset-x-0 z-0 grid select-none auto-cols-max grid-flow-col content-start gap-1 p-2"
         style={{ top, bottom, gridTemplateRows: 'repeat(auto-fill, minmax(88px, max-content))' }}
         onPointerDown={(e) => {
           if (e.target === e.currentTarget) setSelected(null);
@@ -133,7 +139,7 @@ function Desktop({ data, skin, closeShortcut }: Required<DesktopShellProps>) {
                 onMinimize={() => actions.minimize(win.id)}
                 onToggleMaximize={() => actions.toggleMaximize(win.id)}
                 onMove={(x, y) => actions.move(win.id, x, y)}
-                onResize={(w, h) => actions.resize(win.id, w, h)}
+                onSetBounds={(b) => actions.setBounds(win.id, b)}
               >
                 <Component data={data} openApp={openApp} />
               </Window>
@@ -143,11 +149,11 @@ function Desktop({ data, skin, closeShortcut }: Required<DesktopShellProps>) {
       </div>
 
       {skin.topBar !== undefined && (
-        <div className="absolute inset-x-0 top-0 z-20" style={{ height: top }}>
+        <div className="absolute inset-x-0 top-0 z-20 select-none" style={{ height: top }}>
           {skin.topBar}
         </div>
       )}
-      <div className="absolute inset-x-0 bottom-0 z-20" style={{ height: bottom }}>
+      <div className="absolute inset-x-0 bottom-0 z-20 select-none" style={{ height: bottom }}>
         {skin.bottomBar(api)}
       </div>
     </div>
