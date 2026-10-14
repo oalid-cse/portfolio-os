@@ -55,7 +55,7 @@
 **Interfaces:**
 - Produces: `cn(...classes: ClassValue[]): string` (clsx + tailwind-merge) in `src/lib/utils.ts`
 
-- [ ] **Step 1:** Run `git init` (the folder isn't a repo yet). Scaffold into the existing folder; keep `docs/`, `AGENTS.md`, `CLAUDE.md`, `.github/`. Move the PDF and photo as listed.
+- [ ] **Step 1:** (Repo already initialized.) Scaffold into the existing folder; keep `docs/`, `AGENTS.md`, `CLAUDE.md`, `.github/`. Move the PDF and photo as listed.
 - [ ] **Step 2:** Add dev deps: `vitest @vitejs/plugin-react jsdom @testing-library/react @testing-library/jest-dom @testing-library/user-event @playwright/test @axe-core/playwright vite-tsconfig-paths`. Add deps: `clsx tailwind-merge zod`. Run `pnpm exec playwright install --with-deps chromium webkit`.
 - [ ] **Step 3: Write the failing test** `src/lib/utils.test.ts`:
 
