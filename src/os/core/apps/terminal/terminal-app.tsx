@@ -22,6 +22,17 @@ export function TerminalApp({ data, openApp }: AppProps) {
     endRef.current?.scrollIntoView?.({ block: 'end' });
   }, [lines]);
 
+  // On phones the on-screen keyboard shrinks the viewport after focus: keep the prompt visible,
+  // now and again once the keyboard is up.
+  const keyboardTimer = useRef(0);
+  useEffect(() => () => window.clearTimeout(keyboardTimer.current), []);
+  const keepInputInView = () => {
+    const reveal = () => inputRef.current?.scrollIntoView?.({ block: 'nearest' });
+    reveal();
+    window.clearTimeout(keyboardTimer.current);
+    keyboardTimer.current = window.setTimeout(reveal, 350);
+  };
+
   const submit = () => {
     const input = value;
     const result = runCommand(input, data);
@@ -89,6 +100,7 @@ export function TerminalApp({ data, openApp }: AppProps) {
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={onKeyDown}
+          onFocus={keepInputInView}
           autoComplete="off"
           autoCapitalize="off"
           spellCheck={false}

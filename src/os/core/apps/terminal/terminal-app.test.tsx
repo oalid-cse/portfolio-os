@@ -11,6 +11,27 @@ function run(input: HTMLElement, text: string) {
 }
 
 describe('TerminalApp', () => {
+  it('keeps the input in view when it gains focus (on-screen keyboards)', () => {
+    vi.useFakeTimers();
+    const spy = vi.fn();
+    const original = Element.prototype.scrollIntoView;
+    Element.prototype.scrollIntoView = spy;
+    try {
+      render(<TerminalApp data={data} openApp={vi.fn()} />);
+      const input = screen.getByRole('textbox');
+      spy.mockClear();
+      fireEvent.blur(input);
+      fireEvent.focus(input);
+      expect(spy.mock.contexts).toContain(input);
+      spy.mockClear();
+      vi.advanceTimersByTime(400); // again once the keyboard has resized the viewport
+      expect(spy.mock.contexts).toContain(input);
+    } finally {
+      Element.prototype.scrollIntoView = original;
+      vi.useRealTimers();
+    }
+  });
+
   it('shows welcome line and focuses the input', () => {
     render(<TerminalApp data={data} openApp={vi.fn()} />);
     expect(screen.getByText("Welcome! Type 'help' to see available commands.")).toBeInTheDocument();
