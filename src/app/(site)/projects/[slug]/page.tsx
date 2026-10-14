@@ -3,7 +3,9 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { renderMdx } from '@/components/mdx/render-mdx';
 import { ProjectHeader } from '@/components/site/project-header';
+import { JsonLd } from '@/components/site/json-ld';
 import { getProject, getProjects } from '@/lib/content';
+import { breadcrumbJsonLd, buildMetadata, projectJsonLd } from '@/lib/seo';
 
 export const dynamicParams = false;
 
@@ -16,7 +18,9 @@ type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const project = await getProject(slug);
-  return project ? { title: project.meta.title } : {};
+  if (!project) return {};
+  const { title, summary, cover } = project.meta;
+  return buildMetadata({ title, description: summary, path: `/projects/${slug}`, image: cover });
 }
 
 export default async function ProjectPage({ params }: Props) {
@@ -26,6 +30,14 @@ export default async function ProjectPage({ params }: Props) {
   const body = await renderMdx(project.body);
   return (
     <article className="mx-auto w-full max-w-3xl px-4 py-16 sm:px-6">
+      <JsonLd data={projectJsonLd(project.meta)} />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: 'Home', path: '/' },
+          { name: 'Projects', path: '/projects' },
+          { name: project.meta.title, path: `/projects/${slug}` },
+        ])}
+      />
       <Link href="/projects" className="mb-8 inline-block text-sm text-fg-muted hover:text-fg">
         ← All projects
       </Link>

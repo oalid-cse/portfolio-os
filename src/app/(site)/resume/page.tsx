@@ -2,9 +2,13 @@ import type { Metadata } from 'next';
 import { ButtonLink } from '@/components/ui/button';
 import { getEducation, getExperience, getProfile, getSkillGroups } from '@/lib/content';
 import { formatDateRange } from '@/lib/format';
+import { buildMetadata } from '@/lib/seo';
 import '../../print.css';
 
-export const metadata: Metadata = { title: 'Resume' };
+export async function generateMetadata(): Promise<Metadata> {
+  const { name, title } = await getProfile();
+  return buildMetadata({ title: 'Resume', description: `Resume of ${name}, ${title}.`, path: '/resume' });
+}
 
 const h2 = 'mb-4 border-b border-border pb-1 font-mono text-sm uppercase tracking-wider text-fg-muted';
 

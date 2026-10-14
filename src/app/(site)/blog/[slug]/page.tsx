@@ -3,7 +3,9 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { renderMdx } from '@/components/mdx/render-mdx';
 import { getPost, getPosts } from '@/lib/content';
+import { JsonLd } from '@/components/site/json-ld';
 import { formatPostDate, readingTime } from '@/lib/format';
+import { breadcrumbJsonLd, buildMetadata, postJsonLd } from '@/lib/seo';
 
 export const dynamicParams = false;
 
@@ -16,7 +18,13 @@ type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPost(slug);
-  return post ? { title: post.meta.title, description: post.meta.summary } : {};
+  if (!post) return {};
+  return buildMetadata({
+    title: post.meta.title,
+    description: post.meta.summary,
+    path: `/blog/${slug}`,
+    type: 'article',
+  });
 }
 
 export default async function PostPage({ params }: Props) {
@@ -27,6 +35,14 @@ export default async function PostPage({ params }: Props) {
   const { title, publishedAt } = post.meta;
   return (
     <article className="mx-auto w-full max-w-3xl px-4 py-16 sm:px-6">
+      <JsonLd data={postJsonLd(post.meta)} />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: 'Home', path: '/' },
+          { name: 'Blog', path: '/blog' },
+          { name: title, path: `/blog/${slug}` },
+        ])}
+      />
       <Link href="/blog" className="mb-8 inline-block text-sm text-fg-muted hover:text-fg">
         ← All posts
       </Link>
