@@ -6,7 +6,7 @@ export const skins: readonly OsSkinMeta[] = [
   { id: 'windows11', name: 'Windows 11', kind: 'desktop', status: 'ready' },
   { id: 'macos', name: 'macOS', kind: 'desktop', status: 'ready' },
   { id: 'iphone', name: 'iPhone', kind: 'mobile', status: 'ready' },
-  { id: 'windows10', name: 'Windows 10', kind: 'desktop', status: 'coming-soon' },
+  { id: 'windows10', name: 'Windows 10', kind: 'desktop', status: 'ready' },
   { id: 'windows7', name: 'Windows 7', kind: 'desktop', status: 'coming-soon' },
   { id: 'windowsxp', name: 'Windows XP', kind: 'desktop', status: 'coming-soon' },
   { id: 'ubuntu', name: 'Ubuntu', kind: 'desktop', status: 'coming-soon' },
@@ -23,7 +23,7 @@ export function isReadyOsId(id: string): id is OsId {
 
 const SUGGESTED_ID: Partial<Record<DetectedOs, string>> = {
   windows11: 'windows11',
-  windows10: 'windows11',
+  windows10: 'windows10',
   windows: 'windows11',
   macos: 'macos',
   ipad: 'macos',

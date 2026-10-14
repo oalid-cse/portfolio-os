@@ -7,4 +7,5 @@ export const skinLoaders: Record<OsId, () => Promise<SkinModule>> = {
   windows11: () => import('../skins/windows11'),
   macos: () => import('../skins/macos'),
   iphone: () => import('../skins/iphone'),
+  windows10: () => import('../skins/windows10'),
 };

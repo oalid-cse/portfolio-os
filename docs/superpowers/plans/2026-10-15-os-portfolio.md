@@ -647,11 +647,11 @@ it('open twice → one window, focused', ...);
 - `suggestSkinFor('windows10')` → Windows 10 skin (was windows11). Update the registry test.
 - Look: full-width taskbar, left-aligned Start button (original glyph, no flag) + search-box placeholder + pinned apps + tray/clock right; flat Start menu: app list column + square tiles grid (all 8 apps) + user tile + `Switch OS` + `Back to classic view`; square-cornered window chrome with min/max/close right (close hover red #e81123); accent `#0078d7`; font `'Segoe UI', system-ui, sans-serif`. Alt+F4. `insets: { top: 0, bottom: 40 }`, `mobileAlternative: 'samsung'` if ready else `'iphone'` (use `'iphone'`; T31 may switch).
 
-- [ ] **Step 1:** Write failing tests: registry test for the new mapping; os-host test that lazy map covers every ready id; e2e spec (taskbar, Start menu contents, open About from Start, Back to classic).
-- [ ] **Step 2:** Run. Expected: FAIL.
-- [ ] **Step 3:** Implement.
-- [ ] **Step 4:** Run + visual check + full verify. Expected: PASS.
-- [ ] **Step 5: Commit:** `feat(os): data-driven skin host and Windows 10 skin`
+- [x] **Step 1:** Write failing tests: registry test for the new mapping; os-host test that lazy map covers every ready id; e2e spec (taskbar, Start menu contents, open About from Start, Back to classic).
+- [x] **Step 2:** Run. Expected: FAIL.
+- [x] **Step 3:** Implement.
+- [x] **Step 4:** Run + visual check + full verify. Expected: PASS.
+- [x] **Step 5: Commit:** `feat(os): data-driven skin host and Windows 10 skin`
 
 ### Task 28: Windows 7 skin
 

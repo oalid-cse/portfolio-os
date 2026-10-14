@@ -5,7 +5,7 @@ import { skins } from '@/os/core/registry';
 
 export const metadata: Metadata = {
   title: 'OS versions',
-  description: 'Explore this portfolio as Windows 11, macOS or iPhone.',
+  description: 'Explore this portfolio inside recreated desktop and phone operating systems.',
 };
 
 export default function OsGalleryPage() {

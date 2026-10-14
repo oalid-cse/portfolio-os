@@ -33,9 +33,9 @@ describe('OsSuggestBanner', () => {
   });
 
   it('uses the detected name and the skin name separately', async () => {
-    await mount('windows10');
+    await mount('ipad');
     expect(screen.getByRole('region')).toHaveTextContent(
-      "You're on Windows 10. View this portfolio as Windows 11?",
+      "You're on iPad. View this portfolio as macOS?",
     );
   });
 

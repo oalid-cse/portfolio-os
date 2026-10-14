@@ -1,37 +1,31 @@
 'use client';
 
-import { type ComponentType, lazy, Suspense } from 'react';
+import { type ComponentType, lazy } from 'react';
 import type { PortfolioData } from '@/content/types';
 import { skinLoaders } from './loaders';
 import type { OsId, OsRootProps } from './types';
 
-// Created once per id at module level so the lazy component keeps a stable identity.
-const lazySkins: Record<OsId, ComponentType<OsRootProps>> = {
-  windows11: lazy(skinLoaders.windows11),
-  macos: lazy(skinLoaders.macos),
-  iphone: lazy(skinLoaders.iphone),
-};
+/**
+ * One lazy component per skin, derived from `skinLoaders` and created once at module level so
+ * each keeps a stable identity. Adding a skin never touches this file.
+ */
+export const lazySkins: Record<OsId, ComponentType<OsRootProps>> = (() => {
+  const map: Partial<Record<OsId, ComponentType<OsRootProps>>> = {};
+  for (const id of Object.keys(skinLoaders) as OsId[]) map[id] = lazy(skinLoaders[id]);
+  return map as Record<OsId, ComponentType<OsRootProps>>;
+})();
 
-function FullScreenLoader() {
-  return (
-    <div
-      role="status"
-      className="flex h-dvh w-full items-center justify-center gap-3 bg-neutral-950 text-neutral-300"
-    >
-      <span
-        aria-hidden
-        className="size-5 animate-spin rounded-full border-2 border-neutral-600 border-t-neutral-200 motion-reduce:animate-none"
-      />
-      <span>Loading…</span>
-    </div>
-  );
-}
-
+/**
+ * Renders the skin for `id`. Deliberately has no Suspense boundary of its own: the page is
+ * prerendered with the skin in its HTML, and React.lazy chunks are not preloaded, so the skin
+ * usually suspends during hydration. With a boundary here, any context change above it (e.g.
+ * next-themes resolving the system theme on mount) reaches the still-dehydrated boundary, which
+ * React can then only client-render: the server HTML is thrown away, the fallback flashes and
+ * the skin mounts twice. Without one, hydration of the whole root waits for the chunk and keeps
+ * the server HTML on screen; client-side navigations are transitions, so the previous page
+ * stays visible until the skin chunk has loaded.
+ */
 export function OsHost({ id, data }: { id: OsId; data: PortfolioData }) {
   const Skin = lazySkins[id];
-  return (
-    <Suspense fallback={<FullScreenLoader />}>
-      <Skin data={data} />
-    </Suspense>
-  );
+  return <Skin data={data} />;
 }
