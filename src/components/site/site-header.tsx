@@ -2,7 +2,7 @@
 
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ThemeToggle } from './theme-toggle';
 
 type NavLink = { label: string; href: string; external?: boolean };
@@ -13,10 +13,19 @@ export function SiteHeader({ name, resumeHref }: { name: string; resumeHref: str
     { label: 'Projects', href: '/projects' },
     { label: 'Experience', href: '/#experience' },
     { label: 'Blog', href: '/blog' },
-    { label: 'Resume', href: resumeHref, external: true },
+    { label: 'Resume', href: resumeHref },
     { label: 'Contact', href: '/#contact' },
   ];
-  const linkCls = 'text-sm text-fg-muted transition-colors hover:text-fg';
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [open]);
+
+  const linkCls = 'text-sm text-fg-muted transition-colors hover:text-fg max-md:block max-md:py-2';
 
   const renderLink = (l: NavLink) =>
     l.external ? (

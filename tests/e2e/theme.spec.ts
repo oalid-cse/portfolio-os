@@ -12,3 +12,12 @@ test('footer links to OS versions', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('link', { name: 'Explore OS versions' })).toHaveAttribute('href', '/os');
 });
+
+test('mobile menu closes on Escape', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Open menu' }).click();
+  await expect(page.getByRole('navigation', { name: 'Mobile' })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('navigation', { name: 'Mobile' })).toHaveCount(0);
+});
