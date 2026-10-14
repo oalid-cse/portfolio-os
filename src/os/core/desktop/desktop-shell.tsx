@@ -24,7 +24,7 @@ export type DesktopSkin = {
   wallpaper: ReactNode;
   WindowChrome: ComponentType<WindowChromeProps>;
   renderIcon(app: AppIconName): ReactNode;
-  topBar?: ReactNode;
+  topBar?: (api: DesktopApi) => ReactNode;
   bottomBar: (api: DesktopApi) => ReactNode;
   desktopIcons: AppId[];
   insets: { top: number; bottom: number };
@@ -150,7 +150,7 @@ function Desktop({ data, skin, closeShortcut, store }: DesktopProps) {
 
       {skin.topBar !== undefined && (
         <div className="absolute inset-x-0 top-0 z-20 select-none" style={{ height: top }}>
-          {skin.topBar}
+          {skin.topBar(api)}
         </div>
       )}
       <div className="absolute inset-x-0 bottom-0 z-20 select-none" style={{ height: bottom }}>

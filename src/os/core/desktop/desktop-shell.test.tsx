@@ -17,7 +17,7 @@ const skin: DesktopSkin = {
   wallpaper: <div data-testid="wallpaper" />,
   WindowChrome: TestChrome,
   renderIcon: (id) => <span data-testid={`icon-${id}`} />,
-  topBar: <div data-testid="topbar" />,
+  topBar: (api) => <div data-testid="topbar">{`focused: ${api.focusedId ?? 'none'}`}</div>,
   bottomBar: (api) => (
     <nav aria-label="Taskbar">
       {api.windows.map((w) => (
@@ -53,6 +53,13 @@ describe('DesktopShell', () => {
       expect(screen.getByRole('button', { name })).toBeInTheDocument();
     }
     expect(screen.getByTestId('icon-about')).toBeInTheDocument();
+  });
+
+  it('topBar receives the desktop api (e.g. to show the focused window)', () => {
+    render(<DesktopShell data={data} skin={skin} />);
+    expect(screen.getByTestId('topbar')).toHaveTextContent('focused: none');
+    fireEvent.doubleClick(screen.getByRole('button', { name: 'About' }));
+    expect(screen.getByTestId('topbar')).toHaveTextContent(/focused: about-\d+/);
   });
 
   it('double-clicking a desktop icon opens a window with dialog role and the app title', () => {

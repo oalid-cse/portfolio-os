@@ -14,7 +14,7 @@ export function OsSwitcher({ current, variant }: { current: OsId; variant: 'menu
               <Link
                 href={`/os/${s.id}`}
                 aria-current={s.id === current ? 'page' : undefined}
-                className={`${item} hover:bg-black/10 aria-[current=page]:font-semibold`}
+                className={`${item} hover:bg-current/10 focus-visible:bg-current/10 aria-[current=page]:font-semibold`}
               >
                 {s.name}
               </Link>

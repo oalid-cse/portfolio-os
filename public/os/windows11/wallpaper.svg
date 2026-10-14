@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <!-- Original abstract artwork for this portfolio ("Tidal ribbons"). Not derived from any OS wallpaper. -->
+  <defs>
+    <radialGradient id="sky" cx="62%" cy="58%" r="85%">
+      <stop offset="0" stop-color="#123a78"/>
+      <stop offset="0.45" stop-color="#0a1f4a"/>
+      <stop offset="1" stop-color="#050b1f"/>
+    </radialGradient>
+    <linearGradient id="r1" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#1d4ed8" stop-opacity="0"/>
+      <stop offset="0.35" stop-color="#2f7bf2"/>
+      <stop offset="0.7" stop-color="#5cc8ff"/>
+      <stop offset="1" stop-color="#a5e4ff" stop-opacity="0.2"/>
+    </linearGradient>
+    <linearGradient id="r2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4338ca" stop-opacity="0"/>
+      <stop offset="0.4" stop-color="#4f63e8"/>
+      <stop offset="0.8" stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#0ea5e9" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="r3" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7dd3fc" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#e0f4ff"/>
+      <stop offset="1" stop-color="#7dd3fc" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="r4" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7c3aed" stop-opacity="0"/>
+      <stop offset="0.45" stop-color="#6d5cf0"/>
+      <stop offset="0.75" stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="28"/></filter>
+    <filter id="haze" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="90"/></filter>
+    <filter id="edge" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="2.5"/></filter>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#sky)"/>
+  <ellipse cx="1180" cy="600" rx="620" ry="300" fill="#2563eb" opacity="0.35" filter="url(#haze)"/>
+
+  <!-- Counter ribbon sweeping down from the upper left -->
+  <g fill="none" stroke-linecap="round">
+    <path d="M300 -80 C 520 260, 700 420, 1020 560 S 1500 760, 1700 1160" stroke="url(#r4)" stroke-width="160" opacity="0.4" filter="url(#soft)"/>
+    <path d="M330 -80 C 550 250, 740 400, 1050 540 S 1540 740, 1760 1160" stroke="url(#r3)" stroke-width="2" opacity="0.35" filter="url(#edge)"/>
+  </g>
+
+  <!-- Shadow fold beneath the main ribbon -->
+  <path d="M-100 1010 C 400 800, 780 1010, 1190 730 S 1770 300, 2060 330" fill="none" stroke="#020617" stroke-width="90" opacity="0.45" filter="url(#soft)"/>
+
+  <!-- Broad silk ribbons -->
+  <g fill="none" stroke-linecap="round">
+    <path d="M-120 980 C 380 760, 760 980, 1180 700 S 1760 260, 2060 300" stroke="url(#r2)" stroke-width="220" opacity="0.55" filter="url(#soft)"/>
+    <path d="M-80 860 C 420 640, 820 860, 1220 600 S 1780 200, 2040 180" stroke="url(#r1)" stroke-width="150" opacity="0.75" filter="url(#soft)"/>
+    <path d="M-60 760 C 460 560, 860 760, 1240 520 S 1760 140, 2000 90" stroke="url(#r1)" stroke-width="70" opacity="0.55" filter="url(#soft)"/>
+  </g>
+
+  <!-- Fine luminous edges that give the ribbons their folded-silk look -->
+  <g fill="none" stroke="url(#r3)" stroke-linecap="round">
+    <path d="M-80 800 C 420 590, 830 800, 1225 560 S 1780 170, 2040 140" stroke-width="5" opacity="0.8" filter="url(#edge)"/>
+    <path d="M-80 905 C 400 700, 800 920, 1200 650 S 1770 240, 2050 230" stroke-width="3" opacity="0.5" filter="url(#edge)"/>
+    <path d="M-100 1040 C 360 850, 740 1060, 1160 770 S 1740 330, 2060 360" stroke-width="2" opacity="0.35"/>
+    <path d="M-60 720 C 470 530, 870 720, 1250 490 S 1760 110, 2000 60" stroke-width="1.5" opacity="0.45"/>
+  </g>
+
+  <!-- Subtle vignette -->
+  <radialGradient id="vig" cx="50%" cy="50%" r="75%">
+    <stop offset="0.6" stop-color="#000" stop-opacity="0"/>
+    <stop offset="1" stop-color="#000" stop-opacity="0.45"/>
+  </radialGradient>
+  <rect width="1920" height="1080" fill="url(#vig)"/>
+</svg>
