@@ -1,0 +1,268 @@
+/* iPhone skin: iOS dark appearance. Everything is scoped to the skin root. */
+[data-os-skin='iphone'] {
+  /* Shared app tokens (see src/os/core/apps/os-tokens.css) */
+  --os-font: -apple-system, BlinkMacSystemFont, 'Inter', system-ui, sans-serif;
+  --os-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', monospace;
+  --os-bg: #000;
+  --os-fg: #f5f5f7;
+  --os-muted: #98989f;
+  --os-accent: #0a84ff;
+  --os-radius: 12px;
+  --os-border: rgb(255 255 255 / 0.12);
+
+  /* Mobile engine layout tokens */
+  --mobile-status-height: 54px;
+  --mobile-nav-height: 34px;
+  --mobile-icon-size: 62px;
+  --mobile-grid-columns: 4;
+
+  /* Skin tokens */
+  --ios-surface: #1c1c1e;
+  --ios-separator: rgb(84 84 88 / 0.6);
+  --ios-pressed: rgb(255 255 255 / 0.08);
+  --ios-dock: rgb(255 255 255 / 0.17);
+  --ios-dot: rgb(255 255 255 / 0.35);
+  --ios-destructive: #ff453a;
+  --ios-backdrop: #2a2b2f;
+  --ios-bezel: #0d0d0f;
+  --ios-bezel-edge: #4a4a50;
+
+  /* Icon plates */
+  --ios-icon-about: linear-gradient(180deg, #a4abbb, #5b6274);
+  --ios-icon-projects: linear-gradient(180deg, #ffcf5c, #ff8a00);
+  --ios-icon-experience: linear-gradient(180deg, #5fe0a8, #0e9f6e);
+  --ios-icon-skills: linear-gradient(180deg, #c99bff, #7b3fe4);
+  --ios-icon-resume: linear-gradient(180deg, #ffffff, #e3e5ea);
+  --ios-glyph-resume: #ff3b30;
+  --ios-icon-contact: linear-gradient(180deg, #67d0ff, #0a6ff0);
+  --ios-icon-terminal: linear-gradient(180deg, #3a3a40, #101013);
+  --ios-glyph-terminal: #7ef0a0;
+  --ios-icon-browser: linear-gradient(180deg, #ffffff, #e6eef9);
+  --ios-glyph-browser: #0a7aff;
+  --ios-icon-switch-os: linear-gradient(180deg, #b9bcc4, #737782);
+
+  color: var(--os-fg);
+  font-family: var(--os-font);
+  color-scheme: dark;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Device frame (wide viewports) */
+[data-os-skin='iphone'] [data-mobile='backdrop'] {
+  background: radial-gradient(circle at 50% 40%, #34353a, var(--ios-backdrop) 70%);
+}
+@media (width < 768px) {
+  [data-os-skin='iphone'] [data-mobile='backdrop'] {
+    background: #000;
+  }
+}
+@media (width >= 768px) {
+  [data-os-skin='iphone'] [data-mobile='frame'] {
+    background: var(--ios-bezel);
+    box-shadow:
+      0 0 0 2px var(--ios-bezel-edge),
+      0 0 0 5px #1b1b1e,
+      0 40px 90px rgb(0 0 0 / 0.55);
+  }
+}
+
+[data-os-skin='iphone'] .ios-wallpaper {
+  background: #071a2e url('/os/iphone/wallpaper.svg') center / cover no-repeat;
+}
+
+/* Status bar */
+[data-os-skin='iphone'] .ios-status {
+  color: #fff;
+  padding-top: 6px;
+}
+[data-os-skin='iphone'] .ios-time {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+[data-os-skin='iphone'] .ios-island {
+  background: #000;
+}
+
+/* Home screen */
+[data-os-skin='iphone'] [data-mobile='grid'] {
+  padding: 18px 18px 0;
+  row-gap: 26px;
+}
+[data-os-skin='iphone'] [data-mobile='launcher'] {
+  width: 76px;
+}
+[data-os-skin='iphone'] [data-mobile='label'] {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.005em;
+  color: #fff;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.45);
+}
+[data-os-skin='iphone'] .ios-icon {
+  border-radius: 23%;
+  box-shadow:
+    inset 0 0.5px 0 rgb(255 255 255 / 0.35),
+    0 2px 8px rgb(0 0 0 / 0.25);
+}
+[data-os-skin='iphone'] [data-mobile='launcher'] [data-mobile='icon'] {
+  transition: filter 120ms ease-out;
+}
+[data-os-skin='iphone'] [data-mobile='launcher']:active [data-mobile='icon'] {
+  filter: brightness(0.7);
+}
+[data-os-skin='iphone'] [data-mobile='launcher']:focus-visible [data-mobile='icon'] {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+  border-radius: 23%;
+}
+[data-os-skin='iphone'] [data-mobile='page-dots'] {
+  gap: 8px;
+  padding: 10px 0 14px;
+}
+[data-os-skin='iphone'] [data-mobile='page-dots'] span {
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: var(--ios-dot);
+}
+[data-os-skin='iphone'] [data-mobile='page-dots'] span[data-active='true'] {
+  background: #fff;
+}
+[data-os-skin='iphone'] [data-mobile='dock'] {
+  margin: 0 12px 6px;
+  padding: 16px 6px;
+  border-radius: 34px;
+  background: var(--ios-dock);
+  -webkit-backdrop-filter: blur(30px) saturate(1.6);
+  backdrop-filter: blur(30px) saturate(1.6);
+}
+/* No labels in the dock (the name stays on the button for assistive tech). */
+[data-os-skin='iphone'] [data-mobile='dock'] [data-mobile='label'] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* App screens */
+[data-os-skin='iphone'] [data-mobile='app'] {
+  background: var(--os-bg);
+}
+[data-os-skin='iphone'] .ios-back {
+  color: var(--os-accent);
+  font-size: 17px;
+  letter-spacing: -0.02em;
+}
+[data-os-skin='iphone'] .ios-chevron {
+  font-size: 34px;
+  font-weight: 300;
+  line-height: 0;
+  margin-top: -4px;
+}
+[data-os-skin='iphone'] .ios-back:active {
+  opacity: 0.5;
+}
+[data-os-skin='iphone'] .ios-back:focus-visible {
+  outline: 2px solid var(--os-accent);
+}
+[data-os-skin='iphone'] .ios-large-title {
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+[data-os-skin='iphone'] .os-app {
+  padding: 8px 16px 28px;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+}
+/* The large title already names the app; keep an app's matching top heading for screen readers only. */
+[data-os-skin='iphone'] .os-app > h1:first-child {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+[data-os-skin='iphone'] .os-app .os-btn-inline {
+  text-decoration: none;
+}
+[data-os-skin='iphone'] .os-app .os-card {
+  background: var(--ios-surface);
+  border: 0;
+}
+[data-os-skin='iphone'] .os-app .os-chip {
+  background: var(--ios-surface);
+  border: 0;
+  border-radius: 9999px;
+  padding: 0.2rem 0.7rem;
+}
+[data-os-skin='iphone'] .os-app.os-mono {
+  font-size: 13px;
+  letter-spacing: 0;
+  background: #000;
+}
+
+/* Settings-style grouped list (Switch OS) */
+[data-os-skin='iphone'] .ios-group-note {
+  color: var(--os-muted);
+  font-size: 13px;
+  padding: 0 16px 8px;
+}
+[data-os-skin='iphone'] .ios-group {
+  background: var(--ios-surface);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+[data-os-skin='iphone'] .ios-group ul {
+  gap: 0;
+}
+[data-os-skin='iphone'] .ios-group li + li {
+  box-shadow: inset 16px 0 0 var(--ios-surface), inset 0 0.5px 0 var(--ios-separator);
+}
+[data-os-skin='iphone'] .ios-group a,
+[data-os-skin='iphone'] .ios-group span[aria-disabled] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: 11px 16px;
+  border-radius: 0;
+  color: var(--os-fg);
+  text-decoration: none;
+}
+[data-os-skin='iphone'] .ios-group a:active {
+  background: var(--ios-pressed);
+}
+[data-os-skin='iphone'] .ios-group a[aria-current='page']::after {
+  content: '✓';
+  color: var(--os-accent);
+  font-weight: 600;
+}
+[data-os-skin='iphone'] .ios-group span[aria-disabled] {
+  opacity: 1;
+  color: var(--os-muted);
+}
+[data-os-skin='iphone'] .ios-group span[aria-disabled] span {
+  font-size: 15px;
+}
+[data-os-skin='iphone'] .ios-group a.ios-row-action {
+  color: var(--os-accent);
+}
+
+/* Home indicator */
+[data-os-skin='iphone'] .ios-home-bar {
+  background: #fff;
+}
+[data-os-skin='iphone'] .ios-home-hit:focus-visible .ios-home-bar {
+  outline: 2px solid var(--os-accent);
+  outline-offset: 3px;
+}
