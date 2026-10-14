@@ -1,0 +1,38 @@
+import { expect, test } from '@playwright/test';
+
+const MAC_SAFARI_UA =
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15';
+const GOOGLEBOT_UA =
+  'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)';
+
+test.describe('Mac visitor', () => {
+  test.use({ userAgent: MAC_SAFARI_UA });
+
+  test('sees the banner and Open navigates to /os/macos', async ({ page }) => {
+    await page.goto('/');
+    const banner = page.getByRole('region', { name: 'OS experience suggestion' });
+    await expect(banner).toBeVisible();
+    await expect(banner).toContainText("You're on macOS. View this portfolio as macOS?");
+    await banner.getByRole('link', { name: 'Open' }).click();
+    await expect(page).toHaveURL(/\/os\/macos$/);
+  });
+
+  test('Not now hides it and stays hidden after reload', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Not now' }).click();
+    await expect(page.getByRole('region', { name: 'OS experience suggestion' })).toHaveCount(0);
+    await page.reload();
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByRole('region', { name: 'OS experience suggestion' })).toHaveCount(0);
+  });
+});
+
+test.describe('Googlebot', () => {
+  test.use({ userAgent: GOOGLEBOT_UA });
+
+  test('sees no banner', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByRole('region', { name: 'OS experience suggestion' })).toHaveCount(0);
+  });
+});

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { OsSuggestBanner } from '@/components/site/os-suggest-banner';
 import { SiteFooter } from '@/components/site/site-footer';
 import { SiteHeader } from '@/components/site/site-header';
 import { getProfile } from '@/lib/content';
@@ -11,6 +12,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
       <SiteHeader name={profile.name} resumeHref="/resume" />
       <main className="mx-auto w-full max-w-5xl flex-1 px-5">{children}</main>
       <SiteFooter profile={profile} />
+      <OsSuggestBanner />
     </div>
   );
 }
