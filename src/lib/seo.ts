@@ -31,7 +31,8 @@ export function buildMetadata(input: {
 }): Metadata {
   const { title, description, path, image, type = 'website' } = input;
   const url = absolute(path);
-  const images = image ? [{ url: image }] : undefined;
+  const ogImages = [{ url: image ?? '/opengraph-image' }];
+  const twitterImages = [{ url: image ?? '/twitter-image' }];
   return {
     ...(title ? { title } : {}),
     description,
@@ -42,13 +43,13 @@ export function buildMetadata(input: {
       url,
       type,
       siteName: 'Abu Bin Oalid',
-      ...(images ? { images } : {}),
+      images: ogImages,
     },
     twitter: {
       card: 'summary_large_image',
       title: title ? `${title} · Abu Bin Oalid` : DEFAULT_TITLE,
       description,
-      ...(images ? { images } : {}),
+      images: twitterImages,
     },
   };
 }
