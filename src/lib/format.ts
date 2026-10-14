@@ -26,3 +26,15 @@ export function formatDuration(start: string, end: string | 'present', now: Date
   if (months) parts.push(`${months} ${months === 1 ? 'mo' : 'mos'}`);
   return parts.join(' ');
 }
+
+/** 'YYYY-MM-DD' -> 'Oct 15, 2026' (no timezone shifts). */
+export function formatPostDate(value: string): string {
+  const [year, month, day] = value.split('-');
+  return `${MONTHS[Number(month) - 1]} ${Number(day)}, ${year}`;
+}
+
+/** Whole minutes at 200 words per minute, at least 1. */
+export function readingTime(text: string): number {
+  const words = text.trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.ceil(words / 200));
+}

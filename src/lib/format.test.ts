@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatDateRange, formatDuration } from './format';
+import { formatDateRange, formatDuration, formatPostDate, readingTime } from './format';
 
 describe('formatDateRange', () => {
   it('formats a closed range', () => {
@@ -27,5 +27,19 @@ describe('formatDuration', () => {
   });
   it('uses now for present', () => {
     expect(formatDuration('2025-01', 'present', new Date(2025, 0, 15))).toBe('1 mo');
+  });
+});
+
+describe('formatPostDate', () => {
+  it('formats a date without timezone shifts', () => {
+    expect(formatPostDate('2026-10-05')).toBe('Oct 5, 2026');
+  });
+});
+
+describe('readingTime', () => {
+  it('rounds up at 200 words per minute, minimum 1', () => {
+    expect(readingTime('')).toBe(1);
+    expect(readingTime('word '.repeat(200))).toBe(1);
+    expect(readingTime('word '.repeat(201))).toBe(2);
   });
 });
