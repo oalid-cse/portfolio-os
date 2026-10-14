@@ -11,6 +11,7 @@ vi.mock('./loaders', () => {
       macos: mockSkin('macos'),
       iphone: mockSkin('iphone'),
       windows10: mockSkin('windows10'),
+      windows7: mockSkin('windows7'),
     },
   };
 });
@@ -45,5 +46,10 @@ describe('OsHost', () => {
   it('renders the Windows 10 skin for its id', async () => {
     render(<OsHost id="windows10" data={data} />);
     expect(await screen.findByText('mock windows10')).toBeInTheDocument();
+  });
+
+  it('renders the Windows 7 skin for its id', async () => {
+    render(<OsHost id="windows7" data={data} />);
+    expect(await screen.findByText('mock windows7')).toBeInTheDocument();
   });
 });

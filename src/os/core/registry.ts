@@ -7,7 +7,7 @@ export const skins: readonly OsSkinMeta[] = [
   { id: 'macos', name: 'macOS', kind: 'desktop', status: 'ready' },
   { id: 'iphone', name: 'iPhone', kind: 'mobile', status: 'ready' },
   { id: 'windows10', name: 'Windows 10', kind: 'desktop', status: 'ready' },
-  { id: 'windows7', name: 'Windows 7', kind: 'desktop', status: 'coming-soon' },
+  { id: 'windows7', name: 'Windows 7', kind: 'desktop', status: 'ready' },
   { id: 'windowsxp', name: 'Windows XP', kind: 'desktop', status: 'coming-soon' },
   { id: 'ubuntu', name: 'Ubuntu', kind: 'desktop', status: 'coming-soon' },
   { id: 'samsung', name: 'Samsung One UI', kind: 'mobile', status: 'coming-soon' },

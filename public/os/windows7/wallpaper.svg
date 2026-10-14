@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <!-- "Glass dawn": original abstract light-burst on blue, made for this portfolio. -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#04214d"/>
+      <stop offset="0.45" stop-color="#0b4f9c"/>
+      <stop offset="0.75" stop-color="#1373c6"/>
+      <stop offset="1" stop-color="#083a7a"/>
+    </linearGradient>
+    <radialGradient id="burst" cx="1180" cy="560" r="620" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="0.08" stop-color="#d9f3ff" stop-opacity="0.8"/>
+      <stop offset="0.3" stop-color="#5cc4ff" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#1e7fe0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="ray" cx="1180" cy="560" r="1400" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.6" stop-color="#bfe8ff" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="#bfe8ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="bokeh">
+      <stop offset="0" stop-color="#cfefff" stop-opacity="0.35"/>
+      <stop offset="0.8" stop-color="#9fdcff" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.4"/>
+    </radialGradient>
+    <linearGradient id="swoosh" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7ee8ff" stop-opacity="0"/>
+      <stop offset="0.55" stop-color="#9ff0ff" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="swoosh2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7cf0b4" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#8ff5c8" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#7cf0b4" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="haze" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="18"/></filter>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#sky)"/>
+  <g filter="url(#soft)">
+    <polygon points="1180,560 2677,464 2680,545" fill="url(#ray)" opacity="0.10"/>
+    <polygon points="1180,560 2644,886 2613,1003" fill="url(#ray)" opacity="0.08"/>
+    <polygon points="1180,560 2446,1364 2379,1462" fill="url(#ray)" opacity="0.05"/>
+    <polygon points="1180,560 1979,1829 1917,1867" fill="url(#ray)" opacity="0.06"/>
+    <polygon points="1180,560 1538,2017 1389,2045" fill="url(#ray)" opacity="0.06"/>
+    <polygon points="1180,560 1071,2056 941,2041" fill="url(#ray)" opacity="0.13"/>
+    <polygon points="1180,560 455,1873 364,1818" fill="url(#ray)" opacity="0.13"/>
+    <polygon points="1180,560 184,1682 74,1573" fill="url(#ray)" opacity="0.07"/>
+    <polygon points="1180,560 -171,1212 -203,1141" fill="url(#ray)" opacity="0.07"/>
+    <polygon points="1180,560 -319,503 -313,419" fill="url(#ray)" opacity="0.10"/>
+    <polygon points="1180,560 -232,55 -194,-42" fill="url(#ray)" opacity="0.09"/>
+    <polygon points="1180,560 -72,-265 -32,-324" fill="url(#ray)" opacity="0.07"/>
+    <polygon points="1180,560 431,-740 529,-791" fill="url(#ray)" opacity="0.08"/>
+    <polygon points="1180,560 890,-912 1002,-929" fill="url(#ray)" opacity="0.07"/>
+    <polygon points="1180,560 1463,-913 1598,-881" fill="url(#ray)" opacity="0.07"/>
+    <polygon points="1180,560 1898,-757 2001,-695" fill="url(#ray)" opacity="0.12"/>
+    <polygon points="1180,560 2345,-385 2402,-309" fill="url(#ray)" opacity="0.13"/>
+    <polygon points="1180,560 2520,-113 2566,-14" fill="url(#ray)" opacity="0.11"/>
+  </g>
+  <g fill="none" stroke-linecap="round">
+    <path d="M-80 900 C 420 760, 820 520, 1180 560 S 1760 300, 2040 180" stroke="url(#swoosh)" stroke-width="34" filter="url(#haze)"/>
+    <path d="M-80 900 C 420 760, 820 520, 1180 560 S 1760 300, 2040 180" stroke="url(#swoosh)" stroke-width="3"/>
+    <path d="M-60 1010 C 500 860, 900 660, 1180 560 S 1820 420, 2000 360" stroke="url(#swoosh2)" stroke-width="22" filter="url(#haze)"/>
+    <path d="M-60 1010 C 500 860, 900 660, 1180 560 S 1820 420, 2000 360" stroke="url(#swoosh2)" stroke-width="2"/>
+  </g>
+  <circle cx="1180" cy="560" r="620" fill="url(#burst)"/>
+  <g>
+    <circle cx="981" cy="116" r="21" fill="url(#bokeh)" opacity="0.48"/>
+    <circle cx="1124" cy="885" r="49" fill="url(#bokeh)" opacity="0.36"/>
+    <circle cx="1160" cy="614" r="46" fill="url(#bokeh)" opacity="0.41"/>
+    <circle cx="1756" cy="516" r="53" fill="url(#bokeh)" opacity="0.48"/>
+    <circle cx="1343" cy="675" r="17" fill="url(#bokeh)" opacity="0.60"/>
+    <circle cx="634" cy="435" r="52" fill="url(#bokeh)" opacity="0.48"/>
+    <circle cx="935" cy="235" r="15" fill="url(#bokeh)" opacity="0.29"/>
+    <circle cx="1456" cy="199" r="17" fill="url(#bokeh)" opacity="0.34"/>
+    <circle cx="1631" cy="154" r="32" fill="url(#bokeh)" opacity="0.41"/>
+    <circle cx="1652" cy="834" r="39" fill="url(#bokeh)" opacity="0.55"/>
+    <circle cx="856" cy="410" r="27" fill="url(#bokeh)" opacity="0.56"/>
+    <circle cx="407" cy="242" r="58" fill="url(#bokeh)" opacity="0.33"/>
+    <circle cx="974" cy="622" r="25" fill="url(#bokeh)" opacity="0.34"/>
+    <circle cx="862" cy="420" r="14" fill="url(#bokeh)" opacity="0.45"/>
+    <circle cx="1324" cy="554" r="58" fill="url(#bokeh)" opacity="0.47"/>
+    <circle cx="242" cy="908" r="45" fill="url(#bokeh)" opacity="0.52"/>
+  </g>
+</svg>

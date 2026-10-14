@@ -1,0 +1,365 @@
+/* Windows 7 skin: Aero glass frames and taskbar, a glowing round Start orb, glossy captions. Scoped to the skin root. */
+[data-os-skin='windows7'] {
+  /* Shared app tokens (see src/os/core/apps/os-tokens.css): apps sit on solid white bodies inside the glass */
+  --os-font: 'Segoe UI', Tahoma, system-ui, sans-serif;
+  --os-mono: Consolas, 'Lucida Console', ui-monospace, monospace;
+  --os-bg: #ffffff;
+  --os-fg: #1e1e1e;
+  --os-muted: #5b6573;
+  --os-accent: #0b5fb3;
+  --os-radius: 3px;
+  --os-border: #c5d1de;
+
+  /* Glass */
+  --w7-glass-tint: rgb(98 145 198 / 0.52);
+  --w7-glass-tint-unfocused: rgb(176 196 220 / 0.42);
+  --w7-glass-dark: rgb(22 44 72 / 0.62);
+  --w7-glass-edge: rgb(0 0 0 / 0.58);
+  --w7-glass-rim: rgb(255 255 255 / 0.5);
+  --w7-gloss: rgb(255 255 255 / 0.3);
+  --w7-streak: rgb(255 255 255 / 0.13);
+  --w7-window-shadow: 0 0 18px rgb(0 0 0 / 0.5), 0 6px 14px rgb(0 0 0 / 0.28);
+
+  /* Window titles and captions */
+  --w7-title-fg: #000000;
+  --w7-title-fg-unfocused: #3c4552;
+  --w7-title-glow: rgb(255 255 255 / 0.95);
+  --w7-caption-divider: rgb(28 40 58 / 0.55);
+  --w7-close: #c4402a;
+  --w7-close-top: #e9a291;
+  --w7-close-glow: #ff9a6a;
+  --w7-caption-hover: #3a9be6;
+  --w7-caption-hover-top: #c6e7ff;
+
+  /* Shell */
+  --w7-shell-fg: #ffffff;
+  --w7-taskbar: rgb(20 40 66 / 0.56);
+  --w7-orb-core: #1d5fae;
+  --w7-orb-deep: #0a2753;
+  --w7-orb-glow: rgb(110 205 255 / 0.85);
+  --w7-menu-fg: #1e1e1e;
+  --w7-menu-hover: #dbeafb;
+  --w7-menu-hover-edge: #7da2ce;
+  --w7-focus: #3c7fb1;
+  --w7-boot-bg: #000000;
+  --w7-boot-fg: #d8e6f5;
+  --w7-boot-spark: #a6dcff;
+
+  /* Glossy app plates */
+  --w7-app-about: #2a7bd4;
+  --w7-app-projects: #e0902a;
+  --w7-app-experience: #8a5a32;
+  --w7-app-skills: #35a24a;
+  --w7-app-resume: #c9372c;
+  --w7-app-contact: #1fa3c4;
+  --w7-app-terminal: #30343b;
+  --w7-app-browser: #2f62c9;
+
+  color: var(--os-fg);
+  font-family: var(--os-font);
+}
+
+[data-os-skin='windows7'] .w7-shell {
+  color: var(--w7-shell-fg);
+  color-scheme: dark;
+}
+
+[data-os-skin='windows7'] .w7-wallpaper {
+  background: #0b4a92 url('/os/windows7/wallpaper.svg') center / cover no-repeat;
+}
+
+/* ---------- Glass ---------- */
+
+[data-os-skin='windows7'] .w7-glass {
+  -webkit-backdrop-filter: blur(9px) saturate(1.5);
+  backdrop-filter: blur(9px) saturate(1.5);
+}
+
+/* Diagonal light streaks over a tinted pane with a gloss along the top edge. */
+[data-os-skin='windows7'] .w7-frame {
+  border: 1px solid var(--w7-glass-edge);
+  box-shadow: inset 0 0 0 1px var(--w7-glass-rim);
+  background:
+    linear-gradient(to bottom, var(--w7-gloss), transparent 28px),
+    linear-gradient(118deg, transparent 18%, var(--w7-streak) 21%, transparent 27%, transparent 52%, var(--w7-streak) 56%, transparent 63%),
+    var(--w7-glass-tint-unfocused);
+}
+[data-os-skin='windows7'] .w7-frame[data-focused] {
+  background:
+    linear-gradient(to bottom, var(--w7-gloss), transparent 28px),
+    linear-gradient(118deg, transparent 18%, var(--w7-streak) 21%, transparent 27%, transparent 52%, var(--w7-streak) 56%, transparent 63%),
+    var(--w7-glass-tint);
+}
+[data-os-skin='windows7'] .w7-frame:not([data-maximized]) {
+  box-shadow: inset 0 0 0 1px var(--w7-glass-rim), var(--w7-window-shadow);
+}
+
+/* The app body sits inside the glass on a solid surface, with a dark line and white rim like the originals. */
+[data-os-skin='windows7'] .w7-titlebar + * {
+  margin: 0 8px 8px;
+  border: 1px solid rgb(0 0 0 / 0.5);
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.45);
+  background: var(--os-bg);
+}
+[data-os-skin='windows7'] .w7-titlebar[data-maximized] + * {
+  margin: 0;
+  border-width: 1px 0 0;
+  box-shadow: none;
+}
+
+/* Black title with a soft white haze behind it so it reads on any glass. */
+[data-os-skin='windows7'] .w7-title-text {
+  text-shadow:
+    0 0 10px var(--w7-title-glow),
+    0 0 6px var(--w7-title-glow),
+    0 0 2px var(--w7-title-glow);
+}
+
+/* ---------- Caption buttons ---------- */
+
+[data-os-skin='windows7'] .w7-captions {
+  border: 1px solid var(--w7-caption-divider);
+  border-top: 0;
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.45);
+  margin-top: 1px;
+}
+[data-os-skin='windows7'] .w7-caption {
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0.55), rgb(255 255 255 / 0.22) 48%, rgb(80 110 150 / 0.28) 52%, rgb(190 220 250 / 0.45));
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.35);
+}
+[data-os-skin='windows7'] .w7-caption:hover,
+[data-os-skin='windows7'] .w7-caption:focus-visible {
+  background: linear-gradient(to bottom, var(--w7-caption-hover-top), #86c6f2 48%, var(--w7-caption-hover) 52%, #6fd2ff);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.5), inset 0 -4px 8px rgb(150 235 255 / 0.7);
+}
+[data-os-skin='windows7'] .w7-caption:active {
+  background: linear-gradient(to bottom, #8fbbe0, #4f8fc4 48%, #1d5c96 52%, #3b8ccc);
+}
+[data-os-skin='windows7'] .w7-caption-close {
+  background: linear-gradient(to bottom, var(--w7-close-top), #d9806c 48%, var(--w7-close) 52%, #d5603a);
+  box-shadow: inset 0 0 0 1px rgb(255 220 210 / 0.45);
+}
+[data-os-skin='windows7'] .w7-caption-close:hover,
+[data-os-skin='windows7'] .w7-caption-close:focus-visible {
+  background: linear-gradient(to bottom, #f6b9a8, #e8836b 48%, #d6371f 52%, var(--w7-close-glow));
+  box-shadow: inset 0 0 0 1px rgb(255 230 220 / 0.6), inset 0 -5px 9px rgb(255 190 120 / 0.8);
+}
+[data-os-skin='windows7'] .w7-caption-close:active {
+  background: linear-gradient(to bottom, #c98676, #a9472f 48%, #8c1d0d 52%, #c0502c);
+}
+[data-os-skin='windows7'] .w7-caption-glyph {
+  filter: drop-shadow(0 0 1px rgb(0 0 0 / 0.9)) drop-shadow(0 0 1px rgb(0 0 0 / 0.5));
+}
+
+/* Glossy app plates: a lit top half, a darker base and a pale inner rim over the app colour. */
+[data-os-skin='windows7'] .w7-gem {
+  background-image:
+    linear-gradient(to bottom, rgb(255 255 255 / 0.5), rgb(255 255 255 / 0.12) 48%, transparent 52%, rgb(0 0 0 / 0.12)),
+    radial-gradient(ellipse 80% 40% at 50% 100%, rgb(255 255 255 / 0.35), transparent);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.35),
+    0 0 0 1px rgb(0 0 0 / 0.35),
+    0 1px 2px rgb(0 0 0 / 0.35);
+}
+
+/* ---------- Taskbar ---------- */
+
+[data-os-skin='windows7'] .w7-taskbar {
+  border-top: 1px solid rgb(0 0 0 / 0.6);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.32);
+  background:
+    linear-gradient(to bottom, rgb(255 255 255 / 0.16), rgb(255 255 255 / 0.05) 50%, rgb(0 0 0 / 0.06) 50%, rgb(0 0 0 / 0.14)),
+    var(--w7-taskbar);
+  text-shadow: 0 0 6px rgb(0 0 0 / 0.6);
+}
+
+[data-os-skin='windows7'] .w7-superbar-button {
+  border: 1px solid transparent;
+}
+[data-os-skin='windows7'] .w7-superbar-button[data-state='running'],
+[data-os-skin='windows7'] .w7-superbar-button[data-state='active'] {
+  border-color: rgb(0 0 0 / 0.45);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.32);
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0.2), rgb(255 255 255 / 0.06) 50%, rgb(255 255 255 / 0.02) 50%, rgb(255 255 255 / 0.1));
+}
+[data-os-skin='windows7'] .w7-superbar-button[data-state='active'] {
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0.36), rgb(255 255 255 / 0.16) 50%, rgb(255 255 255 / 0.08) 50%, rgb(255 255 255 / 0.22));
+}
+/* Hover lights the button in the icon's own colour, glowing up from the bottom edge. */
+[data-os-skin='windows7'] .w7-superbar-button:hover {
+  border-color: rgb(0 0 0 / 0.45);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.45);
+  background:
+    radial-gradient(ellipse 70% 85% at 50% 105%, color-mix(in srgb, var(--w7-glow) 80%, white) 0%, color-mix(in srgb, var(--w7-glow) 45%, transparent) 50%, transparent 80%),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.3), rgb(255 255 255 / 0.08) 50%, rgb(255 255 255 / 0.02) 50%);
+}
+
+/* The orb: a deep-blue glass sphere, cyan light pooling at its base, a gloss cap on top. */
+[data-os-skin='windows7'] .w7-orb {
+  border: 1px solid rgb(0 10 30 / 0.7);
+  background:
+    radial-gradient(circle at 50% 108%, var(--w7-orb-glow) 0%, transparent 52%),
+    radial-gradient(circle at 50% 35%, var(--w7-orb-core) 0%, var(--w7-orb-deep) 78%);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.3),
+    0 0 5px rgb(0 0 0 / 0.55);
+  transition: box-shadow 200ms ease-out, filter 200ms ease-out;
+}
+[data-os-skin='windows7'] .w7-orb::before {
+  content: '';
+  position: absolute;
+  top: 4%;
+  left: 14%;
+  right: 14%;
+  height: 46%;
+  border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0.72), rgb(255 255 255 / 0.06));
+}
+[data-os-skin='windows7'] .w7-orb-button:hover .w7-orb,
+[data-os-skin='windows7'] .w7-orb-button[data-open] .w7-orb,
+[data-os-skin='windows7'] .w7-orb-button:focus-visible .w7-orb {
+  filter: brightness(1.25) saturate(1.15);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.45),
+    0 0 12px 3px var(--w7-orb-glow);
+}
+[data-os-skin='windows7'] .w7-orb-button:active .w7-orb {
+  filter: brightness(0.9);
+}
+
+[data-os-skin='windows7'] .w7-show-desktop {
+  border-left: 1px solid rgb(0 0 0 / 0.5);
+  box-shadow: inset 1px 0 0 rgb(255 255 255 / 0.3);
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0.18), rgb(255 255 255 / 0.04));
+}
+
+/* ---------- Start menu ---------- */
+
+[data-os-skin='windows7'] .w7-start-frame {
+  border: 1px solid var(--w7-glass-edge);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.35), 0 0 16px rgb(0 0 0 / 0.5);
+  background:
+    linear-gradient(to bottom, rgb(255 255 255 / 0.18), transparent 60px),
+    linear-gradient(118deg, transparent 30%, var(--w7-streak) 34%, transparent 42%),
+    var(--w7-glass-dark);
+}
+
+[data-os-skin='windows7'] .w7-programs {
+  background: #ffffff;
+  color: var(--w7-menu-fg);
+  border: 1px solid rgb(0 0 0 / 0.55);
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.4);
+  text-shadow: none;
+  color-scheme: light;
+}
+[data-os-skin='windows7'] .w7-program:hover,
+[data-os-skin='windows7'] .w7-program:focus-visible {
+  border-color: var(--w7-menu-hover-edge);
+  background: linear-gradient(to bottom, #edf5fe, var(--w7-menu-hover));
+  outline-color: var(--w7-focus);
+}
+
+[data-os-skin='windows7'] .w7-place {
+  text-shadow: 0 0 6px rgb(0 0 0 / 0.75);
+}
+[data-os-skin='windows7'] button.w7-place:hover,
+[data-os-skin='windows7'] button.w7-place:focus-visible,
+[data-os-skin='windows7'] button.w7-place[data-open] {
+  border-color: rgb(0 0 0 / 0.4);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.4);
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0.28), rgb(255 255 255 / 0.1) 50%, rgb(255 255 255 / 0.04) 50%, rgb(255 255 255 / 0.14));
+  outline-color: transparent;
+}
+
+[data-os-skin='windows7'] .w7-separator {
+  background: linear-gradient(to right, transparent, rgb(255 255 255 / 0.32), transparent);
+  box-shadow: 0 1px 0 rgb(0 0 0 / 0.3);
+}
+
+[data-os-skin='windows7'] .w7-avatar {
+  border: 1px solid rgb(0 0 0 / 0.55);
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0.7), rgb(170 205 240 / 0.45) 50%, rgb(110 150 200 / 0.5) 50%, rgb(190 220 250 / 0.6));
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.6), 0 2px 8px rgb(0 0 0 / 0.5);
+}
+
+[data-os-skin='windows7'] .w7-shutdown {
+  border: 1px solid rgb(0 0 0 / 0.65);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.3);
+  background: linear-gradient(to bottom, #6b93c2, #3f6c9f 48%, #23528a 52%, #3a72ad);
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.7);
+  outline-color: #ffffff;
+}
+[data-os-skin='windows7'] .w7-shutdown:hover,
+[data-os-skin='windows7'] .w7-shutdown:focus-visible {
+  background: linear-gradient(to bottom, #8fb6e2, #5a8ac0 48%, #2f6db0 52%, #58a8e6);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.45), inset 0 -4px 8px rgb(140 220 255 / 0.55);
+}
+
+[data-os-skin='windows7'] .w7-flyout {
+  background: #f5f7fa;
+  color: var(--w7-menu-fg);
+  border: 1px solid #8c97a5;
+  box-shadow: 3px 3px 6px rgb(0 0 0 / 0.4);
+  text-shadow: none;
+  color-scheme: light;
+}
+
+/* ---------- App bodies ---------- */
+
+[data-os-skin='windows7'] .os-app {
+  scrollbar-color: #c3cad4 #f0f0f0;
+}
+
+/* Console-style body for the terminal app */
+[data-os-skin='windows7'] .os-app.os-mono {
+  --os-fg: #c0c0c0;
+  --os-muted: #8a8a8a;
+  --os-accent: #5fb4f0;
+  background: #000000;
+  color: var(--os-fg);
+  scrollbar-color: #5a5a5a #000000;
+}
+
+/* ---------- Motion ---------- */
+
+@keyframes w7-start-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes w7-boot-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+[data-os-skin='windows7'] .w7-boot-glow::before {
+  content: '';
+  position: absolute;
+  inset: -40%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(90 180 255 / 0.55) 0%, rgb(60 120 230 / 0.2) 40%, transparent 70%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-os-skin='windows7'] .w7-start-in {
+    animation: w7-start-in 150ms ease-out;
+  }
+
+  [data-os-skin='windows7'] .w7-boot-glow::before {
+    animation: w7-boot-pulse 1.4s ease-in-out infinite;
+  }
+}
