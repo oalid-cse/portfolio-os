@@ -12,9 +12,22 @@ const variants: Record<Variant, string> = {
   ghost: 'text-fg-muted hover:text-fg',
 };
 
-type ButtonLinkProps = ComponentProps<typeof Link> & { variant?: Variant };
+type ButtonLinkProps = Omit<ComponentProps<typeof Link>, 'href'> & { href: string; variant?: Variant };
 
-/** Link styled as a button. Internal routes use next/link; plain files and external URLs still work. */
-export function ButtonLink({ variant = 'primary', className, ...props }: ButtonLinkProps) {
-  return <Link className={cn(base, variants[variant], className)} {...props} />;
+const isHttp = (href: string) => /^https?:\/\//i.test(href);
+const usesPlainAnchor = (href: string) => isHttp(href) || /^mailto:/i.test(href) || /\.pdf($|[?#])/i.test(href);
+
+/** Link styled as a button. Internal routes use next/link; external URLs, mailto and PDFs use a plain <a>. */
+export function ButtonLink({ variant = 'primary', className, href, ...props }: ButtonLinkProps) {
+  const classes = cn(base, variants[variant], className);
+  if (usesPlainAnchor(href)) {
+    const { children, download } = props;
+    const external = isHttp(href) ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+    return (
+      <a href={href} className={classes} download={download} {...external}>
+        {children}
+      </a>
+    );
+  }
+  return <Link href={href} className={classes} {...props} />;
 }
