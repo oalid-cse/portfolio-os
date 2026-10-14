@@ -36,4 +36,24 @@ describe('TerminalApp', () => {
     run(screen.getByRole('textbox'), 'open skills');
     expect(openApp).toHaveBeenCalledWith('skills');
   });
+
+  it('resume opens the PDF in a new tab; exit navigates in place', () => {
+    const open = vi.spyOn(window, 'open').mockReturnValue(null);
+    const assign = vi.fn();
+    const original = window.location;
+    Object.defineProperty(window, 'location', { configurable: true, value: { ...original, assign } });
+    try {
+      render(<TerminalApp data={data} openApp={vi.fn()} />);
+      const input = screen.getByRole('textbox');
+      run(input, 'resume');
+      expect(open).toHaveBeenCalledWith(data.profile.resumePdf, '_blank', 'noopener');
+      expect(assign).not.toHaveBeenCalled();
+      run(input, 'exit');
+      expect(assign).toHaveBeenCalledWith('/');
+      expect(open).toHaveBeenCalledTimes(1);
+    } finally {
+      open.mockRestore();
+      Object.defineProperty(window, 'location', { configurable: true, value: original });
+    }
+  });
 });

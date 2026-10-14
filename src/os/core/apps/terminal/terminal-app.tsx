@@ -32,7 +32,12 @@ export function TerminalApp({ data, openApp }: AppProps) {
     setCursor(null);
     setValue('');
     if (result.effect?.type === 'open') openApp(result.effect.app);
-    if (result.effect?.type === 'navigate') window.location.assign(result.effect.href);
+    if (result.effect?.type === 'navigate') {
+      const { href } = result.effect;
+      // Documents (the resume PDF) open in a new tab; page navigation (exit → '/') stays in place.
+      if (href.endsWith('.pdf')) window.open(href, '_blank', 'noopener');
+      else window.location.assign(href);
+    }
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
