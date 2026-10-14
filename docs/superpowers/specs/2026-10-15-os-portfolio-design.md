@@ -353,3 +353,24 @@ OS logos, wallpapers, and system fonts are trademarked or copyrighted. Skins use
 - Preferred domain name.
 - Resend account / API key for the contact form (optional; mailto fallback works without it).
 - Any certifications, testimonials, or blog post ideas.
+
+## 13. Addendum (2026-10-15): remaining OS skins
+
+Requested by the owner after the macOS skin shipped: build every remaining OS from the registry, not just the v1 three.
+
+| Skin | Engine | Detected OS suggested to it | Look (original assets only) |
+|---|---|---|---|
+| Windows 10 | desktop | `windows10` | Full-width left-aligned taskbar, flat Start menu with square tiles, square-cornered windows, flat accent blue |
+| Windows 7 | desktop | none (not detectable) | Aero glass frames and taskbar with blur, round glowing Start orb (no flag), large-icon superbar, glossy red close button |
+| Windows XP | desktop | none (not detectable) | Luna blue taskbar, green rounded "start" button (text, no flag), rounded blue title bars, original rolling-hills wallpaper (not "Bliss"), Tahoma/Verdana stack, XP-style boot progress bar |
+| Ubuntu (GNOME) | desktop | `linux` | Top bar (Activities left, clock centre, tray right), Ubuntu Dock on the left with "Show apps" grid, Yaru-style window chrome with orange accent, Ubuntu font (Ubuntu Font Licence, via Google Fonts) — no Canonical logo |
+| Samsung One UI | mobile | `samsung`, `android` | One UI status bar, rounded icon grid, large "reachability" app headers, 3-button nav bar (Recents/Home/Back), punch-hole device frame |
+
+Engine changes these need:
+- Desktop engine: optional `insets.left` (Ubuntu's left dock). Clamping, cascade start and maximize all respect it.
+- Skin platform: `os-host.tsx` builds its lazy map from `skinLoaders` so a new skin only touches `types.ts`, `registry.ts`, `loaders.ts` and its own folder.
+- Mobile engine: the nav-bar slot (`HomeIndicator`) receives `{ onHome, onBack }` so One UI can render Back + Home.
+
+Legal: no Microsoft, Canonical or Samsung logos, wallpapers or proprietary fonts. Each skin records sources in `public/os/<id>/CREDITS.md`. The `/os` disclaimer already names all four companies.
+
+Execution order: mobile engine + iPhone (T23–T24) → new skins (T27–T31) → polish and launch (T25–T26) last, so the a11y pass and README cover every skin.

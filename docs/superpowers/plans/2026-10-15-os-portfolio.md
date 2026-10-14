@@ -624,6 +624,79 @@ it('open twice → one window, focused', ...);
 
 ---
 
+# Phase 8b: Remaining OS skins (spec §13)
+
+> Execution order: T23 → T24 → T27 → T28 → T29 → T30 → T31 → T25 → T26.
+
+**Shared recipe for every skin task below (each task's requirements implicitly include it):**
+- Move the id from `ComingSoonId` to `OsId` (`src/os/core/types.ts`), flip `status: 'ready'` in `registry.ts`, add the loader in `loaders.ts`.
+- Skin folder `src/os/skins/<id>/` mirrors the existing skins of the same engine (desktop: `windows11`/`macos`; mobile: `iphone`): `index.tsx` (root `data-os-skin="<id>"`, `--os-*` tokens scoped there), chrome, bars/menus, `icons.tsx`, `boot-screen.tsx` (via shared `BootGate`), `theme.css`.
+- Every skin has `Back to classic view` and an OS switcher reachable from its main menu.
+- Original assets only: wallpaper as original SVG in `public/os/<id>/wallpaper.svg`; lucide icons; `public/os/<id>/CREDITS.md`. No vendor logos/wallpapers/proprietary fonts.
+- E2E `tests/e2e/os-<id>.spec.ts` (desktop skins: desktop project only; mobile skins: both projects). Non-boot tests set `sessionStorage['os-booted-<id>']='1'` via `addInitScript`; one test sees and skips the boot screen.
+- Visual check: prod-server screenshots of idle, main menu open, two windows/apps open, maximized/app view; saved as `.superpowers/sdd/2026-10-15-os-portfolio/task-<N>-*.png`, inspected and iterated.
+- Verify: `pnpm check`, `pnpm build && pnpm budget`, full `pnpm test:e2e`.
+
+### Task 27: Skin platform + Windows 10
+
+**Files:**
+- Modify: `src/os/core/os-host.tsx` (build `lazySkins` from `skinLoaders` with `Object.fromEntries`/a typed loop, so new skins only touch types/registry/loaders), `src/os/core/types.ts`, `src/os/core/registry.ts`, `src/os/core/registry.test.ts`, `src/os/core/loaders.ts`
+- Create: `src/os/skins/windows10/*`, `public/os/windows10/{wallpaper.svg,CREDITS.md}`, `tests/e2e/os-windows10.spec.ts`
+
+**Interfaces:**
+- `suggestSkinFor('windows10')` → Windows 10 skin (was windows11). Update the registry test.
+- Look: full-width taskbar, left-aligned Start button (original glyph, no flag) + search-box placeholder + pinned apps + tray/clock right; flat Start menu: app list column + square tiles grid (all 8 apps) + user tile + `Switch OS` + `Back to classic view`; square-cornered window chrome with min/max/close right (close hover red #e81123); accent `#0078d7`; font `'Segoe UI', system-ui, sans-serif`. Alt+F4. `insets: { top: 0, bottom: 40 }`, `mobileAlternative: 'samsung'` if ready else `'iphone'` (use `'iphone'`; T31 may switch).
+
+- [ ] **Step 1:** Write failing tests: registry test for the new mapping; os-host test that lazy map covers every ready id; e2e spec (taskbar, Start menu contents, open About from Start, Back to classic).
+- [ ] **Step 2:** Run. Expected: FAIL.
+- [ ] **Step 3:** Implement.
+- [ ] **Step 4:** Run + visual check + full verify. Expected: PASS.
+- [ ] **Step 5: Commit:** `feat(os): data-driven skin host and Windows 10 skin`
+
+### Task 28: Windows 7 skin
+
+**Files:** Create `src/os/skins/windows7/*`, `public/os/windows7/{wallpaper.svg,CREDITS.md}`, `tests/e2e/os-windows7.spec.ts`; modify types/registry/loaders.
+
+**Interfaces:**
+- Not suggested by detection (unchanged mapping); reachable from switchers and `/os`.
+- Look: Aero glass taskbar (40px, translucent dark with blur and subtle gradient), round glowing Start orb (original gradient sphere, no flag), large-icon "superbar" pinned apps with hover glow; two-column Start menu (white left list of all 8 apps, dark glass right column with user avatar, `Switch OS`, `Back to classic view`); glass window frames (translucent tinted borders + blur, rounded top corners), caption buttons top-right with a wide glossy red close; wallpaper: original abstract light-burst on blue; font `'Segoe UI', Tahoma, system-ui, sans-serif`. Alt+F4. `insets: { top: 0, bottom: 40 }`.
+
+- [ ] **Step 1–5:** as the shared recipe. **Commit:** `feat(os): add Windows 7 skin`
+
+### Task 29: Windows XP skin
+
+**Files:** Create `src/os/skins/windowsxp/*`, `public/os/windowsxp/{wallpaper.svg,CREDITS.md}`, `tests/e2e/os-windowsxp.spec.ts`; modify types/registry/loaders.
+
+**Interfaces:**
+- Not suggested by detection.
+- Look: Luna blue taskbar (30px gradient) with green rounded `start` button (italic bold text "start", no flag), quick-launch and window buttons, blue tray with clock; two-column Start menu (blue header with avatar + name, white left list of all 8 apps, light-blue right column with `Switch OS`, `Back to classic view`, orange-ish footer); window chrome: rounded blue gradient title bar (bold white title with text-shadow), min/max buttons blue, close button red/orange "X"; window body beige `#ece9d8`; wallpaper: original rolling green hills + blue sky with soft clouds (NOT a copy of "Bliss" — different hill shapes/composition); font `Tahoma, Verdana, 'Segoe UI', sans-serif`; boot screen: black with an original wordmark "Portfolio XP" and a 3-block blue progress marquee. Alt+F4. `insets: { top: 0, bottom: 30 }`.
+
+- [ ] **Step 1–5:** as the shared recipe. **Commit:** `feat(os): add Windows XP skin`
+
+### Task 30: Ubuntu skin (+ desktop engine left inset)
+
+**Files:** Modify `src/os/core/desktop/{window-store.ts,window-store.test.ts,desktop-shell.tsx,desktop-shell.test.tsx}`; create `src/os/skins/ubuntu/*`, `public/os/ubuntu/{wallpaper.svg,CREDITS.md}`, `tests/e2e/os-ubuntu.spec.ts`; modify types/registry/loaders.
+
+**Interfaces:**
+- Engine: `DesktopSkin.insets` gains optional `left` (default 0); `createWindowStore` takes `leftInset`; clamp keeps x ≥ `leftInset + 120 - w` and maximize/cascade start at `leftInset`; the shell renders a left-bar slot `leftBar?: (api) => ReactNode` sized to the inset. Tests: maximize with left inset fills from `left`; clamp respects it.
+- `suggestSkinFor('linux')` → Ubuntu. Update the registry test.
+- Look (GNOME/Yaru): 32px dark top bar — `Activities` button left (opens an overview: centered app grid of all 8 apps + `Switch OS` + `Back to classic view`), clock centre (`Thu 15 Oct 14:05` style), tray icons right; left dock 64px (pinned apps with orange running dots, "Show apps" grid button at the bottom); window chrome: dark Yaru header bar, title centred, round grey close/min/max buttons right (close hover orange `#E95420`); accent `#E95420`; font: `Ubuntu` via `next/font/google` loaded in the skin (Ubuntu Font Licence; note in CREDITS.md); wallpaper: original warm purple-orange gradient abstract (no Canonical logo). Close shortcut Ctrl+Q? No — keep Alt+F4. `insets: { top: 32, bottom: 0, left: 64 }`.
+
+- [ ] **Step 1–5:** engine tests first, then as the shared recipe. **Commit:** `feat(os): add Ubuntu skin and desktop left inset`
+
+### Task 31: Samsung One UI skin (+ mobile nav-bar back)
+
+**Files:** Modify `src/os/core/mobile/*` (nav-bar slot gets `onBack`); create `src/os/skins/samsung/*`, `public/os/samsung/{wallpaper.svg,CREDITS.md}`, `tests/e2e/os-samsung.spec.ts`; modify types/registry/loaders.
+
+**Interfaces:**
+- Mobile engine: the `HomeIndicator` slot receives `{ onHome(): void; onBack(): void }` (`onBack` = go home from an app; no-op on home). iPhone keeps rendering only the home bar. Update mobile tests.
+- `suggestSkinFor('samsung')` and `suggestSkinFor('android')` → Samsung. Update the registry test. Desktop skins whose `mobileAlternative` is `'iphone'` stay as is.
+- Look (One UI): status bar (time left, icons right), punch-hole camera circle in the device frame; home screen: 4-column grid of rounded "squircle" icons with labels, dock row, page dots; app view: One UI large header (title in the top ~30% of the screen, content below) with back arrow; bottom 3-button nav bar (Recents ▢ as a no-op, Home ○ labelled `Go home`, Back ‹ labelled `Back`); `Switch OS` pseudo-app via `extraApps` (OsSwitcher list + BackToClassic); font `system-ui, 'Roboto', sans-serif`; wallpaper original soft gradient blobs.
+
+- [ ] **Step 1–5:** engine tests first, then as the shared recipe. **Commit:** `feat(os): add Samsung One UI skin and nav-bar back`
+
+---
+
 # Phase 9: Polish and launch
 
 ### Task 25: Accessibility and cross-browser pass
@@ -632,7 +705,7 @@ it('open twice → one window, focused', ...);
 - Create: `tests/e2e/a11y.spec.ts`
 - Modify: whatever the scan flags
 
-- [ ] **Step 1: Write failing/initial e2e:** run `@axe-core/playwright` on `/`, `/projects/alhisab`, `/resume`, `/os`, `/os/windows11` (after skipping boot), `/os/macos`, `/os/iphone`, in both themes for classic pages. Assert zero `serious`/`critical` violations.
+- [ ] **Step 1: Write failing/initial e2e:** run `@axe-core/playwright` on `/`, `/projects/alhisab`, `/resume`, `/os`, and every ready skin `/os/<id>` (after skipping boot), in both themes for classic pages. Assert zero `serious`/`critical` violations.
 - [ ] **Step 2:** Run. Fix every violation.
 - [ ] **Step 3:** Manual keyboard pass: tab through the home page (visible focus ring on everything), open and close a window in each desktop skin using only the keyboard, and confirm reduced motion (`page.emulateMedia({ reducedMotion: 'reduce' })`) removes the boot screen and animations.
 - [ ] **Step 4:** Run the full suite: `pnpm check && pnpm build && pnpm budget && pnpm test:e2e && pnpm dlx @lhci/cli autorun`. Expected: all green.
@@ -654,5 +727,4 @@ it('open twice → one window, focused', ...);
 
 ## Later (separate spec → plan each)
 
-- Skins: Windows 10, Windows 7, Windows XP, Ubuntu (desktop engine), Samsung One UI / Android (mobile engine). Each is a new `src/os/skins/<id>/` folder + registry status flip + loader entry + e2e spec.
 - Backend phase: DB (Postgres + Drizzle), admin for content, view counter, contact rate limiting, testimonials.
