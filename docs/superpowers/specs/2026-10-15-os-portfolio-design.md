@@ -317,7 +317,7 @@ OS logos, wallpapers, and system fonts are trademarked or copyrighted. Skins use
 
 ## 9. Performance and accessibility
 
-- Classic site ships no OS code. This is verified by inspecting the build output in CI (`/` first-load JS budget ≤ 120 kB gzip).
+- Classic site ships no OS code. This is verified by inspecting the build output in CI (`/` first-load JS budget ≤ 160 kB gzip (raised from 120: Next 16 framework floor ≈135 kB)).
 - OS skins are lazy-loaded per route. Wallpapers use `next/image` / AVIF.
 - All interactive OS elements are real buttons with labels. Windows have `role="dialog"` + `aria-label`. Focus moves into newly opened windows.
 - `prefers-reduced-motion` disables non-essential animation everywhere.

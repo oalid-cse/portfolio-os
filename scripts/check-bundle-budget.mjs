@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 
-const LIMIT_KB = 120;
+const LIMIT_KB = 160;
 const pages = [{ route: '/', file: '.next/server/app/index.html' }];
 let failed = false;
 

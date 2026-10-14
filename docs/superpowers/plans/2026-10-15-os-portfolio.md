@@ -27,7 +27,7 @@
 - `/os` disclaimer copy: `Fan-made recreations for a personal portfolio. Not affiliated with Microsoft, Apple, Samsung, or Canonical.`
 - Desktop skins below 768px viewport width show the small-screen notice.
 - Boot screen ≤ 1.5s, skippable, skipped with `prefers-reduced-motion` or if `sessionStorage['os-booted-<id>']` is set.
-- Budgets: Lighthouse ≥ 95 in all four categories on `/` and `/projects/alhisab`. `/` first-load JS ≤ 120 kB gzip.
+- Budgets: Lighthouse ≥ 95 in all four categories on `/` and `/projects/alhisab`. `/` first-load JS ≤ 160 kB gzip (ruling: Next 16 framework floor ≈135 kB).
 - No official OS logos, wallpapers, or proprietary fonts. Sources go in `public/os/<id>/CREDITS.md`.
 - Never invent portfolio facts. Unknown values use `TODO(owner): …` placeholders.
 - Unit/component tests are colocated as `*.test.ts(x)`. E2E tests go in `tests/e2e/*.spec.ts`.
