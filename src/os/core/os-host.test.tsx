@@ -13,6 +13,7 @@ vi.mock('./loaders', () => {
       windows10: mockSkin('windows10'),
       windows7: mockSkin('windows7'),
       windowsxp: mockSkin('windowsxp'),
+      ubuntu: mockSkin('ubuntu'),
     },
   };
 });
@@ -57,5 +58,10 @@ describe('OsHost', () => {
   it('renders the Windows XP skin for its id', async () => {
     render(<OsHost id="windowsxp" data={data} />);
     expect(await screen.findByText('mock windowsxp')).toBeInTheDocument();
+  });
+
+  it('renders the Ubuntu skin for its id', async () => {
+    render(<OsHost id="ubuntu" data={data} />);
+    expect(await screen.findByText('mock ubuntu')).toBeInTheDocument();
   });
 });

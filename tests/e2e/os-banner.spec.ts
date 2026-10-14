@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 
 const MAC_SAFARI_UA =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15';
+const UBUNTU_FIREFOX_UA = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:132.0) Gecko/20100101 Firefox/132.0';
 const GOOGLEBOT_UA =
   'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)';
 
@@ -24,6 +25,17 @@ test.describe('Mac visitor', () => {
     await page.reload();
     await page.waitForLoadState('networkidle');
     await expect(page.getByRole('region', { name: 'OS experience suggestion' })).toHaveCount(0);
+  });
+});
+
+test.describe('Linux visitor', () => {
+  test.use({ userAgent: UBUNTU_FIREFOX_UA });
+
+  test('is offered the Ubuntu skin', async ({ page }) => {
+    await page.goto('/');
+    const banner = page.getByRole('region', { name: 'OS experience suggestion' });
+    await expect(banner).toContainText("You're on Linux. View this portfolio as Ubuntu?");
+    await expect(banner.getByRole('link', { name: 'Open' })).toHaveAttribute('href', '/os/ubuntu');
   });
 });
 

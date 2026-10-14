@@ -1,0 +1,125 @@
+/* Ubuntu (GNOME / Yaru dark) skin. Everything is scoped to the skin root. */
+[data-os-skin='ubuntu'] {
+  /* Shared app tokens (see src/os/core/apps/os-tokens.css) */
+  --os-font: var(--ubu-font), 'Ubuntu', 'Cantarell', system-ui, sans-serif;
+  --os-mono: 'Ubuntu Mono', ui-monospace, 'DejaVu Sans Mono', monospace;
+  --os-bg: #242424;
+  --os-fg: #f6f5f4;
+  --os-muted: #a8a6a4;
+  --os-accent: #f58b5d; /* the brand orange lifted for text contrast on the dark surface */
+  --os-radius: 6px;
+  --os-border: rgb(255 255 255 / 0.1);
+
+  /* Skin tokens */
+  --ubu-orange: #e95420;
+  --ubu-orange-hover: #f26a3a;
+  --ubu-boot: #2c001e;
+  --ubu-topbar: #000;
+  --ubu-topbar-hover: rgb(255 255 255 / 0.17);
+  --ubu-topbar-active: rgb(255 255 255 / 0.26);
+  --ubu-dock: rgb(26 26 26 / 0.86);
+  --ubu-dock-hover: rgb(255 255 255 / 0.12);
+  --ubu-dock-active: rgb(255 255 255 / 0.2);
+  --ubu-tooltip: #2e2e2e;
+  --ubu-headerbar: #303030;
+  --ubu-headerbar-unfocused: #242424;
+  --ubu-headerbar-stroke: rgb(0 0 0 / 0.42);
+  --ubu-window: #242424;
+  --ubu-window-stroke: rgb(255 255 255 / 0.08);
+  --ubu-shadow: 0 0 0 1px rgb(0 0 0 / 0.6), 0 12px 40px rgb(0 0 0 / 0.55), 0 3px 9px rgb(0 0 0 / 0.35);
+  --ubu-shadow-unfocused: 0 0 0 1px rgb(0 0 0 / 0.5), 0 6px 18px rgb(0 0 0 / 0.35);
+  --ubu-button: rgb(255 255 255 / 0.1);
+  --ubu-button-hover: rgb(255 255 255 / 0.18);
+  --ubu-button-active: rgb(255 255 255 / 0.26);
+  --ubu-overview: rgb(18 10 16 / 0.72);
+  --ubu-panel: #2a2a2a;
+  --ubu-panel-stroke: rgb(255 255 255 / 0.1);
+
+  /* App icon plates (Yaru-inspired palette; glyphs are lucide) */
+  --ubu-icon-about: linear-gradient(160deg, #8a8f99, #4d525c);
+  --ubu-icon-projects: linear-gradient(160deg, #f79a5c, #e95420);
+  --ubu-icon-experience: linear-gradient(160deg, #3fc1a8, #16806e);
+  --ubu-icon-skills: linear-gradient(160deg, #a35fc1, #6a2a8c);
+  --ubu-icon-resume: linear-gradient(160deg, #f5f3f0, #d6d1cb);
+  --ubu-glyph-resume: #c7162b;
+  --ubu-icon-contact: linear-gradient(160deg, #5aa5ef, #1f6fc4);
+  --ubu-icon-terminal: linear-gradient(160deg, #4c3a48, #2c001e);
+  --ubu-icon-browser: linear-gradient(160deg, #ffcf6b, #f08a24);
+
+  color: var(--os-fg);
+  font-family: var(--os-font);
+  color-scheme: dark;
+  -webkit-font-smoothing: antialiased;
+}
+
+[data-os-skin='ubuntu'] .ubu-wallpaper {
+  background: #2e0a26 url('/os/ubuntu/wallpaper.svg') center / cover no-repeat;
+}
+
+[data-os-skin='ubuntu'] .ubu-icon {
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.35),
+    inset 0 -2px 0 rgb(0 0 0 / 0.18),
+    0 2px 4px rgb(0 0 0 / 0.4);
+}
+
+[data-os-skin='ubuntu'] .ubu-blur {
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  backdrop-filter: blur(24px) saturate(1.4);
+}
+
+/* Terminal: aubergine body, the classic Ubuntu terminal colour */
+[data-os-skin='ubuntu'] .os-app.os-mono {
+  background: #300a24;
+}
+
+[data-os-skin='ubuntu'] .os-app {
+  scrollbar-color: rgb(255 255 255 / 0.3) transparent;
+  scrollbar-width: thin;
+}
+
+/* Rounded bottom corners on the app body, square when maximized */
+[data-os-skin='ubuntu'] .ubu-window-body {
+  border-radius: 0 0 11px 11px;
+  overflow: hidden;
+}
+[data-os-skin='ubuntu'] .ubu-window-body[data-maximized] {
+  border-radius: 0;
+}
+
+@keyframes ubu-overview-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes ubu-grid-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-os-skin='ubuntu'] .ubu-overview-in {
+    animation: ubu-overview-in 160ms ease-out;
+  }
+  [data-os-skin='ubuntu'] .ubu-grid-in {
+    animation: ubu-grid-in 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  [data-os-skin='ubuntu'] .ubu-spinner {
+    animation: ubu-spin 0.9s linear infinite;
+  }
+}
+
+@keyframes ubu-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

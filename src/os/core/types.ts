@@ -1,7 +1,7 @@
 import type { PortfolioData } from '@/content/types';
 
-export type OsId = 'windows11' | 'macos' | 'iphone' | 'windows10' | 'windows7' | 'windowsxp';
-export type ComingSoonId = 'ubuntu' | 'samsung';
+export type OsId = 'windows11' | 'macos' | 'iphone' | 'windows10' | 'windows7' | 'windowsxp' | 'ubuntu';
+export type ComingSoonId = 'samsung';
 export type OsKind = 'desktop' | 'mobile';
 
 export type AppId =

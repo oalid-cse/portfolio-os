@@ -9,7 +9,7 @@ export const skins: readonly OsSkinMeta[] = [
   { id: 'windows10', name: 'Windows 10', kind: 'desktop', status: 'ready' },
   { id: 'windows7', name: 'Windows 7', kind: 'desktop', status: 'ready' },
   { id: 'windowsxp', name: 'Windows XP', kind: 'desktop', status: 'ready' },
-  { id: 'ubuntu', name: 'Ubuntu', kind: 'desktop', status: 'coming-soon' },
+  { id: 'ubuntu', name: 'Ubuntu', kind: 'desktop', status: 'ready' },
   { id: 'samsung', name: 'Samsung One UI', kind: 'mobile', status: 'coming-soon' },
 ];
 

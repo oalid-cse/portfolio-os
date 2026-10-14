@@ -325,4 +325,71 @@ describe('createWindowStore', () => {
     s().toggleMaximize(id);
     expect(win(id).h).toBe(200);
   });
+  describe('with a left inset (Ubuntu dock)', () => {
+    const LEFT = 64;
+    const setupLeft = () => {
+      const store = createWindowStore({ viewport: () => ({ w: vw, h: vh }), topInset: 32, bottomInset: 0, leftInset: LEFT });
+      const s = () => store.getState();
+      const win = (id: string) => s().windows.find((x) => x.id === id)!;
+      return { s, win };
+    };
+
+    it('maximize fills from the left inset to the right edge', () => {
+      const { s, win } = setupLeft();
+      s().open('about', 'About');
+      const id = s().focusedId!;
+      s().toggleMaximize(id);
+      expect(win(id)).toMatchObject({ mode: 'maximized', x: LEFT, y: 32, w: vw - LEFT, h: vh - 32 });
+    });
+
+    it('clamp keeps 120px of the title bar right of the inset', () => {
+      const { s, win } = setupLeft();
+      s().open('about', 'About');
+      const id = s().focusedId!;
+      s().move(id, -99999, 100);
+      expect(win(id).x).toBe(LEFT + 120 - win(id).w);
+      s().move(id, 99999, 100);
+      expect(win(id).x).toBe(vw - 120);
+    });
+
+    it('setBounds clamps x to the left inset bound', () => {
+      const { s, win } = setupLeft();
+      s().open('about', 'About');
+      const id = s().focusedId!;
+      s().setBounds(id, { x: -5000, y: 100, w: 500, h: 400 });
+      expect(win(id).x).toBe(LEFT + 120 - 500);
+    });
+
+    it('the first window is centred in the work area right of the inset and cascades from there', () => {
+      const { s } = setupLeft();
+      s().open('about', 'About');
+      s().open('skills', 'Skills');
+      const [a, b] = s().windows;
+      expect(a!.x).toBe(LEFT + Math.round((vw - LEFT - a!.w) / 2));
+      expect(a!.x).toBeGreaterThanOrEqual(LEFT);
+      expect(b!.x - a!.x).toBe(32);
+    });
+
+    it('cascade never places a window under the dock, even on narrow viewports', () => {
+      vw = 800;
+      vh = 600;
+      const { s } = setupLeft();
+      const ids: AppId[] = ['about', 'projects', 'experience', 'skills', 'resume', 'contact', 'terminal', 'browser'];
+      for (const id of ids) s().open(id, id);
+      for (const w of s().windows) {
+        expect(w.x).toBeGreaterThanOrEqual(LEFT);
+        expect(w.x + w.w).toBeLessThanOrEqual(vw);
+      }
+    });
+
+    it('clampAll refits maximized windows between the left inset and the right edge', () => {
+      const { s, win } = setupLeft();
+      s().open('about', 'About');
+      const id = s().focusedId!;
+      s().toggleMaximize(id);
+      vw = 1024;
+      s().clampAll();
+      expect(win(id)).toMatchObject({ x: LEFT, w: 1024 - LEFT });
+    });
+  });
 });

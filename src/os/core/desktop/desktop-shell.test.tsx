@@ -209,4 +209,33 @@ describe('DesktopShell', () => {
     fireEvent.doubleClick(screen.getByRole('button', { name: 'About' }));
     expect(dialog('About').querySelector('.skin-body')).not.toBeNull();
   });
+  it('renders the skin leftBar in a column sized to the left inset, between top and bottom insets', () => {
+    render(
+      <DesktopShell
+        data={data}
+        skin={{
+          ...skin,
+          insets: { top: 32, bottom: 0, left: 64 },
+          leftBar: (api) => <nav aria-label="Dock">{`windows: ${api.windows.length}`}</nav>,
+        }}
+      />,
+    );
+    const dock = screen.getByRole('navigation', { name: 'Dock' });
+    const column = dock.parentElement!;
+    expect(column.style.width).toBe('64px');
+    expect(column.style.top).toBe('32px');
+    expect(column.style.bottom).toBe('0px');
+    expect(column).toHaveClass('select-none');
+    fireEvent.doubleClick(screen.getByRole('button', { name: 'About' }));
+    expect(dock).toHaveTextContent('windows: 1');
+  });
+
+  it('shifts desktop icons right of the left inset and maximizes beside it', () => {
+    render(<DesktopShell data={data} skin={{ ...skin, insets: { top: 32, bottom: 0, left: 64 }, leftBar: () => null }} />);
+    expect(screen.getByRole('button', { name: 'About' }).parentElement!.style.left).toBe('64px');
+    fireEvent.doubleClick(screen.getByRole('button', { name: 'About' }));
+    fireEvent.click(within(dialog('About')).getByRole('button', { name: 'Maximize' }));
+    expect(dialog('About').style.left).toBe('64px');
+    expect(dialog('About').style.width).toBe(`${1280 - 64}px`);
+  });
 });

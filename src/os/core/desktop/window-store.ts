@@ -43,11 +43,13 @@ export type WindowStoreOptions = {
   viewport: () => { w: number; h: number };
   topInset?: number;
   bottomInset?: number;
+  /** Width reserved on the left edge (e.g. a vertical dock). */
+  leftInset?: number;
 };
 
 export type Geometry = Pick<WinState, 'x' | 'y' | 'w' | 'h'>;
 
-export function createWindowStore({ viewport, topInset = 0, bottomInset = 0 }: WindowStoreOptions): WindowStore {
+export function createWindowStore({ viewport, topInset = 0, bottomInset = 0, leftInset = 0 }: WindowStoreOptions): WindowStore {
   let seq = 0;
   /** Geometry before maximizing, restored by the next toggleMaximize. */
   const prevGeometry = new Map<string, Geometry>();
@@ -57,24 +59,30 @@ export function createWindowStore({ viewport, topInset = 0, bottomInset = 0 }: W
   const clampPos = (x: number, y: number, w: number) => {
     const { w: vw, h: vh } = viewport();
     return {
-      x: Math.max(VISIBLE_TITLE - w, Math.min(x, vw - VISIBLE_TITLE)),
+      x: Math.max(leftInset + VISIBLE_TITLE - w, Math.min(x, vw - VISIBLE_TITLE)),
       y: Math.max(topInset, Math.min(y, vh - bottomInset - TITLE_BAR_HEIGHT)),
     };
   };
 
   const workHeight = () => viewport().h - topInset - bottomInset;
+  const workWidth = () => viewport().w - leftInset;
 
   /** Fits a size to the work area while respecting the minimum window size. */
   const fitSize = (w: number, h: number) => ({
-    w: Math.max(MIN_W, Math.min(w, viewport().w)),
+    w: Math.max(MIN_W, Math.min(w, workWidth())),
     h: Math.max(MIN_H, Math.min(h, workHeight())),
   });
 
-  const maximizedGeometry = (): Geometry => ({ x: 0, y: topInset, w: viewport().w, h: Math.max(MIN_H, workHeight()) });
+  const maximizedGeometry = (): Geometry => ({
+    x: leftInset,
+    y: topInset,
+    w: Math.max(MIN_W, workWidth()),
+    h: Math.max(MIN_H, workHeight()),
+  });
 
   /** Centred inside the work area: the first window's position and where the cascade wraps back to. */
   const cascadeStart = (w: number, h: number) => ({
-    x: Math.round((viewport().w - w) / 2),
+    x: leftInset + Math.round((workWidth() - w) / 2),
     y: topInset + Math.max(0, Math.round((workHeight() - h) / 2)),
   });
 
@@ -104,7 +112,7 @@ export function createWindowStore({ viewport, topInset = 0, bottomInset = 0 }: W
         const existing = get().windows.find((w) => w.appId === appId);
         if (existing) return focus(existing.id);
         const { w: vw, h: vh } = viewport();
-        const w = Math.max(MIN_W, Math.min(900, vw - 80));
+        const w = Math.max(MIN_W, Math.min(900, vw - leftInset - 80));
         const h = Math.max(MIN_H, Math.min(600, vh - 120));
         const last = get().windows.at(-1);
         let start = last ? { x: last.x + CASCADE, y: last.y + CASCADE } : cascadeStart(w, h);

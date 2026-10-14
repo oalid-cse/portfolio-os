@@ -26,8 +26,11 @@ export type DesktopSkin = {
   renderIcon(app: AppIconName): ReactNode;
   topBar?: (api: DesktopApi) => ReactNode;
   bottomBar: (api: DesktopApi) => ReactNode;
+  /** Vertical bar on the left edge (e.g. a dock), rendered in a column `insets.left` wide. */
+  leftBar?: (api: DesktopApi) => ReactNode;
   desktopIcons: AppId[];
-  insets: { top: number; bottom: number };
+  /** Reserved edges; `left` defaults to 0. */
+  insets: { top: number; bottom: number; left?: number };
   mobileAlternative: OsId;
   /** Optional classes for each window's content area (it carries `data-maximized` when maximized). */
   windowBodyClassName?: string;
@@ -58,7 +61,12 @@ export function DesktopShell({ data, skin, closeShortcut = altF4 }: DesktopShell
   // One store per shell instance (never a module singleton). It lives here, above the breakpoint
   // switch, so open windows survive a trip below 768px and back. Insets are read once.
   const [store] = useState(() =>
-    createWindowStore({ viewport, topInset: skin.insets.top, bottomInset: skin.insets.bottom }),
+    createWindowStore({
+      viewport,
+      topInset: skin.insets.top,
+      bottomInset: skin.insets.bottom,
+      leftInset: skin.insets.left ?? 0,
+    }),
   );
   if (width === null) return null;
   if (width < DESKTOP_MIN_WIDTH) return <SmallScreenNotice mobileAlternative={skin.mobileAlternative} />;
@@ -68,7 +76,7 @@ export function DesktopShell({ data, skin, closeShortcut = altF4 }: DesktopShell
 type DesktopProps = Required<DesktopShellProps> & { store: WindowStore };
 
 function Desktop({ data, skin, closeShortcut, store }: DesktopProps) {
-  const { top, bottom } = skin.insets;
+  const { top, bottom, left = 0 } = skin.insets;
   const windows = useStore(store, (s) => s.windows);
   const focusedId = useStore(store, (s) => s.focusedId);
   const reducedMotion = useReducedMotion();
@@ -106,8 +114,8 @@ function Desktop({ data, skin, closeShortcut, store }: DesktopProps) {
       <div className="absolute inset-0 z-0 select-none">{skin.wallpaper}</div>
 
       <div
-        className="absolute inset-x-0 z-0 grid select-none auto-cols-max grid-flow-col content-start gap-1 p-2"
-        style={{ top, bottom, gridTemplateRows: 'repeat(auto-fill, minmax(88px, max-content))' }}
+        className="absolute right-0 z-0 grid select-none auto-cols-max grid-flow-col content-start gap-1 p-2"
+        style={{ top, bottom, left, gridTemplateRows: 'repeat(auto-fill, minmax(88px, max-content))' }}
         onPointerDown={(e) => {
           if (e.target === e.currentTarget) setSelected(null);
         }}
@@ -154,6 +162,11 @@ function Desktop({ data, skin, closeShortcut, store }: DesktopProps) {
       {skin.topBar !== undefined && (
         <div className="absolute inset-x-0 top-0 z-20 select-none" style={{ height: top }}>
           {skin.topBar(api)}
+        </div>
+      )}
+      {skin.leftBar !== undefined && (
+        <div className="absolute left-0 z-20 select-none" style={{ top, bottom, width: left }}>
+          {skin.leftBar(api)}
         </div>
       )}
       <div className="absolute inset-x-0 bottom-0 z-20 select-none" style={{ height: bottom }}>

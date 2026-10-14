@@ -33,8 +33,8 @@ test('a fresh load of /os/windows11 never shows the loader once the skin has app
   expect(await page.evaluate(() => (window as unknown as { __loaderAfterSkin?: boolean }).__loaderAfterSkin)).toBeUndefined();
 });
 
-test('/os/ubuntu is a 404', async ({ page }) => {
-  const res = await page.goto('/os/ubuntu');
+test('/os/samsung is a 404 while it is coming soon', async ({ page }) => {
+  const res = await page.goto('/os/samsung');
   expect(res?.status()).toBe(404);
 });
 
@@ -46,8 +46,8 @@ test('/os shows the disclaimer, tiles and back link', async ({ page }) => {
       { exact: true },
     ),
   ).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Open' })).toHaveCount(6);
-  await expect(page.getByText('Coming soon')).toHaveCount(2);
+  await expect(page.getByRole('link', { name: 'Open' })).toHaveCount(7);
+  await expect(page.getByText('Coming soon')).toHaveCount(1);
   await page.getByRole('link', { name: 'Back to classic view' }).click();
   await expect(page).toHaveURL(/\/$/);
 });

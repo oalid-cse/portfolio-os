@@ -682,7 +682,7 @@ it('open twice → one window, focused', ...);
 - `suggestSkinFor('linux')` → Ubuntu. Update the registry test.
 - Look (GNOME/Yaru): 32px dark top bar — `Activities` button left (opens an overview: centered app grid of all 8 apps + `Switch OS` + `Back to classic view`), clock centre (`Thu 15 Oct 14:05` style), tray icons right; left dock 64px (pinned apps with orange running dots, "Show apps" grid button at the bottom); window chrome: dark Yaru header bar, title centred, round grey close/min/max buttons right (close hover orange `#E95420`); accent `#E95420`; font: `Ubuntu` via `next/font/google` loaded in the skin (Ubuntu Font Licence; note in CREDITS.md); wallpaper: original warm purple-orange gradient abstract (no Canonical logo). Close shortcut Ctrl+Q? No — keep Alt+F4. `insets: { top: 32, bottom: 0, left: 64 }`.
 
-- [ ] **Step 1–5:** engine tests first, then as the shared recipe. **Commit:** `feat(os): add Ubuntu skin and desktop left inset`
+- [x] **Step 1–5:** engine tests first, then as the shared recipe. **Commit:** `feat(os): add Ubuntu skin and desktop left inset`
 
 ### Task 31: Samsung One UI skin (+ mobile nav-bar back)
 
