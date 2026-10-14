@@ -1,0 +1,453 @@
+/* Windows XP skin: Luna blue taskbar and title bars, a green start button, beige window bodies. Scoped to the skin root. */
+[data-os-skin='windowsxp'] {
+  /* Shared app tokens (see src/os/core/apps/os-tokens.css): apps read dark-on-beige inside the blue frame */
+  --os-font: Tahoma, Verdana, 'Segoe UI', sans-serif;
+  --os-mono: 'Lucida Console', 'Courier New', ui-monospace, monospace;
+  --os-bg: #ece9d8;
+  --os-fg: #1b1b1b;
+  --os-muted: #5c5a4e;
+  --os-accent: #0b4fc2;
+  --os-radius: 3px;
+  --os-border: #aca899;
+
+  /* Frame and title bar */
+  --xp-frame: #0055e5;
+  --xp-frame-edge: #0831d9;
+  --xp-frame-unfocused: #7b97e0;
+  --xp-frame-edge-unfocused: #6b84c8;
+  --xp-title-fg: #ffffff;
+  --xp-title-shadow: #0c1a73;
+  --xp-title-fg-unfocused: #dce6fa;
+  --xp-window-shadow: 2px 3px 10px rgb(0 0 0 / 0.35);
+
+  /* Caption buttons */
+  --xp-caption-edge: #ffffff;
+  --xp-close: #e0552b;
+  --xp-close-hot: #f27a48;
+
+  /* Shell */
+  --xp-shell-fg: #ffffff;
+  --xp-taskbar: #245edb;
+  --xp-start: #3a9a3a;
+  --xp-tray: #0f8ee8;
+  --xp-menu-fg: #1b1b1b;
+  --xp-menu-hover: #316ac5;
+  --xp-menu-right: #d3e5fa;
+  --xp-menu-right-edge: #95bdee;
+  --xp-menu-right-fg: #0a246a;
+  --xp-orange: #e98c2b;
+  --xp-flyout-edge: #8b8b8b;
+
+  /* Start glyph */
+  --xp-glyph-rim: #ffffff;
+  --xp-glyph-sky: #4aa3f0;
+  --xp-glyph-sun: #ffd23c;
+  --xp-glyph-hill: #3fae3a;
+
+  /* Boot */
+  --xp-boot-bg: #000000;
+  --xp-boot-fg: #ffffff;
+  --xp-boot-accent: #ff7a1a;
+  --xp-boot-block: #2c6ae8;
+  --xp-boot-track: #b2b2b2;
+  --xp-boot-muted: #8d8d8d;
+
+  /* Candy app tiles */
+  --xp-app-about: #2f7de1;
+  --xp-app-projects: #e8a524;
+  --xp-app-experience: #a0663a;
+  --xp-app-skills: #3fa83f;
+  --xp-app-resume: #d9463a;
+  --xp-app-contact: #1c9fc9;
+  --xp-app-terminal: #3b3f46;
+  --xp-app-browser: #2a5fd0;
+
+  color: var(--os-fg);
+  font-family: var(--os-font);
+}
+
+[data-os-skin='windowsxp'] .xp-shell {
+  color: var(--xp-shell-fg);
+  font-family: var(--os-font);
+  color-scheme: light;
+}
+
+[data-os-skin='windowsxp'] .xp-wallpaper {
+  background: #4f97e6 url('/os/windowsxp/wallpaper.svg') center / cover no-repeat;
+}
+
+/* ---------- Window frame ---------- */
+
+[data-os-skin='windowsxp'] .xp-frame {
+  border-radius: 8px 8px 0 0;
+  border: 1px solid var(--xp-frame-edge-unfocused);
+  background: var(--xp-frame-unfocused);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.25), var(--xp-window-shadow);
+}
+[data-os-skin='windowsxp'] .xp-frame[data-focused] {
+  border-color: var(--xp-frame-edge);
+  background: linear-gradient(to right, #0a46d6, var(--xp-frame) 4px, var(--xp-frame) calc(100% - 4px), #0a46d6);
+  box-shadow: inset 0 0 0 1px rgb(120 170 255 / 0.4), var(--xp-window-shadow);
+}
+[data-os-skin='windowsxp'] .xp-frame[data-maximized] {
+  border-radius: 0;
+  border-width: 0;
+  box-shadow: none;
+}
+
+/* Glossy blue title bar: a bright lip, a deep band, and a lighter return toward the bottom edge. */
+[data-os-skin='windowsxp'] .xp-titlebar {
+  border-radius: 7px 7px 0 0;
+  color: var(--xp-title-fg-unfocused);
+  background: linear-gradient(
+    to bottom,
+    #a9c1f3 0%,
+    #93b1ef 10%,
+    #7f9fe6 45%,
+    #87a7ea 85%,
+    #7894db 100%
+  );
+}
+[data-os-skin='windowsxp'] .xp-titlebar[data-focused] {
+  color: var(--xp-title-fg);
+  background: linear-gradient(
+    to bottom,
+    #3c8dff 0%,
+    #1468f2 6%,
+    #0058e8 18%,
+    #0053e1 45%,
+    #0059ec 70%,
+    #0a66f8 88%,
+    #0048d1 100%
+  );
+  box-shadow: inset 0 1px 0 rgb(160 200 255 / 0.7), inset 1px 0 0 rgb(110 160 255 / 0.5);
+}
+[data-os-skin='windowsxp'] .xp-titlebar[data-maximized] {
+  border-radius: 0;
+}
+[data-os-skin='windowsxp'] .xp-titlebar[data-focused] .xp-title {
+  text-shadow: 1px 1px 0 var(--xp-title-shadow);
+}
+
+/* The app body sits inside the blue border on beige; the frame shows through the margin. */
+[data-os-skin='windowsxp'] .xp-window-body {
+  margin: 0 4px 4px;
+  border: 1px solid rgb(0 0 0 / 0.18);
+  background: var(--os-bg);
+}
+[data-os-skin='windowsxp'] .xp-window-body[data-maximized] {
+  margin: 0;
+  border-width: 0;
+}
+
+/* ---------- Caption buttons ---------- */
+
+[data-os-skin='windowsxp'] .xp-caption {
+  border: 1px solid var(--xp-caption-edge);
+  background:
+    radial-gradient(circle at 85% 90%, rgb(110 160 255 / 0.9), transparent 55%),
+    linear-gradient(135deg, #5d98ff 0%, #2765ed 45%, #1a52d8 100%);
+  box-shadow: inset 1px 1px 0 rgb(255 255 255 / 0.35), 0 0 0 0.5px rgb(0 20 80 / 0.4);
+}
+[data-os-skin='windowsxp'] .xp-titlebar:not([data-focused]) .xp-caption {
+  opacity: 0.75;
+  filter: saturate(0.55);
+}
+[data-os-skin='windowsxp'] .xp-caption:hover,
+[data-os-skin='windowsxp'] .xp-caption:focus-visible {
+  background:
+    radial-gradient(circle at 85% 90%, rgb(150 195 255 / 0.95), transparent 60%),
+    linear-gradient(135deg, #7eb0ff 0%, #3f7ef7 45%, #2a62e4 100%);
+}
+[data-os-skin='windowsxp'] .xp-caption:active {
+  background: linear-gradient(135deg, #1a4bc4, #2a63e0);
+  box-shadow: inset 1px 1px 2px rgb(0 0 40 / 0.5);
+}
+[data-os-skin='windowsxp'] .xp-caption-close {
+  background:
+    radial-gradient(circle at 85% 90%, rgb(255 160 120 / 0.85), transparent 55%),
+    linear-gradient(135deg, #f19c76 0%, var(--xp-close) 45%, #c8401c 100%);
+}
+[data-os-skin='windowsxp'] .xp-caption-close:hover,
+[data-os-skin='windowsxp'] .xp-caption-close:focus-visible {
+  background:
+    radial-gradient(circle at 85% 90%, rgb(255 190 150 / 0.95), transparent 60%),
+    linear-gradient(135deg, #f8b896 0%, var(--xp-close-hot) 45%, #da5226 100%);
+}
+[data-os-skin='windowsxp'] .xp-caption-close:active {
+  background: linear-gradient(135deg, #b8381a, #d34b24);
+}
+
+/* Candy app tiles: a soft top-left light and a gentle bevel over the app colour. */
+[data-os-skin='windowsxp'] .xp-tile {
+  background-image:
+    radial-gradient(circle at 28% 22%, rgb(255 255 255 / 0.55), transparent 55%),
+    linear-gradient(to bottom right, rgb(255 255 255 / 0.15), rgb(0 0 0 / 0.18));
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.3),
+    0 0 0 1px rgb(0 0 0 / 0.22),
+    1px 1px 2px rgb(0 0 0 / 0.3);
+}
+
+/* ---------- Taskbar ---------- */
+
+[data-os-skin='windowsxp'] .xp-taskbar {
+  border-top: 1px solid #0c2f9e;
+  background: linear-gradient(
+    to bottom,
+    #3c81f3 0%,
+    #5ea0f6 6%,
+    #3779ed 14%,
+    var(--xp-taskbar) 45%,
+    #2a69e3 80%,
+    #1d4fc4 100%
+  );
+}
+
+/* The green start pill: rounded right end, a light lip, darker at the base. */
+[data-os-skin='windowsxp'] .xp-start {
+  border-radius: 0 12px 12px 0;
+  background: linear-gradient(
+    to bottom,
+    #5fbf5f 0%,
+    #7fd97f 8%,
+    #4cae4c 18%,
+    var(--xp-start) 55%,
+    #369436 85%,
+    #2b7a2b 100%
+  );
+  box-shadow:
+    inset -2px 0 3px rgb(0 60 0 / 0.45),
+    inset 0 1px 0 rgb(200 255 200 / 0.6),
+    2px 0 3px rgb(0 0 40 / 0.35);
+}
+[data-os-skin='windowsxp'] .xp-start:hover,
+[data-os-skin='windowsxp'] .xp-start:focus-visible {
+  filter: brightness(1.12);
+}
+[data-os-skin='windowsxp'] .xp-start[data-open],
+[data-os-skin='windowsxp'] .xp-start:active {
+  filter: brightness(0.9);
+  box-shadow: inset 1px 1px 4px rgb(0 40 0 / 0.6);
+}
+[data-os-skin='windowsxp'] .xp-start:focus-visible .xp-start-label {
+  outline: 1px dotted #ffffff;
+  outline-offset: 1px;
+}
+[data-os-skin='windowsxp'] .xp-start-label {
+  letter-spacing: 0.01em;
+  text-shadow: 1px 1px 2px rgb(0 40 0 / 0.75);
+}
+[data-os-skin='windowsxp'] .xp-start-glyph {
+  filter: drop-shadow(1px 1px 1px rgb(0 40 0 / 0.55));
+}
+
+[data-os-skin='windowsxp'] .xp-quick {
+  box-shadow: inset -1px 0 0 rgb(0 20 90 / 0.45), inset -2px 0 0 rgb(120 170 255 / 0.4);
+}
+[data-os-skin='windowsxp'] .xp-quick-button:hover,
+[data-os-skin='windowsxp'] .xp-quick-button:focus-visible {
+  background: rgb(255 255 255 / 0.18);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.35);
+}
+
+/* Window buttons: raised lighter blue; the active one pressed in, darker. */
+[data-os-skin='windowsxp'] .xp-task {
+  background: linear-gradient(to bottom, #5c9cff, #3c81f3 20%, #3a7cf0 80%, #2f6be0);
+  box-shadow: inset 1px 1px 0 rgb(255 255 255 / 0.35), inset -1px -1px 0 rgb(0 20 90 / 0.4), 1px 1px 1px rgb(0 0 40 / 0.3);
+}
+[data-os-skin='windowsxp'] .xp-task:hover {
+  background: linear-gradient(to bottom, #7cb2ff, #5a96fa 20%, #4f8ef7 80%, #3e7ced);
+}
+[data-os-skin='windowsxp'] .xp-task[data-active] {
+  background: linear-gradient(to bottom, #1a4fbd, #1e57c9);
+  box-shadow: inset 1px 1px 2px rgb(0 10 50 / 0.6), inset -1px -1px 0 rgb(120 170 255 / 0.3);
+}
+
+[data-os-skin='windowsxp'] .xp-tray {
+  border-left: 1px solid #0b3ea8;
+  background: linear-gradient(to bottom, #2cb1fb 0%, #19a1f2 8%, var(--xp-tray) 50%, #0f84dd 85%, #0a6cc4 100%);
+  box-shadow: inset 1px 0 0 rgb(140 210 255 / 0.6);
+  text-shadow: 1px 1px 0 rgb(0 30 90 / 0.4);
+}
+
+/* ---------- Start menu ---------- */
+
+[data-os-skin='windowsxp'] .xp-start-menu {
+  border: 1px solid #0b3eb0;
+  background: #ffffff;
+  box-shadow: 3px 3px 8px rgb(0 0 0 / 0.45);
+}
+
+[data-os-skin='windowsxp'] .xp-menu-header {
+  color: #ffffff;
+  background: linear-gradient(to bottom, #1d6ce0 0%, #3c8bf2 10%, #1865da 35%, #155fd3 85%, #1a5ac8 100%);
+  text-shadow: 1px 1px 1px rgb(0 20 80 / 0.7);
+}
+[data-os-skin='windowsxp'] .xp-menu-avatar {
+  border: 2px solid #ffffff;
+  box-shadow: 1px 1px 3px rgb(0 0 40 / 0.5);
+  background: #ffffff;
+}
+[data-os-skin='windowsxp'] .xp-menu-rule {
+  background: linear-gradient(to right, transparent, var(--xp-orange) 15%, var(--xp-orange) 85%, transparent);
+}
+
+[data-os-skin='windowsxp'] .xp-menu-left {
+  background: #ffffff;
+  color: var(--xp-menu-fg);
+}
+[data-os-skin='windowsxp'] .xp-menu-item:hover,
+[data-os-skin='windowsxp'] .xp-menu-item:focus-visible {
+  background: var(--xp-menu-hover);
+  color: #ffffff;
+  outline-color: #ffffff;
+}
+
+[data-os-skin='windowsxp'] .xp-menu-right {
+  background: var(--xp-menu-right);
+  border-left: 1px solid var(--xp-menu-right-edge);
+  color: var(--xp-menu-right-fg);
+}
+[data-os-skin='windowsxp'] .xp-place {
+  width: 100%;
+}
+[data-os-skin='windowsxp'] .xp-place-icon {
+  color: #1c5cc8;
+}
+[data-os-skin='windowsxp'] .xp-place:hover,
+[data-os-skin='windowsxp'] .xp-place:focus-visible,
+[data-os-skin='windowsxp'] .xp-place[data-open] {
+  background: var(--xp-menu-hover);
+  color: #ffffff;
+  outline-color: #ffffff;
+}
+[data-os-skin='windowsxp'] .relative:has(> .xp-place:hover) > .xp-place-icon,
+[data-os-skin='windowsxp'] .relative:has(> .xp-place:focus-visible) > .xp-place-icon,
+[data-os-skin='windowsxp'] .xp-place:hover .xp-place-icon,
+[data-os-skin='windowsxp'] .xp-place:focus-visible .xp-place-icon,
+[data-os-skin='windowsxp'] .xp-place[data-open] .xp-place-icon {
+  color: #ffffff;
+}
+[data-os-skin='windowsxp'] .xp-menu-divider {
+  background: linear-gradient(to right, transparent, #9cbde9 20%, #9cbde9 80%, transparent);
+}
+
+/* Warm footer: an orange-amber band, like late-afternoon light under the blue. */
+[data-os-skin='windowsxp'] .xp-menu-footer {
+  color: #3a1d00;
+  border-top: 1px solid #c5651a;
+  background: linear-gradient(to bottom, #fbd18f 0%, #f6b462 30%, var(--xp-orange) 75%, #d7741c 100%);
+}
+[data-os-skin='windowsxp'] .xp-footer-button {
+  font-weight: 700;
+}
+[data-os-skin='windowsxp'] .xp-footer-button:hover,
+[data-os-skin='windowsxp'] .xp-footer-button:focus-visible {
+  background: rgb(255 255 255 / 0.3);
+  outline-color: #3a1d00;
+}
+[data-os-skin='windowsxp'] .xp-footer-icon {
+  color: #ffffff;
+  border: 1px solid #ffffff;
+  background: linear-gradient(135deg, #f19c76, var(--xp-close) 50%, #c8401c);
+  box-shadow: 1px 1px 1px rgb(80 30 0 / 0.4);
+}
+
+[data-os-skin='windowsxp'] .xp-flyout {
+  background: #ffffff;
+  color: var(--xp-menu-fg);
+  border: 1px solid var(--xp-flyout-edge);
+  box-shadow: 3px 3px 5px rgb(0 0 0 / 0.4);
+  font-size: 12px;
+}
+[data-os-skin='windowsxp'] .xp-flyout a {
+  border-radius: 0;
+}
+[data-os-skin='windowsxp'] .xp-flyout a:hover,
+[data-os-skin='windowsxp'] .xp-flyout a:focus-visible {
+  background: var(--xp-menu-hover);
+  color: #ffffff;
+  outline: none;
+}
+
+/* ---------- App bodies ---------- */
+
+[data-os-skin='windowsxp'] .os-app {
+  font-size: 0.8125rem;
+  scrollbar-color: #c1d3fb #f4f3ee;
+}
+[data-os-skin='windowsxp'] .os-card {
+  background: #ffffff;
+}
+
+/* Console-style body for the terminal app */
+[data-os-skin='windowsxp'] .os-app.os-mono {
+  --os-fg: #c0c0c0;
+  --os-muted: #8a8a8a;
+  --os-accent: #6fb8ff;
+  background: #000000;
+  color: var(--os-fg);
+  scrollbar-color: #5a5a5a #000000;
+}
+
+/* ---------- Boot ---------- */
+
+[data-os-skin='windowsxp'] .xp-boot {
+  position: relative;
+  background: var(--xp-boot-bg);
+  color: var(--xp-boot-fg);
+  font-family: var(--os-font);
+}
+[data-os-skin='windowsxp'] .xp-boot-xp {
+  color: var(--xp-boot-accent);
+}
+[data-os-skin='windowsxp'] .xp-boot-track {
+  border: 2px solid var(--xp-boot-track);
+}
+[data-os-skin='windowsxp'] .xp-boot-blocks {
+  left: 2px;
+}
+[data-os-skin='windowsxp'] .xp-boot-block {
+  display: block;
+  width: 9px;
+  height: 8px;
+  border-radius: 1px;
+  background: linear-gradient(to bottom, #8fb5ff, var(--xp-boot-block) 45%, #1546b8 100%);
+}
+[data-os-skin='windowsxp'] .xp-boot-caption {
+  color: var(--xp-boot-muted);
+}
+
+/* ---------- Motion ---------- */
+
+@keyframes xp-start-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* The three blocks travel across the track and wrap around, like the classic marquee. */
+@keyframes xp-marquee {
+  from {
+    transform: translateX(-36px);
+  }
+  to {
+    transform: translateX(150px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-os-skin='windowsxp'] .xp-start-in {
+    animation: xp-start-in 120ms ease-out;
+  }
+
+  [data-os-skin='windowsxp'] .xp-boot-blocks {
+    animation: xp-marquee 1.3s linear infinite;
+  }
+}

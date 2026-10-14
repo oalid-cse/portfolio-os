@@ -8,7 +8,7 @@ afterEach(cleanup);
 
 const baseWin: WinState = { id: 'about-1', appId: 'about', title: 'About', x: 100, y: 80, w: 600, h: 400, z: 1, mode: 'normal' };
 
-function setup(win: Partial<WinState> = {}, focused = true) {
+function setup(win: Partial<WinState> = {}, focused = true, bodyClassName?: string) {
   const handlers = {
     onFocus: vi.fn(),
     onClose: vi.fn(),
@@ -18,7 +18,7 @@ function setup(win: Partial<WinState> = {}, focused = true) {
     onSetBounds: vi.fn(),
   };
   render(
-    <Window win={{ ...baseWin, ...win }} focused={focused} Chrome={TestChrome} reducedMotion {...handlers}>
+    <Window win={{ ...baseWin, ...win }} focused={focused} Chrome={TestChrome} reducedMotion bodyClassName={bodyClassName} {...handlers}>
       <p>body</p>
     </Window>,
   );
@@ -164,5 +164,15 @@ describe('Window', () => {
     setup();
     expect(screen.getByTestId('titlebar')).toHaveClass('select-none', 'touch-none');
     expect(screen.getByText('body').parentElement).toHaveClass('select-text');
+  });
+
+  it('the content area takes the skin body class and reports maximized mode', () => {
+    setup({}, true, 'skin-body');
+    const body = screen.getByText('body').parentElement;
+    expect(body).toHaveClass('skin-body', 'select-text', 'flex-1');
+    expect(body).not.toHaveAttribute('data-maximized');
+    cleanup();
+    setup({ mode: 'maximized' }, true, 'skin-body');
+    expect(screen.getByText('body').parentElement).toHaveAttribute('data-maximized');
   });
 });

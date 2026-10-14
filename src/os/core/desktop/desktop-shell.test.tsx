@@ -203,4 +203,10 @@ describe('DesktopShell', () => {
     });
     expect(dialog('About')).toBeInTheDocument();
   });
+
+  it('passes the skin window body class to every window content area', () => {
+    render(<DesktopShell data={data} skin={{ ...skin, windowBodyClassName: 'skin-body' }} />);
+    fireEvent.doubleClick(screen.getByRole('button', { name: 'About' }));
+    expect(dialog('About').querySelector('.skin-body')).not.toBeNull();
+  });
 });

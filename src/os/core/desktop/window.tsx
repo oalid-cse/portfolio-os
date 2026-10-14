@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { type ComponentType, type CSSProperties, type HTMLAttributes, type PointerEvent, type ReactNode, useEffect, useRef } from 'react';
+import { cn } from '@/lib/utils';
 import type { AppId } from '../types';
 import { type Geometry, MIN_H, MIN_W, type WinState } from './window-store';
 
@@ -32,6 +33,8 @@ export type WindowProps = {
   onMove(x: number, y: number): void;
   /** Atomic geometry update used by edge/corner resizing. */
   onSetBounds(bounds: Geometry): void;
+  /** Extra classes for the content area (e.g. a skin that insets the app inside a thick frame). */
+  bodyClassName?: string;
   children: ReactNode;
 };
 
@@ -54,7 +57,7 @@ const EDGES = Object.keys(EDGE_STYLE) as Edge[];
 const fromButton = (e: { target: EventTarget }) => e.target instanceof Element && e.target.closest('button') !== null;
 
 export function Window(props: WindowProps) {
-  const { win, focused, Chrome, reducedMotion, onFocus, onClose, onMinimize, onToggleMaximize, children } = props;
+  const { win, focused, Chrome, reducedMotion, onFocus, onClose, onMinimize, onToggleMaximize, bodyClassName, children } = props;
   const ref = useRef<HTMLDivElement>(null);
   const gesture = useRef<Gesture | null>(null);
   const minimized = win.mode === 'minimized';
@@ -153,7 +156,9 @@ export function Window(props: WindowProps) {
         onToggleMaximize={onToggleMaximize}
         dragHandleProps={dragHandleProps}
       />
-      <div className="min-h-0 flex-1 select-text">{children}</div>
+      <div data-maximized={maximized || undefined} className={cn('min-h-0 flex-1 select-text', bodyClassName)}>
+        {children}
+      </div>
       {!maximized &&
         EDGES.map((edge) => (
           <div

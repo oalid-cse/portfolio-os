@@ -29,6 +29,8 @@ export type DesktopSkin = {
   desktopIcons: AppId[];
   insets: { top: number; bottom: number };
   mobileAlternative: OsId;
+  /** Optional classes for each window's content area (it carries `data-maximized` when maximized). */
+  windowBodyClassName?: string;
 };
 
 export type DesktopShellProps = {
@@ -133,6 +135,7 @@ function Desktop({ data, skin, closeShortcut, store }: DesktopProps) {
                 win={win}
                 focused={focusedId === win.id}
                 Chrome={skin.WindowChrome}
+                bodyClassName={skin.windowBodyClassName}
                 reducedMotion={reducedMotion}
                 onFocus={() => actions.focus(win.id)}
                 onClose={() => actions.close(win.id)}

@@ -29,6 +29,7 @@ describe('registry', () => {
     expect(isReadyOsId('iphone')).toBe(true);
     expect(isReadyOsId('windows10')).toBe(true);
     expect(isReadyOsId('windows7')).toBe(true);
+    expect(isReadyOsId('windowsxp')).toBe(true);
     expect(isReadyOsId('ubuntu')).toBe(false);
     expect(isReadyOsId('nope')).toBe(false);
   });
@@ -36,9 +37,8 @@ describe('registry', () => {
   it('ready ids are unique and coming-soon entries are listed', () => {
     const ready = skins.filter((s) => s.status === 'ready').map((s) => s.id);
     expect(new Set(ready).size).toBe(ready.length);
-    expect(ready).toEqual(['windows11', 'macos', 'iphone', 'windows10', 'windows7']);
+    expect(ready).toEqual(['windows11', 'macos', 'iphone', 'windows10', 'windows7', 'windowsxp']);
     expect(skins.filter((s) => s.status === 'coming-soon').map((s) => s.id)).toEqual([
-      'windowsxp',
       'ubuntu',
       'samsung',
     ]);
@@ -49,6 +49,7 @@ describe('registry', () => {
     expect(getSkinMeta('iphone')?.kind).toBe('mobile');
     expect(getSkinMeta('windows10')).toMatchObject({ name: 'Windows 10', kind: 'desktop' });
     expect(getSkinMeta('windows7')).toMatchObject({ name: 'Windows 7', kind: 'desktop' });
+    expect(getSkinMeta('windowsxp')).toMatchObject({ name: 'Windows XP', kind: 'desktop' });
     expect(getSkinMeta('samsung')?.kind).toBe('mobile');
     expect(getSkinMeta('missing')).toBeUndefined();
   });
