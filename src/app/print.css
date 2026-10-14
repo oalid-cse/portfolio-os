@@ -1,0 +1,33 @@
+@media print {
+  header,
+  footer,
+  .bg-grid,
+  [aria-label^="Switch to"] {
+    display: none !important;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  .resume,
+  .resume * {
+    background: transparent !important;
+    color: #000 !important;
+    border-color: #000 !important;
+  }
+
+  .resume a {
+    text-decoration: underline;
+  }
+
+  .resume .print-hidden {
+    display: none !important;
+  }
+
+  .resume section {
+    break-inside: avoid;
+  }
+}

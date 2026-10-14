@@ -21,13 +21,12 @@ const usesPlainAnchor = (href: string) => isHttp(href) || /^mailto:/i.test(href)
 export function ButtonLink({ variant = 'primary', className, href, ...props }: ButtonLinkProps) {
   const classes = cn(base, variants[variant], className);
   if (usesPlainAnchor(href)) {
-    const { children, download } = props;
+    // Drop Link-only props so they don't reach the DOM; keep everything else (aria-*, id, data-*, ...).
+    const { prefetch, replace, scroll, shallow, passHref, legacyBehavior, locale, onNavigate, ...anchorProps } =
+      props as typeof props & { shallow?: boolean; passHref?: boolean; legacyBehavior?: boolean; locale?: unknown };
+    void [prefetch, replace, scroll, shallow, passHref, legacyBehavior, locale, onNavigate];
     const external = isHttp(href) ? { target: '_blank', rel: 'noopener noreferrer' } : {};
-    return (
-      <a href={href} className={classes} download={download} {...external}>
-        {children}
-      </a>
-    );
+    return <a {...(anchorProps as ComponentProps<'a'>)} href={href} className={classes} {...external} />;
   }
   return <Link href={href} className={classes} {...props} />;
 }
