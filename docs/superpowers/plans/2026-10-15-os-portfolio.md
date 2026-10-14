@@ -47,7 +47,7 @@
 ### Task 1: Scaffold project, tooling, and CI
 
 **Files:**
-- Create: Next.js app via `pnpm create next-app@latest . --ts --tailwind --eslint --app --src-dir --import-alias "@/*" --use-pnpm --no-turbopack` (accept defaults otherwise)
+- Create: Next.js app via `pnpm create next-app@latest . --ts --tailwind --eslint --app --src-dir --import-alias "@/*" --use-pnpm` (accept defaults otherwise; if a listed flag no longer exists in the current create-next-app, drop it)
 - Create: `vitest.config.ts`, `vitest.setup.ts`, `playwright.config.ts`, `.env.example`, `.github/workflows/ci.yml`, `src/lib/utils.ts`, `src/lib/utils.test.ts`
 - Modify: `package.json` (scripts), `tsconfig.json` (strict already on; add `"noUncheckedIndexedAccess": true`), `.gitignore` (add `.env*.local`, `/test-results`, `/playwright-report`, `.lighthouseci`)
 - Move: `Abu Bin Oalid.pdf` → `public/resume/abu-bin-oalid.pdf`; `profile_linkedin_facebook_1000x1000.jpg` → `public/images/profile.jpg`
@@ -56,7 +56,7 @@
 - Produces: `cn(...classes: ClassValue[]): string` (clsx + tailwind-merge) in `src/lib/utils.ts`
 
 - [ ] **Step 1:** (Repo already initialized.) Scaffold into the existing folder; keep `docs/`, `AGENTS.md`, `CLAUDE.md`, `.github/`. Move the PDF and photo as listed.
-- [ ] **Step 2:** Add dev deps: `vitest @vitejs/plugin-react jsdom @testing-library/react @testing-library/jest-dom @testing-library/user-event @playwright/test @axe-core/playwright vite-tsconfig-paths`. Add deps: `clsx tailwind-merge zod`. Run `pnpm exec playwright install --with-deps chromium webkit`.
+- [ ] **Step 2:** Add dev deps: `vitest @vitejs/plugin-react jsdom @testing-library/react @testing-library/jest-dom @testing-library/user-event @playwright/test @axe-core/playwright vite-tsconfig-paths`. Add deps: `clsx tailwind-merge zod`. Do **not** run `playwright install --with-deps` (the host is elementary OS 7.1, so Playwright's dependency install fails). Use the system Google Chrome via `channel: 'chrome'` instead (it's already installed).
 - [ ] **Step 3: Write the failing test** `src/lib/utils.test.ts`:
 
 ```ts
@@ -66,9 +66,9 @@ it('merges conflicting tailwind classes, last wins', () => {
 ```
 
 - [ ] **Step 4:** Run `pnpm test`. Expected: FAIL (`cn` not exported).
-- [ ] **Step 5:** Implement `cn`. Configure Vitest (jsdom env, setup file imports `@testing-library/jest-dom/vitest`, tsconfig paths, exclude `tests/e2e`). Configure Playwright: `webServer: { command: 'pnpm build && pnpm start', port: 3000 }`, projects `chromium` (1440×900) and `mobile-safari` (iPhone 15 device).
+- [ ] **Step 5:** Implement `cn`. Configure Vitest (jsdom env, setup file imports `@testing-library/jest-dom/vitest`, tsconfig paths, exclude `tests/e2e`). Configure Playwright: `webServer: { command: 'pnpm build && pnpm start', port: 3000 }`, projects `chromium` (`channel: 'chrome'`, viewport 1440×900) and `mobile-safari` (`...devices['iPhone 15']` but with `browserName: 'chromium'`, `channel: 'chrome'`; this keeps the iPhone viewport, touch and UA without WebKit). E2E specs for desktop-only features skip on the mobile project (`test.skip(testInfo.project.name === 'mobile-safari')`) and vice versa where the task says so. Vitest config must alias `server-only` to an empty module (`src/test/empty.ts`) so server modules can be unit-tested.
 - [ ] **Step 6:** Add scripts: `"typecheck": "tsc --noEmit"`, `"test": "vitest run"`, `"test:e2e": "playwright test"`, `"check": "pnpm lint && pnpm typecheck && pnpm test"`.
-- [ ] **Step 7:** CI workflow (`push` + `pull_request`): pnpm setup, Node 24, `pnpm install --frozen-lockfile`, `pnpm check`, `pnpm build`, Playwright install + `pnpm test:e2e`.
+- [ ] **Step 7:** CI workflow (`push` + `pull_request`): pnpm setup, Node 24, `pnpm install --frozen-lockfile`, `pnpm check`, `pnpm build`, `pnpm test:e2e` (GitHub's ubuntu runners have Google Chrome, so `channel: 'chrome'` works there too).
 - [ ] **Step 8:** `.env.example` with `NEXT_PUBLIC_SITE_URL=http://localhost:3000` and `RESEND_API_KEY=` and `CONTACT_TO_EMAIL=`.
 - [ ] **Step 9:** Run `pnpm check && pnpm build`. Expected: all green.
 - [ ] **Step 10: Commit:** `chore: scaffold Next.js app with testing and CI`
@@ -79,7 +79,7 @@ it('merges conflicting tailwind classes, last wins', () => {
 - Create: `src/content/types.ts`, `src/content/schemas.ts`, `src/content/profile.ts`, `src/content/skills.ts`, `src/content/experience.ts`, `src/content/education.ts`, `src/content/schemas.test.ts`
 
 **Interfaces:**
-- Produces: types `Profile`, `SocialIcon` (`'github' | 'linkedin' | 'email' | 'whatsapp'`), `SkillGroup`, `Experience`, `Education`, `ProjectFrontmatter`, `PostFrontmatter`, `PortfolioData` (exactly as spec §3). zod schemas `profileSchema`, `skillGroupSchema`, `experienceSchema`, `educationSchema`, `projectFrontmatterSchema`, `postFrontmatterSchema`. Types are `z.infer` of the schemas.
+- Produces: types `Profile`, `SocialIcon` (`'github' | 'linkedin' | 'email' | 'whatsapp'`), `SkillGroup`, `Experience`, `Education`, `ProjectFrontmatter`, `PostFrontmatter`, `PortfolioData` (as spec §3, plus `features: { contactForm: boolean }`, a plain TS type, not zod). zod schemas `profileSchema`, `skillGroupSchema`, `experienceSchema`, `educationSchema`, `projectFrontmatterSchema`, `postFrontmatterSchema`. Types are `z.infer` of the schemas.
 - Produces: default exports `profile`, `skillGroups`, `experience`, `education` (validated with `.parse` at module load).
 
 - [ ] **Step 1: Write failing tests** `schemas.test.ts`:
@@ -112,6 +112,8 @@ it('has 3 experience entries newest first in source', () =>
 **Interfaces:**
 - Consumes: schemas and data from Task 2.
 - Produces (`content-reader.ts`): `createContentReader(rootDir: string, opts?: { includeDrafts?: boolean })` returning `{ getProjects, getProject, getPosts, getPost }`, which read `<rootDir>/projects/*.mdx` and `<rootDir>/blog/*.mdx`.
+- Produces (`src/lib/features.ts`): `isContactFormEnabled(): boolean` → `Boolean(process.env.RESEND_API_KEY && process.env.CONTACT_TO_EMAIL)`.
+- `PortfolioData` (Task 2 type) also carries `features: { contactForm: boolean }`; `getPortfolioData()` fills it from `isContactFormEnabled()`.
 - Produces (`content.ts`, the public API used by the whole app): `getProfile()`, `getSkillGroups()`, `getExperience()`, `getEducation()`, `getProjects(opts?: { featured?: boolean })`, `getProject(slug: string)`, `getPosts()`, `getPost(slug: string)`, `getPortfolioData(): Promise<PortfolioData>`. Signatures exactly as spec §3 (`getProject` → `{ meta, body } | null`). Uses `createContentReader(path.join(process.cwd(), 'src/content'), { includeDrafts: process.env.NODE_ENV !== 'production' })`. Mark the module `import 'server-only'`.
 
 - [ ] **Step 1: Write failing tests** against fixtures (2 projects with `order` 2 and 1, one `featured: false`; 2 posts, one `draft: true`; one invalid file in `__fixtures__/invalid/projects/`):
@@ -282,7 +284,7 @@ it('renders a Live link that opens in a new tab with rel noopener', ...);
 - Modify: `src/app/layout.tsx`, every `(site)` page (`generateMetadata` / `metadata`)
 
 **Interfaces:**
-- Produces (`seo.ts`): `siteUrl(): string` (from `NEXT_PUBLIC_SITE_URL`, no trailing slash), `buildMetadata(input: { title?: string; description: string; path: string; image?: string; type?: 'website' | 'article' | 'profile' }): Metadata` (canonical = `siteUrl()+path`, OG, Twitter `summary_large_image`), `personJsonLd(profile): WithContext<Person>`, `profilePageJsonLd(profile)`, `projectJsonLd(meta)` (`CreativeWork`), `postJsonLd(meta)` (`BlogPosting`), `breadcrumbJsonLd(items: { name: string; path: string }[])`. Add dev dep `schema-dts` for the types.
+- Produces (`seo.ts`): `siteUrl(): string` (from `NEXT_PUBLIC_SITE_URL`, falling back to `https://abubinoalid.dev`; no trailing slash), `buildMetadata(input: { title?: string; description: string; path: string; image?: string; type?: 'website' | 'article' | 'profile' }): Metadata` (canonical = `siteUrl()+path`, OG, Twitter `summary_large_image`), `personJsonLd(profile): WithContext<Person>`, `profilePageJsonLd(profile)`, `projectJsonLd(meta)` (`CreativeWork`), `postJsonLd(meta)` (`BlogPosting`), `breadcrumbJsonLd(items: { name: string; path: string }[])`. Add dev dep `schema-dts` for the types.
 - Produces: `<JsonLd data={object} />` renders `<script type="application/ld+json">` with `JSON.stringify(data).replace(/</g, '\\u003c')`.
 
 - [ ] **Step 1: Write failing unit tests:**
@@ -310,9 +312,9 @@ it('robots disallows /os/ and points to sitemap', ...);
 - Modify: `.github/workflows/ci.yml`, `package.json` (`"budget": "node scripts/check-bundle-budget.mjs"`)
 
 - [ ] **Step 1:** `lighthouserc.json`: `startServerCommand: "pnpm start"`, URLs `/` and `/projects/alhisab`, assertions `categories:performance|accessibility|best-practices|seo` `minScore: 0.95` (error).
-- [ ] **Step 2:** The budget script parses the `pnpm build` route table output (saved with `pnpm build | tee .next/build-output.txt`) and fails if the `/` First Load JS is > 120 kB. Test by temporarily setting the limit to 1 kB: expect a non-zero exit with a message naming `/`. Then restore.
-- [ ] **Step 3:** Add CI steps: build with tee → `pnpm budget` → `pnpm dlx @lhci/cli autorun`.
-- [ ] **Step 4:** Run locally: `pnpm build | tee .next/build-output.txt && pnpm budget && pnpm dlx @lhci/cli autorun`. Expected: all pass. Fix any failures before committing.
+- [ ] **Step 2:** Recent Next.js versions no longer print First Load JS in `next build` output. So the budget script reads the prerendered `.next/server/app/index.html`, collects every `<script src="/_next/static/...">`, gzips each file from `.next/static/` (`zlib.gzipSync`), sums them, and fails if the total is > 120 kB (prints the total either way). Test by temporarily setting the limit to 1 kB: expect a non-zero exit with a message naming `/`. Then restore.
+- [ ] **Step 3:** Add CI steps: build → `pnpm budget` → `pnpm dlx @lhci/cli autorun`.
+- [ ] **Step 4:** Run locally: `pnpm build && pnpm budget && pnpm dlx @lhci/cli autorun`. Expected: all pass. Fix any failures before committing.
 - [ ] **Step 5: Commit:** `ci: enforce Lighthouse ≥95 and first-load JS budget`
 
 ---
@@ -330,7 +332,7 @@ it('robots disallows /os/ and points to sitemap', ...);
 - Produces: `contactSchema` (zod): `name` 2–80 chars, `email` valid, `message` 10–2000 chars, `website` (honeypot) must be empty string.
 - Produces: `type ContactState = { status: 'idle' } | { status: 'success' } | { status: 'error'; message: string; fieldErrors?: Partial<Record<'name'|'email'|'message', string>> }`.
 - Produces: `sendContact(prev: ContactState, formData: FormData): Promise<ContactState>` (`'use server'`). It takes an injectable sender for tests: export `createSendContact(send: (msg: { name; email; message }) => Promise<void>)`, and `sendContact` = `createSendContact(resendSender)`.
-- Produces: `isContactFormEnabled(): boolean` → `Boolean(process.env.RESEND_API_KEY && process.env.CONTACT_TO_EMAIL)`.
+- Consumes: `isContactFormEnabled()` from `src/lib/features.ts` (Task 3).
 - `ContactSection` renders `<ContactForm action={sendContact} />` when enabled, otherwise a `mailto:` button `Email me`.
 
 - [ ] **Step 1: Write failing tests:**
@@ -393,9 +395,9 @@ it('ContactForm shows field error text and success message "Thanks! I’ll get b
 - Create: `src/os/core/types.ts`, `src/os/core/registry.ts`, `src/os/core/registry.test.ts`
 
 **Interfaces:**
-- Produces: `OsId`, `OsKind`, `AppId`, `OsRootProps = { data: PortfolioData }`, `OsSkinMeta = { id: OsId; name: string; kind: OsKind; status: 'ready' | 'coming-soon'; thumbnail: string }`.
+- Produces: `OsId`, `OsKind`, `AppId`, `OsRootProps = { data: PortfolioData }`, `ComingSoonId = 'windows10' | 'windows7' | 'windowsxp' | 'ubuntu' | 'samsung'`, `OsSkinMeta = { id: OsId | ComingSoonId; name: string; kind: OsKind; status: 'ready' | 'coming-soon'; thumbnail?: string }` (no thumbnail images exist yet; the gallery renders a styled placeholder tile when absent).
 - Produces (`registry.ts`): `skins: readonly OsSkinMeta[]` (metadata only, **no imports of skin code**). It includes `coming-soon` entries for `windows10`, `windows7`, `windowsxp`, `ubuntu`, `samsung`; these ids are typed as `ComingSoonId` and are not part of `OsId`. Also `getSkinMeta(id: string): OsSkinMeta | undefined`, `isReadyOsId(id: string): id is OsId`, `suggestSkinFor(detected: DetectedOs): OsSkinMeta | null`.
-- Produces (`src/os/core/loaders.ts`, separate so the banner never pulls loaders): `skinLoaders: Record<OsId, () => Promise<{ default: ComponentType<OsRootProps> }>>`.
+- (Created in **Task 16**, not here) `src/os/core/loaders.ts`, separate so the banner never pulls loaders: `skinLoaders: Record<OsId, () => Promise<{ default: ComponentType<OsRootProps> }>>`.
 
 - [ ] **Step 1: Write failing tests:** `suggestSkinFor` maps `windows11|windows10|windows → windows11`, `macos|ipad → macos`, `iphone → iphone`, and `android|samsung|linux|unknown → null` (while those skins are coming-soon). `isReadyOsId('ubuntu') === false`. All ready ids are unique.
 - [ ] **Step 2:** Run. Expected: FAIL.
@@ -435,7 +437,8 @@ it('still shows and dismisses when localStorage throws', ...);  // Review Focus 
 
 **Files:**
 - Create: `src/app/os/layout.tsx`, `src/app/os/page.tsx`, `src/app/os/[os]/page.tsx`, `src/os/core/os-host.tsx`, `src/os/core/os-switcher.tsx`, `src/os/core/back-to-classic.tsx`, `src/os/core/os-host.test.tsx`, `tests/e2e/os-routes.spec.ts`
-- Create (placeholder until Tasks 21/22/24): `src/os/skins/{windows11,macos,iphone}/index.tsx`, each exporting a default component that renders `<p>{name} coming soon</p>` + `<BackToClassic />`
+- Create: `src/os/core/loaders.ts` (`skinLoaders: Record<OsId, () => Promise<{ default: ComponentType<OsRootProps> }>>`, using dynamic `import()` per skin)
+- Create (placeholder until Tasks 21/22/24): `src/os/skins/{windows11,macos,iphone}/index.tsx`, each exporting a default component whose root element has `data-os-skin="<id>"` and renders `<p>{name} coming soon</p>` + `<BackToClassic />`. Every skin root (now and in Tasks 21/22/24) keeps the `data-os-skin` attribute.
 
 **Interfaces:**
 - Consumes: registry + loaders (Task 14), `getPortfolioData` (Task 3).
@@ -445,7 +448,7 @@ it('still shows and dismisses when localStorage throws', ...);  // Review Focus 
 - `/os` layout: `metadata.robots = { index: false, follow: true }`, full-viewport `<main>` with no site header or footer, `overflow: hidden` only on `/os/[os]`.
 - `/os` page: gallery of skin cards (thumbnail, name, Open / Coming soon), `Back to classic view`, and the disclaimer copy.
 
-- [ ] **Step 1: Write failing tests:** OsHost renders the loader then the lazy component (mock loader). e2e: `/os/windows11` has `meta[name=robots][content*=noindex]`; `/os/ubuntu` is a 404; `/os` shows the disclaimer text exactly; `/` network requests contain no chunk from `os/skins` (assert via `page.on('request')` URLs not matching `/skins/`; also confirmed by the budget in Task 11).
+- [ ] **Step 1: Write failing tests:** OsHost renders the loader then the lazy component (mock loader). e2e: `/os/windows11` has `meta[name=robots][content*=noindex]`; `/os/ubuntu` is a 404; `/os` shows the disclaimer text exactly; no JavaScript loaded on `/` contains the string `data-os-skin` (collect JS responses with `page.on('response')` and check their text), which proves no skin code ships on the classic site.
 - [ ] **Step 2:** Run. Expected: FAIL.
 - [ ] **Step 3:** Implement.
 - [ ] **Step 4:** Run + `pnpm check` + `pnpm build`. Expected: PASS.
@@ -458,7 +461,7 @@ it('still shows and dismisses when localStorage throws', ...);  // Review Focus 
 
 **Interfaces:**
 - Consumes: `PortfolioData`; `sendContact` + `ContactForm` from Task 12 (the Contact app reuses `ContactForm` from `components/site`; allow this single import and document it in AGENTS.md rule 3 as a second bridge), `formatDateRange` (Task 6).
-- Produces: `type AppDefinition = { id: AppId; title: string; icon: AppIconName; Component: ComponentType<{ data: PortfolioData; openApp: (id: AppId) => void }> }` and `apps: Record<AppId, AppDefinition>`. `terminal` is added in Task 18.
+- Produces: `type AppDefinition = { id: AppId; title: string; icon: AppIconName; Component: ComponentType<{ data: PortfolioData; openApp: (id: AppId) => void }> }` and `apps: Record<AppId, AppDefinition>`. `apps` includes a temporary `terminal` entry rendering `Terminal coming soon`; Task 18 replaces it.
 - Produces: `AppIconName` = the app ids; skins map these to their own icon art.
 - Apps style themselves only with `--os-font`, `--os-bg`, `--os-fg`, `--os-muted`, `--os-accent`, `--os-radius`, `--os-border` (declared with fallbacks in `os-tokens.css`).
 - Projects app: list → detail (in-app state), with an `Open full case study` link to `/projects/<slug>` (`target="_blank"`). Browser app: post list linking to `/blog/<slug>`, plus the empty state `No posts yet.`
@@ -595,8 +598,8 @@ it('open twice → one window, focused', ...);
 
 **Interfaces:**
 - Consumes: `apps` (Tasks 17–18).
-- Produces: `createAppStackStore()` → `{ current: AppId | null; openApp(id); goHome() }` (single app at a time; opening another replaces it).
-- Produces: `<MobileShell data skin={{ wallpaper; renderIcon(app); StatusBar: ComponentType; homeApps: AppId[]; dockApps: AppId[]; HomeIndicator: ComponentType<{ onHome(): void }>; AppHeader: ComponentType<{ title: string; onBack(): void }> }} />`.
+- Produces: `createAppStackStore()` → `{ current: string | null; openApp(id: string); goHome() }` (single app at a time; opening another replaces it).
+- Produces: `<MobileShell data skin={{ wallpaper; renderIcon(app); StatusBar: ComponentType; homeApps: AppId[]; dockApps: AppId[]; HomeIndicator: ComponentType<{ onHome(): void }>; AppHeader: ComponentType<{ title: string; onBack(): void }>; extraApps?: { id: string; title: string; icon: ReactNode; Component: ComponentType }[] }} />`. `extraApps` are skin-defined pseudo-apps appended to the home grid; the app-stack store's `current` is therefore `string | null` and `openApp(id: string)`.
 - `<DeviceFrame>`: at viewport ≥ 768px, renders children inside a centered 390×844 frame with a rounded bezel. Below that, it's full-screen. Swipe-up gesture: a pointer drag starting within 24px of the bottom edge and moving more than 80px up calls `goHome`. The `HomeIndicator` is also a button labelled `Go home`.
 - The Terminal app on mobile is in `homeApps` too; the input must not be covered by the on-screen keyboard (`scrollIntoView` on focus).
 
@@ -614,7 +617,7 @@ it('open twice → one window, focused', ...);
 
 - [ ] **Step 1: Write failing e2e** (run in both `mobile-safari` and `chromium` projects): `/os/iphone` shows the status bar time and a home grid with app labels; tap `About` → `Abu Bin Oalid` is visible; `Go home` returns; on chromium (1440px) the device frame is rendered (`data-testid="device-frame"`); the home screen has a `Settings`-style app named `Switch OS` that lists all skins and `Back to classic view`.
 - [ ] **Step 2:** Run. Expected: FAIL.
-- [ ] **Step 3:** Implement per spec §8: status bar (time left; signal/wifi/battery glyphs right — original SVGs), Dynamic Island pill (decorative, `aria-hidden`), 4-column icon grid with labels, dock with 4 apps (`about`, `projects`, `contact`, `terminal`), iOS-like large-title app header with a `‹ Back` button, home indicator bar. `Switch OS` is a pseudo-app defined inside the skin (it renders `OsSwitcher variant="list"` + `BackToClassic`). Font stack is the same as macOS.
+- [ ] **Step 3:** Implement per spec §8: status bar (time left; signal/wifi/battery glyphs right — original SVGs), Dynamic Island pill (decorative, `aria-hidden`), 4-column icon grid with labels, dock with 4 apps (`about`, `projects`, `contact`, `terminal`), iOS-like large-title app header with a `‹ Back` button, home indicator bar. `Switch OS` is a pseudo-app passed via `extraApps` (it renders `OsSwitcher variant="list"` + `BackToClassic`). Font stack is the same as macOS.
 - [ ] **Step 4:** Run + `pnpm check` + build + budget. Expected: PASS.
 - [ ] **Step 5:** Visual check on a 390×844 viewport and at desktop width.
 - [ ] **Step 6: Commit:** `feat(os): add iPhone skin`
