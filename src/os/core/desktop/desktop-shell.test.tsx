@@ -146,6 +146,18 @@ describe('DesktopShell', () => {
     expect(screen.getAllByRole('button', { name: 'task Skills' })).toHaveLength(1);
   });
 
+  it('Alt+W also closes the focused window by default (by key or by physical key)', async () => {
+    render(<DesktopShell data={data} skin={skin} />);
+    fireEvent.doubleClick(screen.getByRole('button', { name: 'About' }));
+    fireEvent.keyDown(window, { key: 'w', ctrlKey: true, altKey: true });
+    expect(dialog('About')).toBeInTheDocument();
+    fireEvent.keyDown(window, { key: 'w', altKey: true, code: 'KeyW' });
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    fireEvent.doubleClick(screen.getByRole('button', { name: 'Projects' }));
+    fireEvent.keyDown(window, { key: '∑', altKey: true, code: 'KeyW' });
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+  });
+
   it('Alt+F4 closes the focused window by default; Escape does not', async () => {
     render(<DesktopShell data={data} skin={skin} />);
     fireEvent.doubleClick(screen.getByRole('button', { name: 'About' }));

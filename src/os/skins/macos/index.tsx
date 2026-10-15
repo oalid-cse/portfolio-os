@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { BootGate } from '@/os/core/boot';
-import { DesktopShell, type DesktopSkin } from '@/os/core/desktop/desktop-shell';
+import { altW, DesktopShell, type DesktopSkin } from '@/os/core/desktop/desktop-shell';
 import type { OsRootProps } from '@/os/core/types';
 import { MacBootScreen } from './boot-screen';
 import { Dock } from './dock';
@@ -14,7 +14,8 @@ import './theme.css';
 const MENU_BAR_HEIGHT = 28;
 const DOCK_HEIGHT = 80;
 
-const cmdW = (e: KeyboardEvent) => e.metaKey && e.key.toLowerCase() === 'w';
+/** Cmd+W as on a Mac (browsers usually take it first), plus the engine's reachable Alt+W. */
+const closeShortcut = (e: KeyboardEvent) => (e.metaKey && e.key.toLowerCase() === 'w') || altW(e);
 
 export default function MacOS({ data }: OsRootProps) {
   const skin = useMemo<DesktopSkin>(
@@ -38,7 +39,7 @@ export default function MacOS({ data }: OsRootProps) {
   return (
     <div data-os-skin="macos" className="h-dvh">
       <BootGate id="macos" Screen={BootScreen}>
-        <DesktopShell data={data} skin={skin} closeShortcut={cmdW} />
+        <DesktopShell data={data} skin={skin} closeShortcut={closeShortcut} />
       </BootGate>
     </div>
   );

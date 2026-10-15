@@ -139,12 +139,12 @@ test.describe('after boot', () => {
     await expect(win.getByRole('button', { name: 'Restore' })).toBeVisible();
   });
 
-  test('Alt+F4 closes the focused window', async ({ page }) => {
+  test('Alt+W closes the focused window', async ({ page }) => {
     await dock(page).getByRole('button', { name: 'Contact' }).click();
     const win = page.getByRole('dialog', { name: 'Contact' });
     await expect(win).toBeVisible();
     await win.click({ position: { x: 200, y: 20 } });
-    await page.keyboard.press('Alt+F4');
+    await page.keyboard.press('Alt+w');
     await expect(win).toHaveCount(0);
   });
 });

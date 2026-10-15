@@ -47,6 +47,13 @@ export type DesktopShellProps = {
 export const DESKTOP_MIN_WIDTH = 768;
 
 const altF4 = (e: KeyboardEvent) => e.altKey && e.key === 'F4';
+/**
+ * Alt+W: a close shortcut browsers do not reserve (Alt+F4 and Cmd+W usually close the browser
+ * window or tab first). Matches on the physical key too, since macOS Option+W types '∑'.
+ */
+export const altW = (e: KeyboardEvent) =>
+  e.altKey && !e.ctrlKey && !e.metaKey && (e.code === 'KeyW' || e.key.toLowerCase() === 'w');
+const defaultCloseShortcut = (e: KeyboardEvent) => altF4(e) || altW(e);
 
 const subscribeResize = (onChange: () => void) => {
   window.addEventListener('resize', onChange);
@@ -58,7 +65,7 @@ const getServerWidth = () => null;
 
 const viewport = () => ({ w: window.innerWidth, h: window.innerHeight });
 
-export function DesktopShell({ data, skin, closeShortcut = altF4 }: DesktopShellProps) {
+export function DesktopShell({ data, skin, closeShortcut = defaultCloseShortcut }: DesktopShellProps) {
   const width = useSyncExternalStore(subscribeResize, getWidth, getServerWidth);
   // One store per shell instance (never a module singleton). It lives here, above the breakpoint
   // switch, so open windows survive a trip below 768px and back. Insets are read once.
