@@ -100,7 +100,7 @@ Environment variables (see `.env.example`):
 
 | Variable | Purpose |
 |---|---|
-| `NEXT_PUBLIC_SITE_URL` | Final public origin, e.g. `https://yourdomain.dev` (no trailing slash). Drives canonical URLs, sitemap, robots, OG tags |
+| `NEXT_PUBLIC_SITE_URL` | Final public origin, e.g. `https://yourdomain.dev` (no trailing slash). Drives canonical URLs, sitemap, robots, OG tags. If unset, falls back to `https://$VERCEL_PROJECT_PRODUCTION_URL` (set automatically by Vercel), then `http://localhost:3000` |
 | `RESEND_API_KEY` | Resend key for sending contact mail |
 | `CONTACT_TO_EMAIL` | Inbox that receives messages |
 

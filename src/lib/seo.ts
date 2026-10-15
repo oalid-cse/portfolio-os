@@ -2,12 +2,18 @@ import type { Metadata } from 'next';
 import type { BlogPosting, BreadcrumbList, CreativeWork, Person, ProfilePage, WithContext } from 'schema-dts';
 import type { PostFrontmatter, Profile, ProjectFrontmatter } from '@/content/types';
 
-const FALLBACK_SITE_URL = 'https://abubinoalid.dev';
+const LOCAL_SITE_URL = 'http://localhost:3000';
 const DEFAULT_TITLE = 'Abu Bin Oalid · Senior Backend Engineer';
 const MAX_DESCRIPTION = 160;
 
+/**
+ * Public origin, no trailing slash. NEXT_PUBLIC_SITE_URL wins; on Vercel the
+ * production domain (VERCEL_PROJECT_PRODUCTION_URL, host only) is next; local dev last.
+ */
 export function siteUrl(): string {
-  const raw = process.env.NEXT_PUBLIC_SITE_URL?.trim() || FALLBACK_SITE_URL;
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  const vercelHost = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
+  const raw = explicit || (vercelHost ? `https://${vercelHost}` : LOCAL_SITE_URL);
   return raw.replace(/\/+$/, '');
 }
 

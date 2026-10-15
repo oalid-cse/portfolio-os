@@ -57,11 +57,18 @@ afterEach(() => vi.unstubAllEnvs());
 describe('siteUrl', () => {
   it('uses NEXT_PUBLIC_SITE_URL without trailing slash', () => {
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://example.com/');
+    vi.stubEnv('VERCEL_PROJECT_PRODUCTION_URL', 'portfolio.vercel.app');
     expect(siteUrl()).toBe('https://example.com');
   });
-  it('falls back to the production domain', () => {
+  it('falls back to the Vercel production host', () => {
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', '');
-    expect(siteUrl()).toBe('https://abubinoalid.dev');
+    vi.stubEnv('VERCEL_PROJECT_PRODUCTION_URL', 'portfolio.vercel.app/');
+    expect(siteUrl()).toBe('https://portfolio.vercel.app');
+  });
+  it('falls back to localhost when nothing is set', () => {
+    vi.stubEnv('NEXT_PUBLIC_SITE_URL', '');
+    vi.stubEnv('VERCEL_PROJECT_PRODUCTION_URL', '');
+    expect(siteUrl()).toBe('http://localhost:3000');
   });
 });
 

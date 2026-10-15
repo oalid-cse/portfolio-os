@@ -6,7 +6,7 @@ Search the code for `TODO(owner)` to find every placeholder. Replace them, then 
 ## Profile
 - [ ] Current availability: `open` / `freelance` / `not-looking` (CV shows 6amTech role ended March 2026) — `src/content/profile.ts`
 - [ ] Hero tagline wording (demo: "I design scalable, multi-tenant backend systems with PHP & Laravel.") — `src/content/profile.ts`
-- [ ] Final domain name (demo: `https://abubinoalid.dev`) — set `NEXT_PUBLIC_SITE_URL` in Vercel
+- [ ] Final domain name (example: `https://abubinoalid.dev`) — set `NEXT_PUBLIC_SITE_URL` in Vercel (until then the Vercel production URL is used)
 
 ## Projects (`src/content/projects/*.mdx`)
 For each of 6amMart, AjaxERP, Alhisab, Rebusel, GpsFreelancer:
