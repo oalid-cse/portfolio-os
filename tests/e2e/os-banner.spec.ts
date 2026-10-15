@@ -22,6 +22,10 @@ test.describe('Mac visitor', () => {
     await page.goto('/');
     await page.getByRole('button', { name: 'Not now' }).click();
     await expect(page.getByRole('region', { name: 'OS experience suggestion' })).toHaveCount(0);
+    // `/` is ISR (stale-while-revalidate): on a reload Chrome serves cached prefetches and revalidates
+    // them in the background, which devtools never reports as finished, so 'networkidle' would never
+    // come. Routing bypasses the HTTP cache, like a visitor whose cache has expired.
+    await page.route('**/*', (route) => route.continue());
     await page.reload();
     await page.waitForLoadState('networkidle');
     await expect(page.getByRole('region', { name: 'OS experience suggestion' })).toHaveCount(0);

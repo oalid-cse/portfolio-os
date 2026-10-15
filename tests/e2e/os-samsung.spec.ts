@@ -62,13 +62,16 @@ test.describe('booted', () => {
     await expect(about.getByText('Abu Bin Oalid').first()).toBeVisible();
     const title = about.getByRole('heading', { level: 1, name: 'About' });
     await expect(title).toBeVisible();
-    const box = await title.boundingBox();
-    const screenBox = await page.getByTestId('device-screen').boundingBox();
-    if (!box || !screenBox) throw new Error('no geometry');
-    // The title sits low in the band that fills the top ~30% of the screen.
-    const titleBottom = (box.y + box.height - screenBox.y) / screenBox.height;
-    expect(titleBottom).toBeGreaterThan(0.18);
-    expect(titleBottom).toBeLessThan(0.35);
+    // The title sits low in the band that fills the top ~30% of the screen. Polled: the app
+    // screen is still sliding in when the title first becomes visible.
+    await expect(async () => {
+      const box = await title.boundingBox();
+      const screenBox = await page.getByTestId('device-screen').boundingBox();
+      if (!box || !screenBox) throw new Error('no geometry');
+      const titleBottom = (box.y + box.height - screenBox.y) / screenBox.height;
+      expect(titleBottom).toBeGreaterThan(0.18);
+      expect(titleBottom).toBeLessThan(0.35);
+    }).toPass();
     await navBar(page).getByRole('button', { name: 'Go home' }).click();
     await expect(about).toHaveCount(0);
     await expect(home(page).getByRole('button', { name: 'Skills' })).toBeVisible();
