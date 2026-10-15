@@ -5,7 +5,8 @@ export const contactSchema = z.object({
     .string()
     .trim()
     .min(2, 'Please enter your name.')
-    .max(80, 'Name must be 80 characters or fewer.'),
+    .max(80, 'Name must be 80 characters or fewer.')
+    .regex(/^[^\r\n]*$/, 'Name must be on one line.'),
   email: z.string().trim().email('Please enter a valid email.'),
   message: z
     .string()
@@ -15,6 +16,12 @@ export const contactSchema = z.object({
   /** Honeypot: real visitors never fill this in. */
   website: z.literal(''),
 });
+
+/** Email subject for a contact message; control characters are flattened so it stays one header line. */
+export function contactSubject(name: string): string {
+  const clean = name.replace(/[\u0000-\u001f\u007f]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 80);
+  return `Portfolio contact from ${clean || 'a visitor'}`;
+}
 
 export type ContactInput = z.infer<typeof contactSchema>;
 

@@ -1,6 +1,6 @@
 import 'server-only';
 import { Resend } from 'resend';
-import { contactSchema, type ContactState } from '@/lib/contact-schema';
+import { contactSchema, contactSubject, type ContactState } from '@/lib/contact-schema';
 
 export type ContactMessage = { name: string; email: string; message: string };
 export type ContactSender = (msg: ContactMessage) => Promise<void>;
@@ -51,7 +51,7 @@ export const resendSender: ContactSender = async ({ name, email, message }) => {
     from: 'onboarding@resend.dev',
     to,
     replyTo: email,
-    subject: `Portfolio contact from ${name}`,
+    subject: contactSubject(name),
     text: `From: ${name} <${email}>\n\n${message}`,
   });
   if (error) throw new Error(error.message);
