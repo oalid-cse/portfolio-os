@@ -33,6 +33,9 @@ const skin: DesktopSkin = {
       <button type="button" onClick={() => api.openApp('skills')}>
         launch skills
       </button>
+      <button type="button" onClick={() => api.toggleApp('skills')}>
+        toggle skills
+      </button>
     </nav>
   ),
   desktopIcons: ['about', 'projects', 'terminal'],
@@ -123,6 +126,24 @@ describe('DesktopShell', () => {
     fireEvent.change(input, { target: { value: 'open skills' } });
     fireEvent.keyDown(input, { key: 'Enter' });
     expect(dialog('Skills')).toBeInTheDocument();
+  });
+
+  it('toggleApp opens, minimizes the focused window, restores it, and focuses an unfocused one', () => {
+    render(<DesktopShell data={data} skin={skin} />);
+    const toggle = screen.getByRole('button', { name: 'toggle skills' });
+    fireEvent.click(toggle);
+    expect(dialog('Skills')).toBeInTheDocument();
+    fireEvent.click(toggle);
+    expect(screen.queryByRole('dialog', { name: 'Skills' })).toBeNull();
+    fireEvent.click(toggle);
+    expect(dialog('Skills')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'task Skills' })).toHaveAttribute('aria-pressed', 'true');
+    fireEvent.doubleClick(screen.getByRole('button', { name: 'About' }));
+    expect(screen.getByRole('button', { name: 'task Skills' })).toHaveAttribute('aria-pressed', 'false');
+    fireEvent.click(toggle);
+    expect(dialog('Skills')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'task Skills' })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getAllByRole('button', { name: 'task Skills' })).toHaveLength(1);
   });
 
   it('Alt+F4 closes the focused window by default; Escape does not', async () => {

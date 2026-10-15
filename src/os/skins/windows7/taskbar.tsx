@@ -3,14 +3,12 @@
 import { ChevronUp, Signal, Volume2 } from 'lucide-react';
 import { type CSSProperties, useRef, useState } from 'react';
 import type { PortfolioData } from '@/content/types';
-import { apps } from '@/os/core/apps';
+import { ALL_APP_IDS, apps } from '@/os/core/apps';
 import type { DesktopApi } from '@/os/core/desktop/desktop-shell';
+import { TrayClock } from '@/os/core/tray-clock';
 import type { AppId } from '@/os/core/types';
-import { TrayClock } from './clock';
 import { AppGem, appColor, StartOrb } from './icons';
 import { StartMenu } from './start-menu';
-
-export const PINNED: AppId[] = ['about', 'projects', 'experience', 'skills', 'resume', 'contact', 'terminal', 'browser'];
 
 const FOCUS = 'outline-none focus-visible:outline-1 focus-visible:-outline-offset-4 focus-visible:outline-white/80';
 
@@ -18,13 +16,6 @@ export function Taskbar({ api, data }: { api: DesktopApi; data: PortfolioData })
   const [startOpen, setStartOpen] = useState(false);
   const startControls = useRef<HTMLDivElement>(null);
   const startButton = useRef<HTMLButtonElement>(null);
-
-  const onTask = (id: AppId) => {
-    const win = api.windows.find((w) => w.appId === id);
-    if (!win) return api.openApp(id);
-    if (api.focusedId === win.id && win.mode !== 'minimized') return api.minimize(win.id);
-    api.focus(win.id); // also restores a minimized window
-  };
 
   const launch = (id: AppId) => {
     setStartOpen(false);
@@ -62,7 +53,7 @@ export function Taskbar({ api, data }: { api: DesktopApi; data: PortfolioData })
         </div>
 
         <ul className="flex min-w-0 items-stretch gap-0.5 py-px pl-1">
-          {PINNED.map((id) => {
+          {ALL_APP_IDS.map((id) => {
             const win = api.windows.find((w) => w.appId === id);
             const active = !!win && api.focusedId === win.id && win.mode !== 'minimized';
             const state = active ? 'active' : win ? 'running' : 'pinned';
@@ -74,7 +65,7 @@ export function Taskbar({ api, data }: { api: DesktopApi; data: PortfolioData })
                   title={apps[id].title}
                   aria-pressed={active}
                   data-state={state}
-                  onClick={() => onTask(id)}
+                  onClick={() => api.toggleApp(id)}
                   style={{ '--w7-glow': appColor(apps[id].icon) } as CSSProperties}
                   className={`w7-superbar-button relative flex h-full w-[60px] shrink-0 items-center justify-center rounded-[3px] ${FOCUS}`}
                 >
@@ -92,7 +83,7 @@ export function Taskbar({ api, data }: { api: DesktopApi; data: PortfolioData })
             <Volume2 size={15} strokeWidth={2} />
           </span>
           <span className="flex items-center px-2.5">
-            <TrayClock />
+            <TrayClock className="flex flex-col items-center justify-center text-xs leading-[1.35] tabular-nums" />
           </span>
           <span aria-hidden className="w7-show-desktop ml-1 w-[15px]" />
         </div>

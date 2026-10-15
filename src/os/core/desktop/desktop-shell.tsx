@@ -16,6 +16,8 @@ export type DesktopApi = {
   windows: WinState[];
   focusedId: string | null;
   openApp(id: AppId): void;
+  /** Taskbar behaviour: opens the app, minimizes it when it is the focused window, else focuses/restores it. */
+  toggleApp(id: AppId): void;
   focus(id: string): void;
   minimize(id: string): void;
 };
@@ -83,6 +85,16 @@ function Desktop({ data, skin, closeShortcut, store }: DesktopProps) {
   const [selected, setSelected] = useState<AppId | null>(null);
 
   const openApp = useCallback((id: AppId) => store.getState().open(id, apps[id].title), [store]);
+  const toggleApp = useCallback(
+    (id: AppId) => {
+      const { windows: current, focusedId: focused, focus, minimize } = store.getState();
+      const win = current.find((w) => w.appId === id);
+      if (!win) return openApp(id);
+      if (focused === win.id && win.mode !== 'minimized') return minimize(win.id);
+      focus(win.id); // also restores a minimized window
+    },
+    [store, openApp],
+  );
 
   // Where keyboard focus goes back to when the last window closes or minimizes: the last thing
   // focused outside any window or menu (dialogs), e.g. the desktop icon or Start button.
@@ -129,8 +141,8 @@ function Desktop({ data, skin, closeShortcut, store }: DesktopProps) {
 
   const api = useMemo<DesktopApi>(() => {
     const { focus, minimize } = store.getState();
-    return { windows, focusedId, openApp, focus, minimize };
-  }, [store, windows, focusedId, openApp]);
+    return { windows, focusedId, openApp, toggleApp, focus, minimize };
+  }, [store, windows, focusedId, openApp, toggleApp]);
 
   const actions = store.getState();
 

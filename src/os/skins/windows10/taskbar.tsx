@@ -3,14 +3,12 @@
 import { ChevronUp, MessageSquare, Search, Volume2, Wifi } from 'lucide-react';
 import { useRef, useState } from 'react';
 import type { PortfolioData } from '@/content/types';
-import { apps } from '@/os/core/apps';
+import { ALL_APP_IDS, apps } from '@/os/core/apps';
 import type { DesktopApi } from '@/os/core/desktop/desktop-shell';
+import { TrayClock } from '@/os/core/tray-clock';
 import type { AppId } from '@/os/core/types';
-import { TrayClock } from './clock';
 import { AppSquare, StartGlyph } from './icons';
 import { StartMenu } from './start-menu';
-
-export const PINNED: AppId[] = ['about', 'projects', 'experience', 'skills', 'resume', 'contact', 'terminal', 'browser'];
 
 const FOCUS = 'outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-white';
 const BAR_BUTTON = `relative flex h-full w-12 shrink-0 items-center justify-center hover:bg-(--w10-shell-hover) active:bg-(--w10-shell-pressed) ${FOCUS}`;
@@ -19,13 +17,6 @@ export function Taskbar({ api, data }: { api: DesktopApi; data: PortfolioData })
   const [startOpen, setStartOpen] = useState(false);
   const startControls = useRef<HTMLDivElement>(null);
   const startButton = useRef<HTMLButtonElement>(null);
-
-  const onTask = (id: AppId) => {
-    const win = api.windows.find((w) => w.appId === id);
-    if (!win) return api.openApp(id);
-    if (api.focusedId === win.id && win.mode !== 'minimized') return api.minimize(win.id);
-    api.focus(win.id); // also restores a minimized window
-  };
 
   const launch = (id: AppId) => {
     setStartOpen(false);
@@ -72,7 +63,7 @@ export function Taskbar({ api, data }: { api: DesktopApi; data: PortfolioData })
         </div>
 
         <ul className="flex min-w-0 items-stretch">
-          {PINNED.map((id) => {
+          {ALL_APP_IDS.map((id) => {
             const win = api.windows.find((w) => w.appId === id);
             const active = !!win && api.focusedId === win.id && win.mode !== 'minimized';
             return (
@@ -82,7 +73,7 @@ export function Taskbar({ api, data }: { api: DesktopApi; data: PortfolioData })
                   aria-label={apps[id].title}
                   title={apps[id].title}
                   aria-pressed={active}
-                  onClick={() => onTask(id)}
+                  onClick={() => api.toggleApp(id)}
                   className={`${BAR_BUTTON} ${active ? 'bg-(--w10-shell-pressed)' : ''}`}
                 >
                   <AppSquare app={apps[id].icon} />
@@ -105,7 +96,7 @@ export function Taskbar({ api, data }: { api: DesktopApi; data: PortfolioData })
             <Volume2 size={15} strokeWidth={1.5} />
           </span>
           <span className="flex items-center px-2">
-            <TrayClock />
+            <TrayClock className="flex flex-col items-center justify-center text-xs leading-[1.3] tabular-nums" />
           </span>
           <span aria-hidden className="flex w-12 items-center justify-center">
             <MessageSquare size={16} strokeWidth={1.5} />

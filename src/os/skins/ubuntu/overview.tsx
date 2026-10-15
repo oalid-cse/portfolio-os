@@ -2,11 +2,12 @@
 
 import { ChevronDown } from 'lucide-react';
 import { useEffect, useId, useRef, useState } from 'react';
-import { apps } from '@/os/core/apps';
+import { ALL_APP_IDS, apps } from '@/os/core/apps';
 import { BackToClassic } from '@/os/core/back-to-classic';
 import type { DesktopApi } from '@/os/core/desktop/desktop-shell';
+import { useDismiss } from '@/os/core/desktop/use-dismiss';
 import { OsSwitcher } from '@/os/core/os-switcher';
-import { DOCK_APPS } from './dock';
+import type { AppId } from '@/os/core/types';
 import { AppIcon } from './icons';
 import { OVERVIEW_ID, OVERVIEW_TOGGLE, useOverview } from './overview-state';
 
@@ -31,36 +32,25 @@ export function Overview({ api }: { api: DesktopApi }) {
   );
 }
 
-function OverviewPanel({ onLaunch, onClose }: { onLaunch(id: (typeof DOCK_APPS)[number]): void; onClose(): void }) {
+function OverviewPanel({ onLaunch, onClose }: { onLaunch(id: AppId): void; onClose(): void }) {
   const ref = useRef<HTMLDivElement>(null);
   const [switching, setSwitching] = useState(false);
   const switcherId = useId();
 
-  const close = useRef(onClose);
+  // Where focus returns on Escape: whatever was focused when the overview opened.
+  const opener = useRef<HTMLElement | null>(null);
   useEffect(() => {
-    close.current = onClose;
-  });
-
-  useEffect(() => {
-    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    opener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     ref.current?.querySelector<HTMLElement>('button')?.focus({ preventScroll: true });
-    const onPointerDown = (e: PointerEvent) => {
-      const target = e.target as Element;
-      if (ref.current?.contains(target) || target.closest?.(`[${OVERVIEW_TOGGLE}]`)) return;
-      close.current();
-    };
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== 'Escape') return;
-      close.current();
-      opener?.focus({ preventScroll: true });
-    };
-    document.addEventListener('pointerdown', onPointerDown);
-    document.addEventListener('keydown', onKeyDown);
-    return () => {
-      document.removeEventListener('pointerdown', onPointerDown);
-      document.removeEventListener('keydown', onKeyDown);
-    };
   }, []);
+
+  useDismiss(ref, {
+    ignore: (target) => target instanceof Element && target.closest(`[${OVERVIEW_TOGGLE}]`) !== null,
+    onClose: (reason) => {
+      onClose();
+      if (reason === 'escape') opener.current?.focus({ preventScroll: true });
+    },
+  });
 
   return (
     <div
@@ -74,7 +64,7 @@ function OverviewPanel({ onLaunch, onClose }: { onLaunch(id: (typeof DOCK_APPS)[
       className="ubu-blur ubu-overview-in fixed top-8 right-0 bottom-0 left-16 flex flex-col items-center justify-center gap-10 overflow-auto bg-(--ubu-overview) p-8"
     >
       <ul className="ubu-grid-in grid grid-cols-4 gap-x-6 gap-y-4">
-        {DOCK_APPS.map((id) => (
+        {ALL_APP_IDS.map((id) => (
           <li key={id}>
             <button
               type="button"

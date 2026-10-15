@@ -29,3 +29,6 @@ export const apps: Record<AppId, AppDefinition> = {
   terminal: { id: 'terminal', title: 'Terminal', icon: 'terminal', Component: TerminalApp },
   browser: { id: 'browser', title: 'Browser', icon: 'browser', Component: BrowserApp },
 };
+
+/** Every app id, in the order of `apps` (the order skins list "all apps" in). */
+export const ALL_APP_IDS = Object.keys(apps) as AppId[];

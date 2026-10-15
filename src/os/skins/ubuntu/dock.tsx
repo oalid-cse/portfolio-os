@@ -1,12 +1,10 @@
 'use client';
 
-import { apps } from '@/os/core/apps';
+import { ALL_APP_IDS, apps } from '@/os/core/apps';
 import type { DesktopApi } from '@/os/core/desktop/desktop-shell';
 import type { AppId } from '@/os/core/types';
 import { AppIcon, ShowAppsGlyph } from './icons';
 import { OVERVIEW_ID, OVERVIEW_TOGGLE, useOverview } from './overview-state';
-
-export const DOCK_APPS: AppId[] = ['about', 'projects', 'experience', 'skills', 'resume', 'contact', 'terminal', 'browser'];
 
 const TILE =
   'group relative flex size-12 items-center justify-center rounded-xl outline-none transition-colors duration-100 hover:bg-(--ubu-dock-hover) focus-visible:bg-(--ubu-dock-hover) focus-visible:ring-2 focus-visible:ring-(--ubu-orange)';
@@ -39,7 +37,7 @@ export function Dock({ api }: { api: DesktopApi }) {
       {/* Scrolls when the window is too short for every app. Only then: scrolling clips the
           tooltips, which overhang the dock to the right. */}
       <ul className="flex min-h-0 flex-col items-center gap-1.5 [scrollbar-width:none] [@media(max-height:600px)]:overflow-y-auto [@media(max-height:600px)]:px-2">
-        {DOCK_APPS.map((id) => {
+        {ALL_APP_IDS.map((id) => {
           const running = api.windows.some((w) => w.appId === id);
           const focused = api.windows.some((w) => w.appId === id && w.id === api.focusedId);
           const { title, icon } = apps[id];

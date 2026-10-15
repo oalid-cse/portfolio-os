@@ -4,15 +4,15 @@ import { ChevronDown, ChevronRight, Power } from 'lucide-react';
 import Image from 'next/image';
 import { type RefObject, useEffect, useId, useRef, useState } from 'react';
 import type { PortfolioData } from '@/content/types';
-import { apps } from '@/os/core/apps';
+import { ALL_APP_IDS, apps } from '@/os/core/apps';
 import { BackToClassic } from '@/os/core/back-to-classic';
+import { useDismiss } from '@/os/core/desktop/use-dismiss';
 import { OsSwitcher } from '@/os/core/os-switcher';
 import type { AppId } from '@/os/core/types';
 import { AppTile } from './icons';
 
 export type StartMenuProps = {
   data: PortfolioData;
-  pinned: AppId[];
   onLaunch(id: AppId): void;
   /** `restoreFocus` is true when the menu was dismissed from the keyboard. */
   onClose(restoreFocus: boolean): void;
@@ -23,38 +23,17 @@ export type StartMenuProps = {
 const ROW =
   'flex items-center gap-2 rounded-[5px] px-3 py-2 text-sm outline-none transition-colors duration-100 hover:bg-(--w11-hover) active:bg-(--w11-pressed) focus-visible:ring-2 focus-visible:ring-(--os-fg)';
 
-export function StartMenu({ data, pinned, onLaunch, onClose, ignoreRef }: StartMenuProps) {
+export function StartMenu({ data, onLaunch, onClose, ignoreRef }: StartMenuProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [switching, setSwitching] = useState(false);
   const switcherId = useId();
   const { profile } = data;
 
-  // Latest onClose without re-subscribing (the parent passes a fresh closure each render).
-  const close = useRef(onClose);
-  useEffect(() => {
-    close.current = onClose;
-  });
-
   useEffect(() => {
     ref.current?.querySelector<HTMLElement>('button')?.focus({ preventScroll: true });
   }, []);
 
-  useEffect(() => {
-    const onPointerDown = (e: PointerEvent) => {
-      const target = e.target as Node;
-      if (ref.current?.contains(target) || ignoreRef.current?.contains(target)) return;
-      close.current(false);
-    };
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close.current(true);
-    };
-    document.addEventListener('pointerdown', onPointerDown);
-    document.addEventListener('keydown', onKeyDown);
-    return () => {
-      document.removeEventListener('pointerdown', onPointerDown);
-      document.removeEventListener('keydown', onKeyDown);
-    };
-  }, [ignoreRef]);
+  useDismiss(ref, { ignoreRef, onClose: (reason) => onClose(reason === 'escape') });
 
   return (
     <div
@@ -66,7 +45,7 @@ export function StartMenu({ data, pinned, onLaunch, onClose, ignoreRef }: StartM
       <div className="min-h-0 flex-1 overflow-y-auto px-8 pt-7 pb-6">
         <h2 className="mb-3 px-3 text-sm font-semibold">Pinned</h2>
         <ul className="grid grid-cols-6 gap-y-2">
-          {pinned.map((id) => (
+          {ALL_APP_IDS.map((id) => (
             <li key={id}>
               <button
                 type="button"

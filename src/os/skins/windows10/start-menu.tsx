@@ -4,8 +4,9 @@ import { MonitorSmartphone, Power } from 'lucide-react';
 import Image from 'next/image';
 import { type RefObject, useEffect, useId, useRef, useState } from 'react';
 import type { PortfolioData } from '@/content/types';
-import { apps } from '@/os/core/apps';
+import { ALL_APP_IDS, apps } from '@/os/core/apps';
 import { BackToClassic } from '@/os/core/back-to-classic';
+import { useDismiss } from '@/os/core/desktop/use-dismiss';
 import { OsSwitcher } from '@/os/core/os-switcher';
 import type { AppId } from '@/os/core/types';
 import { AppSquare, appColor, GLYPHS } from './icons';
@@ -18,9 +19,6 @@ export type StartMenuProps = {
   /** Clicks inside this element (Start button and search box) are not "outside" clicks. */
   ignoreRef: RefObject<HTMLElement | null>;
 };
-
-/** Tiles in reading order; About is a wide tile so the group has a Windows-like rhythm. */
-const TILES: AppId[] = ['about', 'projects', 'experience', 'skills', 'resume', 'contact', 'terminal', 'browser'];
 
 const FOCUS = 'outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-white';
 const RAIL_ROW = `flex h-12 w-full items-center overflow-hidden whitespace-nowrap text-sm hover:bg-(--w10-shell-hover) active:bg-(--w10-shell-pressed) ${FOCUS}`;
@@ -42,34 +40,13 @@ export function StartMenu({ data, onLaunch, onClose, ignoreRef }: StartMenuProps
   const switcherId = useId();
   const { profile } = data;
 
-  // Latest onClose without re-subscribing (the parent passes a fresh closure each render).
-  const close = useRef(onClose);
-  useEffect(() => {
-    close.current = onClose;
-  });
-
   useEffect(() => {
     ref.current?.querySelector<HTMLElement>('[data-autofocus]')?.focus({ preventScroll: true });
   }, []);
 
-  useEffect(() => {
-    const onPointerDown = (e: PointerEvent) => {
-      const target = e.target as Node;
-      if (ref.current?.contains(target) || ignoreRef.current?.contains(target)) return;
-      close.current(false);
-    };
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close.current(true);
-    };
-    document.addEventListener('pointerdown', onPointerDown);
-    document.addEventListener('keydown', onKeyDown);
-    return () => {
-      document.removeEventListener('pointerdown', onPointerDown);
-      document.removeEventListener('keydown', onKeyDown);
-    };
-  }, [ignoreRef]);
+  useDismiss(ref, { ignoreRef, onClose: (reason) => onClose(reason === 'escape') });
 
-  const groups = groupByLetter(TILES);
+  const groups = groupByLetter(ALL_APP_IDS);
 
   return (
     <div
@@ -146,8 +123,9 @@ export function StartMenu({ data, onLaunch, onClose, ignoreRef }: StartMenuProps
         <h2 id="w10-tiles-title" className="mb-2 px-0.5 text-sm">
           Portfolio
         </h2>
+        {/* Tiles in reading order; About is a wide tile so the group has a Windows-like rhythm. */}
         <ul aria-label="Tiles" className="grid w-max grid-cols-[repeat(3,96px)] gap-1">
-          {TILES.map((id) => {
+          {ALL_APP_IDS.map((id) => {
             const Glyph = GLYPHS[apps[id].icon];
             return (
               <li key={id} className={id === 'about' ? 'col-span-2' : undefined}>

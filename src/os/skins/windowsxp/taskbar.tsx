@@ -5,8 +5,8 @@ import { useRef, useState } from 'react';
 import type { PortfolioData } from '@/content/types';
 import { apps } from '@/os/core/apps';
 import type { DesktopApi } from '@/os/core/desktop/desktop-shell';
+import { TrayClock } from '@/os/core/tray-clock';
 import type { AppId } from '@/os/core/types';
-import { TrayClock } from './clock';
 import { AppTile, HillGlyph } from './icons';
 import { StartMenu } from './start-menu';
 
@@ -18,11 +18,6 @@ export function Taskbar({ api, data }: { api: DesktopApi; data: PortfolioData })
   const [startOpen, setStartOpen] = useState(false);
   const startControls = useRef<HTMLDivElement>(null);
   const startButton = useRef<HTMLButtonElement>(null);
-
-  const onTask = (id: string, minimized: boolean) => {
-    if (api.focusedId === id && !minimized) return api.minimize(id);
-    api.focus(id); // also restores a minimized window
-  };
 
   const launch = (id: AppId) => {
     setStartOpen(false);
@@ -87,7 +82,7 @@ export function Taskbar({ api, data }: { api: DesktopApi; data: PortfolioData })
                   type="button"
                   aria-pressed={active}
                   data-active={active || undefined}
-                  onClick={() => onTask(win.id, minimized)}
+                  onClick={() => api.toggleApp(win.appId)}
                   className={`xp-task flex h-[24px] w-full min-w-0 items-center gap-1.5 rounded-[3px] px-2 text-left text-[11px] ${FOCUS}`}
                 >
                   <AppTile app={apps[win.appId].icon} size="xs" />
@@ -103,7 +98,7 @@ export function Taskbar({ api, data }: { api: DesktopApi; data: PortfolioData })
             <ShieldCheck size={14} strokeWidth={2.25} />
             <Volume2 size={14} strokeWidth={2.25} />
           </span>
-          <TrayClock />
+          <TrayClock variant="inline" className="text-[11px] whitespace-nowrap tabular-nums" placeholderClassName="w-12" />
         </div>
       </nav>
     </div>

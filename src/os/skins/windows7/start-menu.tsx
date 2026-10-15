@@ -4,8 +4,9 @@ import { ChevronRight, Power } from 'lucide-react';
 import Image from 'next/image';
 import { type RefObject, useEffect, useId, useRef, useState } from 'react';
 import type { PortfolioData } from '@/content/types';
-import { apps } from '@/os/core/apps';
+import { ALL_APP_IDS, apps } from '@/os/core/apps';
 import { BackToClassic } from '@/os/core/back-to-classic';
+import { useDismiss } from '@/os/core/desktop/use-dismiss';
 import { OsSwitcher } from '@/os/core/os-switcher';
 import type { AppId } from '@/os/core/types';
 import { AppGem } from './icons';
@@ -19,8 +20,6 @@ export type StartMenuProps = {
   ignoreRef: RefObject<HTMLElement | null>;
 };
 
-const PROGRAMS: AppId[] = ['about', 'projects', 'experience', 'skills', 'resume', 'contact', 'terminal', 'browser'];
-
 const FOCUS = 'outline-none focus-visible:outline-1 focus-visible:outline-offset-0';
 
 export function StartMenu({ data, onLaunch, onClose, ignoreRef }: StartMenuProps) {
@@ -29,32 +28,11 @@ export function StartMenu({ data, onLaunch, onClose, ignoreRef }: StartMenuProps
   const switcherId = useId();
   const { profile } = data;
 
-  // Latest onClose without re-subscribing (the parent passes a fresh closure each render).
-  const close = useRef(onClose);
-  useEffect(() => {
-    close.current = onClose;
-  });
-
   useEffect(() => {
     ref.current?.querySelector<HTMLElement>('[data-autofocus]')?.focus({ preventScroll: true });
   }, []);
 
-  useEffect(() => {
-    const onPointerDown = (e: PointerEvent) => {
-      const target = e.target as Node;
-      if (ref.current?.contains(target) || ignoreRef.current?.contains(target)) return;
-      close.current(false);
-    };
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close.current(true);
-    };
-    document.addEventListener('pointerdown', onPointerDown);
-    document.addEventListener('keydown', onKeyDown);
-    return () => {
-      document.removeEventListener('pointerdown', onPointerDown);
-      document.removeEventListener('keydown', onKeyDown);
-    };
-  }, [ignoreRef]);
+  useDismiss(ref, { ignoreRef, onClose: (reason) => onClose(reason === 'escape') });
 
   return (
     <div
@@ -67,7 +45,7 @@ export function StartMenu({ data, onLaunch, onClose, ignoreRef }: StartMenuProps
 
       <div className="w7-programs my-2 ml-2 flex min-h-0 w-[250px] shrink-0 flex-col rounded-[4px]">
         <ul aria-label="All apps" className="min-h-0 flex-1 overflow-y-auto p-1.5 [scrollbar-width:thin]">
-          {PROGRAMS.map((id, i) => (
+          {ALL_APP_IDS.map((id, i) => (
             <li key={id}>
               <button
                 type="button"

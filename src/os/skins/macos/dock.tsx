@@ -2,13 +2,11 @@
 
 import { type MotionValue, motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { useRef } from 'react';
-import { apps } from '@/os/core/apps';
+import { ALL_APP_IDS, apps } from '@/os/core/apps';
 import type { DesktopApi } from '@/os/core/desktop/desktop-shell';
 import { useReducedMotion } from '@/os/core/desktop/use-reduced-motion';
 import type { AppId } from '@/os/core/types';
 import { AppIcon } from './icons';
-
-export const DOCK_APPS: AppId[] = ['about', 'projects', 'experience', 'skills', 'resume', 'contact', 'terminal', 'browser'];
 
 const BASE = 50;
 const PEAK = 80;
@@ -85,7 +83,7 @@ export function Dock({ api }: { api: DesktopApi }) {
         className="mac-vibrancy rounded-[22px] border border-(--mac-dock-stroke) bg-(--mac-dock) px-2 pt-1.5 pb-2 shadow-[0_10px_30px_rgb(0_0_0/0.3)]"
       >
         <ul className="flex h-[50px] items-end gap-2">
-          {DOCK_APPS.map((id) => (
+          {ALL_APP_IDS.map((id) => (
             <DockItem
               key={id}
               id={id}

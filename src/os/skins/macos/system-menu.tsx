@@ -3,6 +3,7 @@
 import { ChevronRight } from 'lucide-react';
 import { type KeyboardEvent as ReactKeyboardEvent, type RefObject, useEffect, useId, useRef, useState } from 'react';
 import { BackToClassic } from '@/os/core/back-to-classic';
+import { useDismiss } from '@/os/core/desktop/use-dismiss';
 import { OsSwitcher } from '@/os/core/os-switcher';
 
 export type SystemMenuProps = {
@@ -25,32 +26,11 @@ export function SystemMenu({ onAbout, onClose, ignoreRef }: SystemMenuProps) {
   const [switching, setSwitching] = useState(false);
   const submenuId = useId();
 
-  // Latest onClose without re-subscribing (the parent passes a fresh closure each render).
-  const close = useRef(onClose);
-  useEffect(() => {
-    close.current = onClose;
-  });
-
   useEffect(() => {
     ref.current?.querySelector<HTMLElement>('button')?.focus({ preventScroll: true });
   }, []);
 
-  useEffect(() => {
-    const onPointerDown = (e: PointerEvent) => {
-      const target = e.target as Node;
-      if (ref.current?.contains(target) || ignoreRef.current?.contains(target)) return;
-      close.current(false);
-    };
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close.current(true);
-    };
-    document.addEventListener('pointerdown', onPointerDown);
-    document.addEventListener('keydown', onKeyDown);
-    return () => {
-      document.removeEventListener('pointerdown', onPointerDown);
-      document.removeEventListener('keydown', onKeyDown);
-    };
-  }, [ignoreRef]);
+  useDismiss(ref, { ignoreRef, onClose: (reason) => onClose(reason === 'escape') });
 
   // Arrow keys step through the items (submenu links included while it is open), wrapping.
   const onArrowKey = (e: ReactKeyboardEvent<HTMLDivElement>) => {
