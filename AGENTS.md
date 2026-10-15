@@ -8,7 +8,7 @@ This file is the single source of truth. Tool-specific files (`CLAUDE.md`, `.git
 Personal portfolio of **Abu Bin Oalid**, Senior Backend Engineer (PHP/Laravel).
 
 - **Default experience:** a fast, SEO-optimized classic portfolio (dark technical theme + light minimal theme).
-- **Optional "OS experiences":** the same content inside recreated OS UIs at `/os/<id>` (v1: `windows11`, `macos`, `iphone`).
+- **Optional "OS experiences":** the same content inside recreated OS UIs at `/os/<id>` (`windows11`, `macos`, `iphone`, `windows10`, `windows7`, `windowsxp`, `ubuntu`, `samsung`).
 - The visitor's OS is detected **client-side after hydration** and a matching OS experience is *suggested* via a dismissible banner. Never auto-redirect.
 
 Full design: `docs/superpowers/specs/2026-10-15-os-portfolio-design.md`
@@ -25,9 +25,10 @@ pnpm dev            # dev server at http://localhost:3000
 pnpm build          # production build (must pass before any PR)
 pnpm start          # serve production build
 pnpm lint           # ESLint
-pnpm typecheck      # tsc --noEmit
+pnpm typecheck      # next typegen && tsc --noEmit
 pnpm test           # Vitest unit + component tests
 pnpm test:e2e       # Playwright (builds + starts the app)
+pnpm budget         # first-load JS gzip budget for / (run after pnpm build)
 pnpm check          # lint + typecheck + test (run before committing)
 ```
 
@@ -39,7 +40,7 @@ pnpm check          # lint + typecheck + test (run before committing)
 4. **Skins are isolated.** `src/os/skins/<id>/**` imports only from `src/os/core/**`, `src/components/ui/**`, and `src/lib/**`. Skins never import other skins. Each skin is lazy-loaded so it becomes its own chunk.
 5. **OS apps are shared.** App bodies (About, Projects, Terminal, …) live in `src/os/core/apps/` and receive data via props (`PortfolioData`). Skins style them with CSS variables (`--os-*`) and provide window/screen chrome; they do not re-implement app content.
 6. **SEO surface = classic site only.** `/os/*` is `noindex` (layout metadata + `robots.ts` disallow) and excluded from `sitemap.ts`. Server HTML must be identical for every visitor. OS detection runs only in `useEffect`.
-7. **Adding a new OS skin** = new folder `src/os/skins/<id>/` + one entry in `src/os/core/registry.ts` (+ add the id to `OsId`). No changes to content or classic site.
+7. **Adding a new OS skin** = add the id to `OsId` (`types.ts`), an entry in `registry.ts` (plus the detection suggestion map if relevant), a lazy import in `loaders.ts`, and a new folder `src/os/skins/<id>/` (root `data-os-skin="<id>"`, `--os-*` tokens, assets + `CREDITS.md`, an e2e spec). No changes to content or classic site. Full recipe in `README.md`.
 
 ## Directory map
 
@@ -51,7 +52,7 @@ src/lib/               content.ts, seo.ts, os-detect.ts, utils.ts
 src/components/site/   classic-site sections
 src/components/ui/     shared primitives
 src/components/mdx/    MDX component map
-src/os/core/           types, registry, apps/, desktop/ (window engine), mobile/ (app-stack engine)
+src/os/core/           types, registry, loaders, apps/, desktop/ (window engine), mobile/ (app-stack engine)
 src/os/skins/<id>/     per-OS chrome & theme
 tests/e2e/             Playwright specs
 ```
