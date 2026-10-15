@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { portfolioFixture as data } from '../__fixtures__/portfolio-data';
 import { apps } from './index';
+import { ScreenTitleContext } from './app-heading';
 
 afterEach(cleanup);
 
@@ -77,5 +78,47 @@ describe('shared apps', () => {
       posts: [{ slug: 'hi', title: 'Hi', summary: 's', publishedAt: '2026-01-02', tags: [] }],
     });
     expect(screen.getByRole('link', { name: 'Hi' })).toHaveAttribute('href', '/blog/hi');
+  });
+
+  it('Experience nests Education under the app title: one h1, Education an h2, schools h3', () => {
+    renderApp('experience');
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
+    expect(screen.getByRole('heading', { level: 2, name: 'Education' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 3, name: 'Example University' })).toBeInTheDocument();
+  });
+
+  it('Projects detail labels its links in title case', () => {
+    renderApp('projects');
+    fireEvent.click(screen.getByRole('button', { name: /Alhisab/ }));
+    expect(screen.getByRole('link', { name: 'Live' })).toHaveAttribute('href', 'https://example.com/alhisab');
+  });
+
+  it('Experience and Skills can be scrolled with the keyboard (no other focusable content)', () => {
+    for (const id of ['experience', 'skills', 'about'] as const) {
+      const { container, unmount } = renderApp(id);
+      expect(container.querySelector('.os-app')).toHaveAttribute('tabindex', '0');
+      unmount();
+    }
+  });
+
+  it('under a screen title (mobile large title), app headings start at h2', () => {
+    const inScreen = (id: keyof typeof apps) => {
+      const { Component } = apps[id];
+      return render(
+        <ScreenTitleContext value>
+          <Component data={data} openApp={vi.fn()} />
+        </ScreenTitleContext>,
+      );
+    };
+    inScreen('about');
+    expect(screen.getByRole('heading', { level: 2, name: 'Abu Bin Oalid' })).toBeInTheDocument();
+    cleanup();
+    inScreen('browser');
+    expect(screen.getByRole('heading', { level: 2, name: 'Blog' })).toBeInTheDocument();
+    cleanup();
+    inScreen('projects');
+    fireEvent.click(screen.getByRole('button', { name: /Alhisab/ }));
+    expect(screen.queryByRole('heading', { level: 1 })).toBeNull();
+    expect(screen.getByRole('heading', { level: 2, name: 'Alhisab' })).toBeInTheDocument();
   });
 });

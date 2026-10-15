@@ -4,6 +4,7 @@ import { renderToString } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { DetectedOs } from '@/lib/os-detect';
 import { OsSuggestBanner } from './os-suggest-banner';
+import { MAIN_CONTENT_ID } from './skip-link';
 
 const detectAs = (os: DetectedOs) => () => Promise.resolve(os);
 
@@ -68,5 +69,19 @@ describe('OsSuggestBanner', () => {
     expect(screen.getByRole('region')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Not now' }));
     expect(screen.queryByRole('region')).toBeNull();
+  });
+
+  it('Not now sends focus to the main content instead of dropping it to <body>', async () => {
+    const main = document.createElement('main');
+    main.id = MAIN_CONTENT_ID;
+    main.tabIndex = -1;
+    document.body.append(main);
+    try {
+      await mount('macos');
+      await userEvent.click(screen.getByRole('button', { name: 'Not now' }));
+      expect(main).toHaveFocus();
+    } finally {
+      main.remove();
+    }
   });
 });

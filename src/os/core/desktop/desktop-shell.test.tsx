@@ -134,6 +134,32 @@ describe('DesktopShell', () => {
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
   });
 
+  it('closing the last window returns focus to what opened it', async () => {
+    render(<DesktopShell data={data} skin={skin} />);
+    const icon = screen.getByRole('button', { name: 'About' });
+    icon.focus();
+    fireEvent.keyDown(icon, { key: 'Enter' });
+    await waitFor(() => expect(dialog('About')).toHaveFocus());
+    fireEvent.keyDown(window, { key: 'F4', altKey: true });
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    expect(icon).toHaveFocus();
+  });
+
+  it('does not move focus on mount', () => {
+    render(<DesktopShell data={data} skin={skin} />);
+    expect(document.body).toHaveFocus();
+  });
+
+  it('closing a window whose opener is gone falls back to the first desktop icon', async () => {
+    render(<DesktopShell data={data} skin={skin} />);
+    document.body.focus();
+    fireEvent.click(screen.getByRole('button', { name: 'launch skills' }));
+    await waitFor(() => expect(dialog('Skills')).toHaveFocus());
+    fireEvent.keyDown(window, { key: 'F4', altKey: true });
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    expect(screen.getByRole('button', { name: 'About' })).toHaveFocus();
+  });
+
   it('closeShortcut prop replaces the default', async () => {
     render(<DesktopShell data={data} skin={skin} closeShortcut={(e) => e.metaKey && e.key === 'w'} />);
     fireEvent.doubleClick(screen.getByRole('button', { name: 'About' }));

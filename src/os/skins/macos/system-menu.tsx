@@ -1,7 +1,7 @@
 'use client';
 
 import { ChevronRight } from 'lucide-react';
-import { type RefObject, useEffect, useId, useRef, useState } from 'react';
+import { type KeyboardEvent as ReactKeyboardEvent, type RefObject, useEffect, useId, useRef, useState } from 'react';
 import { BackToClassic } from '@/os/core/back-to-classic';
 import { OsSwitcher } from '@/os/core/os-switcher';
 
@@ -52,8 +52,20 @@ export function SystemMenu({ onAbout, onClose, ignoreRef }: SystemMenuProps) {
     };
   }, [ignoreRef]);
 
+  // Arrow keys step through the items (submenu links included while it is open), wrapping.
+  const onArrowKey = (e: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+    const items = [...e.currentTarget.querySelectorAll<HTMLElement>('button, a[href]')];
+    if (items.length === 0) return;
+    e.preventDefault();
+    const at = items.indexOf(document.activeElement as HTMLElement);
+    const step = e.key === 'ArrowDown' ? 1 : -1;
+    const next = at === -1 ? (step === 1 ? 0 : items.length - 1) : (at + step + items.length) % items.length;
+    items[next]?.focus();
+  };
+
   return (
-    <div ref={ref} role="group" aria-label="System menu" className={`absolute top-full left-0 mt-px min-w-60 ${PANEL}`}>
+    <div ref={ref} role="group" aria-label="System menu" onKeyDown={onArrowKey} className={`absolute top-full left-0 mt-px min-w-60 ${PANEL}`}>
       <button type="button" className={ITEM} onClick={onAbout} onPointerEnter={() => setSwitching(false)}>
         About this portfolio
       </button>

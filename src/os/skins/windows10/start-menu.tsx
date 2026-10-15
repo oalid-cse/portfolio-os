@@ -100,7 +100,7 @@ export function StartMenu({ data, onLaunch, onClose, ignoreRef }: StartMenuProps
         <button
           type="button"
           aria-expanded={switching}
-          aria-controls={switcherId}
+          aria-controls={switching ? switcherId : undefined}
           onClick={() => setSwitching((s) => !s)}
           className={RAIL_ROW}
         >

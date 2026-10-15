@@ -1,13 +1,12 @@
+/* Loaded by /resume only, but Next keeps the stylesheet after client-side navigation, so every
+   rule is scoped to a document that is showing the resume. */
 @media print {
-  header,
-  footer,
-  .bg-grid,
-  [aria-label^="Switch to"] {
+  body:has(.resume) [data-site-chrome] {
     display: none !important;
   }
 
-  html,
-  body {
+  html:has(.resume),
+  body:has(.resume) {
     background: #fff !important;
     color: #000 !important;
   }

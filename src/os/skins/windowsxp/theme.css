@@ -17,7 +17,7 @@
   --xp-frame-edge-unfocused: #6b84c8;
   --xp-title-fg: #ffffff;
   --xp-title-shadow: #0c1a73;
-  --xp-title-fg-unfocused: #dce6fa;
+  --xp-title-fg-unfocused: #eef3fd;
   --xp-window-shadow: 2px 3px 10px rgb(0 0 0 / 0.35);
 
   /* Caption buttons */
@@ -99,14 +99,18 @@
 [data-os-skin='windowsxp'] .xp-titlebar {
   border-radius: 7px 7px 0 0;
   color: var(--xp-title-fg-unfocused);
+  /* A shade deeper than the original so the pale title keeps >= 3:1 across the text band. */
   background: linear-gradient(
     to bottom,
-    #a9c1f3 0%,
-    #93b1ef 10%,
-    #7f9fe6 45%,
-    #87a7ea 85%,
-    #7894db 100%
+    #98b0e8 0%,
+    #7593da 10%,
+    #5878cb 45%,
+    #5c7ccd 85%,
+    #5472c2 100%
   );
+}
+[data-os-skin='windowsxp'] .xp-titlebar:not([data-focused]) .xp-title {
+  text-shadow: 1px 1px 0 rgb(12 26 115 / 0.45);
 }
 [data-os-skin='windowsxp'] .xp-titlebar[data-focused] {
   color: var(--xp-title-fg);

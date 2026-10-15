@@ -8,7 +8,7 @@ import type { DesktopApi } from '@/os/core/desktop/desktop-shell';
 import { OsSwitcher } from '@/os/core/os-switcher';
 import { DOCK_APPS } from './dock';
 import { AppIcon } from './icons';
-import { OVERVIEW_TOGGLE, useOverview } from './overview-state';
+import { OVERVIEW_ID, OVERVIEW_TOGGLE, useOverview } from './overview-state';
 
 const PILL =
   'flex h-9 items-center gap-2 rounded-full bg-(--ubu-button) px-4 text-[14px] font-medium text-(--os-fg) outline-none transition-colors hover:bg-(--ubu-button-hover) focus-visible:ring-2 focus-visible:ring-(--ubu-orange)';
@@ -65,6 +65,7 @@ function OverviewPanel({ onLaunch, onClose }: { onLaunch(id: (typeof DOCK_APPS)[
   return (
     <div
       ref={ref}
+      id={OVERVIEW_ID}
       role="group"
       aria-label="Activities overview"
       onPointerDown={(e) => {

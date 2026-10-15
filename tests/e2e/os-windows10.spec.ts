@@ -67,8 +67,13 @@ test.describe('after boot', () => {
     await expect(menu).toContainText('Abu Bin Oalid');
     await expect(menu.getByRole('link', { name: 'Back to classic view' })).toHaveAttribute('href', '/');
 
-    await menu.getByRole('button', { name: 'Switch OS' }).click();
+    const switchOs = menu.getByRole('button', { name: 'Switch OS' });
+    // aria-controls only names the switcher while it exists.
+    await expect(switchOs).not.toHaveAttribute('aria-controls');
+    await switchOs.click();
     const nav = page.getByRole('navigation', { name: 'Switch OS version' });
+    const switcherId = await switchOs.getAttribute('aria-controls');
+    await expect(page.locator(`[id="${switcherId}"]`)).toContainText('Windows 11');
     await expect(nav.getByRole('link', { name: 'Windows 10' })).toHaveAttribute('aria-current', 'page');
     await expect(nav.getByRole('link', { name: 'Windows 11' })).toHaveAttribute('href', '/os/windows11');
 

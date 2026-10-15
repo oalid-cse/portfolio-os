@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { detectOs, osDisplayName, readDetectInput, type DetectedOs } from '@/lib/os-detect';
 import { safeStorage } from '@/lib/safe-storage';
 import { suggestSkinFor } from '@/os/core/registry';
+import { MAIN_CONTENT_ID } from './skip-link';
 
 const DISMISS_KEY = 'os-suggest-dismissed';
 
@@ -36,6 +37,8 @@ export function OsSuggestBanner({ detect = defaultDetect }: { detect?: () => Pro
   const dismiss = () => {
     safeStorage.set(DISMISS_KEY, '1');
     setSuggestion(null);
+    // The focused button is about to unmount; keep keyboard focus in the page, not on <body>.
+    document.getElementById(MAIN_CONTENT_ID)?.focus({ preventScroll: true });
   };
 
   return (

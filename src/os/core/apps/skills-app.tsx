@@ -2,7 +2,8 @@ import type { AppProps } from './app-props';
 
 export function SkillsApp({ data }: AppProps) {
   return (
-    <div className="os-app os-stack">
+    // Focusable so its content can be scrolled from the keyboard: it has no links or buttons.
+    <div className="os-app os-stack" tabIndex={0}>
       <h1 className="os-app-title">Skills</h1>
       {data.skills.map((group) => (
         <section key={group.id} className="os-stack" style={{ gap: '0.5rem' }}>

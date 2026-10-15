@@ -68,12 +68,20 @@ describe('BootGate', () => {
     expect(screen.queryByText('Booting test OS')).toBeNull();
   });
 
-  it('a key press skips the boot screen', () => {
+  it.each(['Enter', 'Escape', ' '])('%j skips the boot screen', (key) => {
     renderGate();
-    fireEvent.keyDown(window, { key: 'Enter' });
+    fireEvent.keyDown(window, { key });
     expect(window.sessionStorage.getItem(KEY)).toBe('1');
     act(() => vi.advanceTimersByTime(1000));
     expect(screen.queryByText('Booting test OS')).toBeNull();
+  });
+
+  it('Tab and modifier keys do not skip the boot screen', () => {
+    renderGate();
+    for (const key of ['Tab', 'Shift', 'Control', 'Alt', 'Meta', 'CapsLock']) fireEvent.keyDown(window, { key });
+    fireEvent.keyDown(window, { key: 'Tab', shiftKey: true });
+    expect(window.sessionStorage.getItem(KEY)).toBeNull();
+    expect(screen.getByText('Booting test OS')).toBeInTheDocument();
   });
 
   it('caps the duration at 1500ms', () => {

@@ -18,6 +18,8 @@ test('mobile menu closes on Escape', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'Open menu' }).click();
   await expect(page.getByRole('navigation', { name: 'Mobile' })).toBeVisible();
+  await page.getByRole('navigation', { name: 'Mobile' }).getByRole('link', { name: 'Projects' }).focus();
   await page.keyboard.press('Escape');
   await expect(page.getByRole('navigation', { name: 'Mobile' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Open menu' })).toBeFocused();
 });

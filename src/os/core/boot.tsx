@@ -7,6 +7,7 @@ import type { OsId } from './types';
 
 export const MAX_BOOT_MS = 1500;
 const FADE_MS = 300;
+const SKIP_KEYS = new Set(['Enter', 'Escape', ' ']);
 
 export type BootGateProps = {
   id: OsId;
@@ -24,7 +25,7 @@ const noSubscribe = () => () => {};
 
 /**
  * Shows a skin's boot screen once per session. Skipped entirely with reduced motion or when
- * `sessionStorage['os-booted-<id>']` is set; a click or any key skips it early.
+ * `sessionStorage['os-booted-<id>']` is set; a click, Enter, Escape or Space skips it early.
  */
 export function BootGate({ id, Screen, durationMs = 1200, children }: BootGateProps) {
   const reducedMotion = useReducedMotion();
@@ -45,10 +46,14 @@ export function BootGate({ id, Screen, durationMs = 1200, children }: BootGatePr
   useEffect(() => {
     if (skip !== false || phase !== 'booting') return;
     const timer = window.setTimeout(finish, Math.min(durationMs, MAX_BOOT_MS));
-    window.addEventListener('keydown', finish);
+    // Only deliberate keys skip: Tab or a modifier is someone starting to navigate, not dismissing.
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (SKIP_KEYS.has(e.key)) finish();
+    };
+    window.addEventListener('keydown', onKeyDown);
     return () => {
       window.clearTimeout(timer);
-      window.removeEventListener('keydown', finish);
+      window.removeEventListener('keydown', onKeyDown);
     };
   }, [skip, phase, durationMs, finish]);
 
@@ -67,7 +72,7 @@ export function BootGate({ id, Screen, durationMs = 1200, children }: BootGatePr
       {showScreen && (
         <div
           data-testid="boot-screen"
-          aria-label="Starting up. Click or press any key to skip."
+          aria-label="Starting up. Click or press Enter to skip."
           role="status"
           onClick={finish}
           className={`fixed inset-0 z-50 cursor-default transition-opacity duration-300 ${

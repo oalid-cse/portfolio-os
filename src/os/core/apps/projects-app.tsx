@@ -1,7 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { AppHeading } from './app-heading';
 import type { AppProps } from './app-props';
+
+const linkLabel = (key: string) => key.charAt(0).toUpperCase() + key.slice(1);
 
 export function ProjectsApp({ data }: AppProps) {
   const [slug, setSlug] = useState<string | null>(null);
@@ -14,7 +17,7 @@ export function ProjectsApp({ data }: AppProps) {
         <button type="button" className="os-btn-inline" style={{ alignSelf: 'flex-start' }} onClick={() => setSlug(null)}>
           ← All projects
         </button>
-        <h1>{project.title}</h1>
+        <AppHeading>{project.title}</AppHeading>
         <p className="os-muted">
           {project.role} · {project.year}
         </p>
@@ -41,7 +44,7 @@ export function ProjectsApp({ data }: AppProps) {
           {links.map(([name, href]) => (
             <li key={name}>
               <a href={href} target="_blank" rel="noopener noreferrer">
-                {name}
+                {linkLabel(name)}
               </a>
             </li>
           ))}

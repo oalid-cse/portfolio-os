@@ -705,11 +705,11 @@ it('open twice → one window, focused', ...);
 - Create: `tests/e2e/a11y.spec.ts`
 - Modify: whatever the scan flags
 
-- [ ] **Step 1: Write failing/initial e2e:** run `@axe-core/playwright` on `/`, `/projects/alhisab`, `/resume`, `/os`, and every ready skin `/os/<id>` (after skipping boot), in both themes for classic pages. Assert zero `serious`/`critical` violations.
-- [ ] **Step 2:** Run. Fix every violation.
-- [ ] **Step 3:** Manual keyboard pass: tab through the home page (visible focus ring on everything), open and close a window in each desktop skin using only the keyboard, and confirm reduced motion (`page.emulateMedia({ reducedMotion: 'reduce' })`) removes the boot screen and animations.
-- [ ] **Step 4:** Run the full suite: `pnpm check && pnpm build && pnpm budget && pnpm test:e2e && pnpm dlx @lhci/cli autorun`. Expected: all green.
-- [ ] **Step 5: Commit:** `fix(a11y): resolve axe findings and keyboard issues`
+- [x] **Step 1: Write failing/initial e2e:** run `@axe-core/playwright` on `/`, `/projects/alhisab`, `/resume`, `/os`, and every ready skin `/os/<id>` (after skipping boot), in both themes for classic pages. Assert zero `serious`/`critical` violations.
+- [x] **Step 2:** Run. Fix every violation.
+- [x] **Step 3:** Manual keyboard pass: tab through the home page (visible focus ring on everything), open and close a window in each desktop skin using only the keyboard, and confirm reduced motion (`page.emulateMedia({ reducedMotion: 'reduce' })`) removes the boot screen and animations.
+- [x] **Step 4:** Run the full suite: `pnpm check && pnpm build && pnpm budget && pnpm test:e2e && pnpm dlx @lhci/cli autorun`. Expected: all green.
+- [x] **Step 5: Commit:** `fix(a11y): resolve axe findings and keyboard issues`
 
 ### Task 26: Deploy and indexing (owner + agent)
 

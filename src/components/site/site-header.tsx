@@ -2,13 +2,14 @@
 
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ThemeToggle } from './theme-toggle';
 
 type NavLink = { label: string; href: string; external?: boolean };
 
 export function SiteHeader({ name, resumeHref }: { name: string; resumeHref: string }) {
   const [open, setOpen] = useState(false);
+  const menuButton = useRef<HTMLButtonElement>(null);
   const links: NavLink[] = [
     { label: 'Projects', href: '/projects' },
     { label: 'Experience', href: '/#experience' },
@@ -19,7 +20,9 @@ export function SiteHeader({ name, resumeHref }: { name: string; resumeHref: str
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false);
+      if (e.key !== 'Escape') return;
+      setOpen(false);
+      menuButton.current?.focus();
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
@@ -39,7 +42,7 @@ export function SiteHeader({ name, resumeHref }: { name: string; resumeHref: str
     );
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-bg/85 backdrop-blur">
+    <header data-site-chrome className="sticky top-0 z-40 border-b border-border bg-bg/85 backdrop-blur">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-4 px-5">
         <Link href="/" className="font-mono text-sm font-medium text-fg">
           {name}
@@ -50,6 +53,7 @@ export function SiteHeader({ name, resumeHref }: { name: string; resumeHref: str
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <button
+            ref={menuButton}
             type="button"
             className="inline-flex size-9 items-center justify-center rounded-md border border-border text-fg-muted hover:text-fg md:hidden"
             aria-label={open ? 'Close menu' : 'Open menu'}

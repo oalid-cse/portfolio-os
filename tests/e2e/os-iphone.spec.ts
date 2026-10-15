@@ -56,7 +56,8 @@ test('the large title is the heading; app headings that differ stay visible', as
   await home(page).getByRole('button', { name: 'Browser' }).click();
   const browser = appScreen(page, 'Browser');
   await expect(browser.getByRole('heading', { level: 1, name: 'Browser' })).toBeVisible();
-  await expect(browser.getByRole('heading', { level: 1, name: 'Blog' })).toBeVisible();
+  await expect(browser.getByRole('heading', { level: 2, name: 'Blog' })).toBeVisible();
+  await expect(browser.getByRole('heading', { level: 1 })).toHaveCount(1);
 });
 
 test('Terminal `open skills` switches to the Skills app', async ({ page }) => {

@@ -33,6 +33,26 @@ test('a fresh load of /os/windows11 never shows the loader once the skin has app
   expect(await page.evaluate(() => (window as unknown as { __loaderAfterSkin?: boolean }).__loaderAfterSkin)).toBeUndefined();
 });
 
+test('a skin chunk that fails to load shows a recoverable error', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'one engine is enough for the error boundary');
+  await page.addInitScript(() => sessionStorage.setItem('os-booted-windows11', '1'));
+  // Fail the lazily loaded skin chunk (the only script that renders the skin root) until Retry.
+  let failSkin = true;
+  await page.route('**/_next/static/chunks/*.js', async (route) => {
+    if (!failSkin) return route.continue();
+    const res = await route.fetch();
+    const body = await res.text();
+    if (body.includes('data-os-skin')) return route.abort();
+    return route.fulfill({ response: res, body });
+  });
+  await page.goto('/os/windows11');
+  await expect(page.getByRole('heading', { name: "Couldn't load this OS." })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Back to classic view' })).toHaveAttribute('href', '/');
+  failSkin = false;
+  await page.getByRole('button', { name: 'Retry' }).click();
+  await expect(page.locator('[data-os-skin="windows11"]')).toBeVisible();
+});
+
 test('an unknown OS id is a 404', async ({ page }) => {
   const res = await page.goto('/os/beos');
   expect(res?.status()).toBe(404);

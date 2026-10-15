@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ProjectsPage() {
   const projects = await getProjects();
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-16 sm:px-6">
+    <div className="mx-auto w-full max-w-5xl py-16">
       <JsonLd data={breadcrumbJsonLd([{ name: 'Home', path: '/' }, { name: 'Projects', path: '/projects' }])} />
       <h1 className="text-4xl font-semibold tracking-tight">Projects</h1>
       <p className="mt-3 max-w-2xl text-fg-muted">Selected backend and full-stack work.</p>

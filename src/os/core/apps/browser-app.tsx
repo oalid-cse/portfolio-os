@@ -1,10 +1,11 @@
 import { formatPostDate } from '@/lib/format';
+import { AppHeading } from './app-heading';
 import type { AppProps } from './app-props';
 
 export function BrowserApp({ data }: AppProps) {
   return (
     <div className="os-app os-stack">
-      <h1>Blog</h1>
+      <AppHeading>Blog</AppHeading>
       {data.posts.length === 0 ? (
         <p className="os-muted">No posts yet.</p>
       ) : (

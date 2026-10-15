@@ -65,6 +65,26 @@ test.describe('after boot', () => {
     await expect(button).toBeFocused();
   });
 
+  test('the system menu moves between items with the arrow keys', async ({ page }) => {
+    await page.getByRole('button', { name: 'System menu' }).focus();
+    await page.keyboard.press('Enter');
+    const menu = page.getByRole('group', { name: 'System menu' });
+    const about = menu.getByRole('button', { name: 'About this portfolio' });
+    const switchOs = menu.getByRole('button', { name: 'Switch OS…' });
+    const classic = menu.getByRole('link', { name: 'Back to classic view' });
+    await expect(about).toBeFocused();
+    await page.keyboard.press('ArrowDown');
+    await expect(switchOs).toBeFocused();
+    await page.keyboard.press('ArrowDown');
+    await expect(classic).toBeFocused();
+    await page.keyboard.press('ArrowDown'); // wraps
+    await expect(about).toBeFocused();
+    await page.keyboard.press('ArrowUp'); // wraps back
+    await expect(classic).toBeFocused();
+    await page.keyboard.press('ArrowUp');
+    await expect(switchOs).toBeFocused();
+  });
+
   test('About this portfolio opens the About window and closes the menu', async ({ page }) => {
     await page.getByRole('button', { name: 'System menu' }).click();
     await page.getByRole('button', { name: 'About this portfolio' }).click();
@@ -126,4 +146,26 @@ test.describe('after boot', () => {
       expect(after?.width).not.toBe(before?.width);
     }).toPass();
   });
+});
+
+test('Cmd+W closes the focused window', async ({ page }) => {
+  await markBooted(page);
+  await page.goto('/os/macos');
+  await dock(page).getByRole('button', { name: 'Skills' }).click();
+  const win = page.getByRole('dialog', { name: 'Skills' });
+  await expect(win).toBeFocused();
+  await page.keyboard.press('Meta+w');
+  await expect(win).toHaveCount(0);
+});
+
+test('reduced motion turns Dock magnification off', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/os/macos');
+  const item = dock(page).getByRole('button', { name: 'Projects' });
+  await expect(item).toBeVisible();
+  const before = await item.boundingBox();
+  await item.hover();
+  await page.mouse.move(before!.x + before!.width / 2 + 2, before!.y + before!.height / 2);
+  await page.waitForTimeout(300);
+  expect((await item.boundingBox())!.width).toBe(before!.width);
 });

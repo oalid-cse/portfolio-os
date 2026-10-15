@@ -21,4 +21,15 @@ test.describe('resume', () => {
     await expect(page.getByRole('button', { name: /Switch to/ })).toBeHidden();
     await expect(page.getByRole('link', { name: 'Download PDF' })).toBeHidden();
   });
+
+  test('printing another page after visiting /resume keeps that page intact', async ({ page }) => {
+    await page.goto('/resume');
+    // Client-side navigation keeps the resume's print stylesheet loaded.
+    await page.locator('header[data-site-chrome]').getByRole('link', { name: 'Abu Bin Oalid' }).click();
+    await expect(page).toHaveURL(/\/$/);
+    await page.getByRole('main').getByRole('link', { name: /Alhisab/i }).first().click();
+    await expect(page).toHaveURL(/\/projects\/alhisab$/);
+    await page.emulateMedia({ media: 'print' });
+    await expect(page.locator('article header')).toBeVisible();
+  });
 });

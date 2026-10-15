@@ -29,7 +29,7 @@ export default async function ProjectPage({ params }: Props) {
   if (!project) notFound();
   const body = await renderMdx(project.body);
   return (
-    <article className="mx-auto w-full max-w-3xl px-4 py-16 sm:px-6">
+    <article className="mx-auto w-full max-w-3xl py-16">
       <JsonLd data={projectJsonLd(project.meta)} />
       <JsonLd
         data={breadcrumbJsonLd([

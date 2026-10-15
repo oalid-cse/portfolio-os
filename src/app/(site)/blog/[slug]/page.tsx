@@ -34,7 +34,7 @@ export default async function PostPage({ params }: Props) {
   const body = await renderMdx(post.body);
   const { title, publishedAt } = post.meta;
   return (
-    <article className="mx-auto w-full max-w-3xl px-4 py-16 sm:px-6">
+    <article className="mx-auto w-full max-w-3xl py-16">
       <JsonLd data={postJsonLd(post.meta)} />
       <JsonLd
         data={breadcrumbJsonLd([

@@ -14,6 +14,7 @@ import {
 import { useStore } from 'zustand';
 import type { PortfolioData } from '@/content/types';
 import { apps } from '../apps';
+import { ScreenTitleContext } from '../apps/app-heading';
 import { useReducedMotion } from '../desktop/use-reduced-motion';
 import type { AppIconName, AppId } from '../types';
 import { AppScreen } from './app-screen';
@@ -124,7 +125,8 @@ export function MobileShell({ data, skin }: MobileShellProps) {
           origin={origin}
           reducedMotion={reducedMotion}
         >
-          {body}
+          {/* The skin's large title is this screen's h1; app headings start one level down. */}
+          <ScreenTitleContext value>{body}</ScreenTitleContext>
         </AppScreen>
       );
   }

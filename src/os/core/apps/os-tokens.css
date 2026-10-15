@@ -9,6 +9,7 @@
   line-height: 1.5;
   font-size: 0.9375rem;
 }
+.os-app:focus-visible { outline: 2px solid var(--os-accent, #4cc2ff); outline-offset: -2px; }
 .os-app h1 { font-size: 1.375rem; font-weight: 700; margin: 0; }
 .os-app h2 { font-size: 1.0625rem; font-weight: 600; margin: 0; }
 .os-app h3 { font-size: 0.9375rem; font-weight: 600; margin: 0; }

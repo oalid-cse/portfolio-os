@@ -1,7 +1,7 @@
 'use client';
 
 import { AnimatePresence } from 'framer-motion';
-import { type ComponentType, type ReactNode, useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import { type ComponentType, type ReactNode, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { useStore } from 'zustand';
 import type { PortfolioData } from '@/content/types';
 import { apps } from '../apps';
@@ -84,6 +84,31 @@ function Desktop({ data, skin, closeShortcut, store }: DesktopProps) {
 
   const openApp = useCallback((id: AppId) => store.getState().open(id, apps[id].title), [store]);
 
+  // Where keyboard focus goes back to when the last window closes or minimizes: the last thing
+  // focused outside any window or menu (dialogs), e.g. the desktop icon or Start button.
+  const opener = useRef<HTMLElement | null>(null);
+  const iconGrid = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const onFocusIn = (e: FocusEvent) => {
+      if (e.target instanceof HTMLElement && !e.target.closest('[role="dialog"]')) opener.current = e.target;
+    };
+    document.addEventListener('focusin', onFocusIn);
+    return () => document.removeEventListener('focusin', onFocusIn);
+  }, []);
+
+  // No window is focused any more: if focus was in a window (or already dropped to <body>), send
+  // it back to the opener, or the first desktop icon when the opener is gone (e.g. a closed menu).
+  const hadFocusedWindow = useRef(false);
+  useEffect(() => {
+    const had = hadFocusedWindow.current;
+    hadFocusedWindow.current = focusedId !== null;
+    if (focusedId !== null || !had) return;
+    const active = document.activeElement;
+    if (active && active !== document.body && !active.closest('[role="dialog"]')) return;
+    const target = opener.current?.isConnected ? opener.current : iconGrid.current?.querySelector('button');
+    target?.focus({ preventScroll: true });
+  }, [focusedId]);
+
   useEffect(() => {
     const onResize = () => store.getState().clampAll();
     onResize(); // the viewport may have changed while the desktop was unmounted
@@ -114,6 +139,7 @@ function Desktop({ data, skin, closeShortcut, store }: DesktopProps) {
       <div className="absolute inset-0 z-0 select-none">{skin.wallpaper}</div>
 
       <div
+        ref={iconGrid}
         className="absolute right-0 z-0 grid select-none auto-cols-max grid-flow-col content-start gap-1 p-2"
         style={{ top, bottom, left, gridTemplateRows: 'repeat(auto-fill, minmax(88px, max-content))' }}
         onPointerDown={(e) => {

@@ -2,7 +2,7 @@
 
 import { BatteryFull, Power, Volume2, Wifi } from 'lucide-react';
 import { Clock } from './clock';
-import { OVERVIEW_TOGGLE, useOverview } from './overview-state';
+import { OVERVIEW_ID, OVERVIEW_TOGGLE, useOverview } from './overview-state';
 
 const PILL = 'flex h-6 items-center rounded-full px-3 outline-none transition-colors duration-100';
 
@@ -18,6 +18,7 @@ export function TopBar() {
         type="button"
         {...{ [OVERVIEW_TOGGLE]: '' }}
         aria-expanded={open}
+        aria-controls={open ? OVERVIEW_ID : undefined}
         onClick={() => setOpen((o) => !o)}
         className={`${PILL} hover:bg-(--ubu-topbar-hover) focus-visible:bg-(--ubu-topbar-hover) ${open ? 'bg-(--ubu-topbar-active)' : ''}`}
       >

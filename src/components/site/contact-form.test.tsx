@@ -53,4 +53,26 @@ describe('ContactForm', () => {
     expect(screen.getByLabelText('Email')).toHaveValue(values.email);
     expect(screen.getByLabelText('Message')).toHaveValue(values.message);
   });
+  it('moves focus to the first invalid field after an error response', async () => {
+    const action = vi.fn(
+      async (): Promise<ContactState> => ({
+        status: 'error',
+        message: 'Please fix the highlighted fields.',
+        fieldErrors: { email: 'Please enter a valid email.', message: 'Message must be at least 10 characters.' },
+      }),
+    );
+    render(<ContactForm action={action} />);
+    await userEvent.click(screen.getByRole('button', { name: 'Send message' }));
+    await screen.findByText('Please enter a valid email.');
+    expect(screen.getByLabelText('Email')).toHaveFocus();
+  });
+  it('moves focus to the status message after an error without field errors', async () => {
+    const action = vi.fn(
+      async (): Promise<ContactState> => ({ status: 'error', message: 'Something went wrong. Please email me directly.' }),
+    );
+    render(<ContactForm action={action} />);
+    await userEvent.click(screen.getByRole('button', { name: 'Send message' }));
+    await screen.findByText('Something went wrong. Please email me directly.');
+    expect(screen.getByRole('status')).toHaveFocus();
+  });
 });

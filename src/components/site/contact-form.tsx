@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useEffect, useRef } from 'react';
 import type { ContactState } from '@/lib/contact-schema';
 
 type Props = { action: (prev: ContactState, formData: FormData) => Promise<ContactState> };
@@ -16,13 +16,25 @@ export function ContactForm({ action }: Props) {
   // Changing key re-mounts the inputs so the preserved values survive React's post-action form reset.
   const formKey = values ? `${values.name}\n${values.email}\n${values.message}` : state.status;
 
+  const formRef = useRef<HTMLFormElement>(null);
+  const statusRef = useRef<HTMLDivElement>(null);
+  // After an error response, take the visitor to what needs fixing: the first invalid field, or
+  // the status message when the error is not about a field.
+  useEffect(() => {
+    if (state.status !== 'error') return;
+    const target = state.fieldErrors
+      ? formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')
+      : statusRef.current;
+    target?.focus();
+  }, [state]);
+
   const fields = [
     { id: 'name', label: 'Name', type: 'text', autoComplete: 'name' },
     { id: 'email', label: 'Email', type: 'email', autoComplete: 'email' },
   ] as const;
 
   return (
-    <form key={formKey} action={formAction} noValidate className="space-y-4 font-mono">
+    <form ref={formRef} key={formKey} action={formAction} noValidate className="space-y-4 font-mono">
       {fields.map(({ id, label, type, autoComplete }) => {
         const error = fieldErrors[id];
         return (
@@ -81,7 +93,7 @@ export function ContactForm({ action }: Props) {
       >
         {pending ? 'Sending…' : 'Send message'}
       </button>
-      <div role="status" aria-live="polite" className="text-sm">
+      <div ref={statusRef} role="status" aria-live="polite" tabIndex={-1} className="text-sm outline-none">
         {state.status === 'success' ? <p>Thanks! I’ll get back to you soon.</p> : null}
         {state.status === 'error' && !state.fieldErrors ? <p className="text-red-500">{state.message}</p> : null}
       </div>

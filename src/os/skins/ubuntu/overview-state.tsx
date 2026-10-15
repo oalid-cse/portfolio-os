@@ -19,5 +19,8 @@ export function useOverview(): OverviewState {
   return ctx;
 }
 
+/** The overview's element id, for `aria-controls` on its toggles while it is open. */
+export const OVERVIEW_ID = 'ubu-activities-overview';
+
 /** Marks the buttons that toggle the overview, so the overview's outside-click check skips them. */
 export const OVERVIEW_TOGGLE = 'data-overview-toggle';

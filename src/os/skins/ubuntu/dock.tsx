@@ -4,7 +4,7 @@ import { apps } from '@/os/core/apps';
 import type { DesktopApi } from '@/os/core/desktop/desktop-shell';
 import type { AppId } from '@/os/core/types';
 import { AppIcon, ShowAppsGlyph } from './icons';
-import { OVERVIEW_TOGGLE, useOverview } from './overview-state';
+import { OVERVIEW_ID, OVERVIEW_TOGGLE, useOverview } from './overview-state';
 
 export const DOCK_APPS: AppId[] = ['about', 'projects', 'experience', 'skills', 'resume', 'contact', 'terminal', 'browser'];
 
@@ -36,7 +36,9 @@ export function Dock({ api }: { api: DesktopApi }) {
 
   return (
     <nav aria-label="Dock" className="ubu-blur flex h-full flex-col items-center bg-(--ubu-dock) py-2">
-      <ul className="flex flex-col items-center gap-1.5">
+      {/* Scrolls when the window is too short for every app. Only then: scrolling clips the
+          tooltips, which overhang the dock to the right. */}
+      <ul className="flex min-h-0 flex-col items-center gap-1.5 [scrollbar-width:none] [@media(max-height:600px)]:overflow-y-auto [@media(max-height:600px)]:px-2">
         {DOCK_APPS.map((id) => {
           const running = api.windows.some((w) => w.appId === id);
           const focused = api.windows.some((w) => w.appId === id && w.id === api.focusedId);
@@ -66,6 +68,7 @@ export function Dock({ api }: { api: DesktopApi }) {
         {...{ [OVERVIEW_TOGGLE]: '' }}
         aria-label="Show apps"
         aria-expanded={overview.open}
+        aria-controls={overview.open ? OVERVIEW_ID : undefined}
         onClick={() => overview.setOpen((o) => !o)}
         className={`${TILE} mt-auto text-(--os-fg) ${overview.open ? 'bg-(--ubu-dock-active)' : ''}`}
       >

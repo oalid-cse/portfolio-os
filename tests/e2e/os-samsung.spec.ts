@@ -93,7 +93,8 @@ test.describe('booted', () => {
     await home(page).getByRole('button', { name: 'Browser' }).click();
     const browser = appScreen(page, 'Browser');
     await expect(browser.getByRole('heading', { level: 1, name: 'Browser' })).toBeVisible();
-    await expect(browser.getByRole('heading', { level: 1, name: 'Blog' })).toBeVisible();
+    await expect(browser.getByRole('heading', { level: 2, name: 'Blog' })).toBeVisible();
+    await expect(browser.getByRole('heading', { level: 1 })).toHaveCount(1);
   });
 
   test('Projects opens a detail view from a card', async ({ page }) => {

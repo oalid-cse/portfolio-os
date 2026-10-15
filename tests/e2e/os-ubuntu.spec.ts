@@ -59,6 +59,22 @@ test.describe('after boot', () => {
     await expect(page.getByTestId('boot-screen')).toHaveCount(0);
   });
 
+  test('Activities points at the overview only while it is open', async ({ page }) => {
+    const activities = topBar(page).getByRole('button', { name: 'Activities' });
+    await expect(activities).not.toHaveAttribute('aria-controls');
+    await activities.click();
+    const id = await overview(page).getAttribute('id');
+    expect(id).toBeTruthy();
+    await expect(activities).toHaveAttribute('aria-controls', id!);
+    await expect(dock(page).getByRole('button', { name: 'Show apps' })).toHaveAttribute('aria-controls', id!);
+  });
+
+  test('the dock scrolls on a short window, so every app stays reachable', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 420 });
+    await dock(page).getByRole('button', { name: 'Browser' }).click();
+    await expect(page.getByRole('dialog', { name: 'Browser' })).toBeVisible();
+  });
+
   test('the top bar shows Activities and a GNOME-style clock', async ({ page }) => {
     await expect(topBar(page).getByRole('button', { name: 'Activities' })).toBeVisible();
     await expect(topBar(page).locator('time')).toHaveText(/^[A-Z][a-z]{2} \d{1,2} [A-Z][a-z]{2} \d{2}:\d{2}$/);
