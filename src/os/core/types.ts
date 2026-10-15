@@ -1,7 +1,16 @@
 import type { PortfolioData } from '@/content/types';
 
-export type OsId = 'windows11' | 'macos' | 'iphone' | 'windows10' | 'windows7' | 'windowsxp' | 'ubuntu';
-export type ComingSoonId = 'samsung';
+export type OsId =
+  | 'windows11'
+  | 'macos'
+  | 'iphone'
+  | 'windows10'
+  | 'windows7'
+  | 'windowsxp'
+  | 'ubuntu'
+  | 'samsung';
+/** Registry ids listed but not built yet. None today; kept so a future skin can be announced first. */
+export type ComingSoonId = never;
 export type OsKind = 'desktop' | 'mobile';
 
 export type AppId =

@@ -1,0 +1,312 @@
+/* Samsung One UI skin: dark mode. Everything is scoped to the skin root. */
+[data-os-skin='samsung'] {
+  /* Shared app tokens (see src/os/core/apps/os-tokens.css) */
+  --os-font: system-ui, 'Roboto', sans-serif;
+  --os-mono: ui-monospace, 'Roboto Mono', 'Cascadia Mono', Menlo, monospace;
+  --os-bg: #000;
+  --os-fg: #f4f4f6;
+  --os-muted: #a2a2ab;
+  --os-accent: #5c9dff;
+  --os-radius: 22px;
+  --os-border: rgb(255 255 255 / 0.1);
+
+  /* Mobile engine layout tokens */
+  --mobile-status-height: 38px;
+  --mobile-nav-height: 48px;
+  --mobile-icon-size: 58px;
+  --mobile-grid-columns: 4;
+
+  /* Skin tokens */
+  --oneui-surface: #17171b;
+  --oneui-divider: rgb(255 255 255 / 0.08);
+  --oneui-pressed: rgb(255 255 255 / 0.07);
+  --oneui-dot: rgb(255 255 255 / 0.4);
+  --oneui-backdrop: #1d1c22;
+  --oneui-bezel: #08080a;
+  --oneui-bezel-edge: #3d3c44;
+
+  /* Icon plates: flat colour, a faint top light */
+  --oneui-icon-about: linear-gradient(180deg, #7d89ff, #5a63e8);
+  --oneui-icon-projects: linear-gradient(180deg, #ffbe45, #f99a1c);
+  --oneui-icon-experience: linear-gradient(180deg, #33c48d, #15a170);
+  --oneui-icon-skills: linear-gradient(180deg, #bd7fff, #9a55f0);
+  --oneui-icon-resume: linear-gradient(180deg, #ff7f6e, #f2574a);
+  --oneui-icon-contact: linear-gradient(180deg, #45a8ff, #1b82f2);
+  --oneui-icon-terminal: linear-gradient(180deg, #34363d, #1c1d22);
+  --oneui-glyph-terminal: #8ff0b0;
+  --oneui-icon-browser: linear-gradient(180deg, #8f7dff, #6a52f5);
+  --oneui-icon-switch-os: linear-gradient(180deg, #8d929c, #6b707a);
+
+  color: var(--os-fg);
+  font-family: var(--os-font);
+  color-scheme: dark;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Boot */
+[data-os-skin='samsung'] .oneui-boot {
+  background: #000;
+  color: var(--os-fg);
+}
+[data-os-skin='samsung'] .oneui-boot-dots span {
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: var(--os-fg);
+  opacity: 0.2;
+  animation: oneui-dot 900ms ease-in-out infinite;
+}
+[data-os-skin='samsung'] .oneui-boot-dots span:nth-child(2) {
+  animation-delay: 150ms;
+}
+[data-os-skin='samsung'] .oneui-boot-dots span:nth-child(3) {
+  animation-delay: 300ms;
+}
+@keyframes oneui-dot {
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Device frame (wide viewports): a slim, near-square-cornered slab */
+[data-os-skin='samsung'] [data-mobile='backdrop'] {
+  background: radial-gradient(circle at 50% 35%, #2c2a33, var(--oneui-backdrop) 70%);
+}
+@media (width < 768px) {
+  [data-os-skin='samsung'] [data-mobile='backdrop'] {
+    background: #000;
+  }
+}
+@media (width >= 768px) {
+  [data-os-skin='samsung'] [data-mobile='frame'] {
+    padding: 9px;
+    border-radius: 46px;
+    background: var(--oneui-bezel);
+    box-shadow:
+      0 0 0 1.5px var(--oneui-bezel-edge),
+      0 0 0 4px #17161b,
+      0 40px 90px rgb(0 0 0 / 0.55);
+  }
+  [data-os-skin='samsung'] [data-mobile='screen'] {
+    border-radius: 38px;
+  }
+}
+
+/* Wallpaper and clock widget */
+[data-os-skin='samsung'] .oneui-wallpaper {
+  background: #150f2c url('/os/samsung/wallpaper.svg') center / cover no-repeat;
+}
+[data-os-skin='samsung'] .oneui-widget {
+  position: absolute;
+  top: calc(var(--mobile-status-height) + 44px);
+  left: 28px;
+  color: #fff;
+  text-shadow: 0 1px 12px rgb(0 0 0 / 0.25);
+}
+[data-os-skin='samsung'] .oneui-widget-time {
+  font-size: 76px;
+  font-weight: 200;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+}
+[data-os-skin='samsung'] .oneui-widget-date {
+  margin-top: 10px;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+/* Status bar */
+[data-os-skin='samsung'] .oneui-status {
+  color: #fff;
+  padding-top: 4px;
+}
+[data-os-skin='samsung'] .oneui-time {
+  font-size: 14px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+[data-os-skin='samsung'] .oneui-punch-hole {
+  background: radial-gradient(circle at 40% 38%, #1d2230 0 22%, #000 46%);
+  box-shadow: 0 0 0 1.5px #050505;
+}
+
+/* Home screen: apps sit low, within thumb reach, under the widget */
+[data-os-skin='samsung'] [data-mobile='grid'] {
+  align-content: end;
+  padding: 0 14px;
+  row-gap: 22px;
+}
+[data-os-skin='samsung'] [data-mobile='launcher'] {
+  width: 76px;
+}
+[data-os-skin='samsung'] [data-mobile='label'] {
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: #fff;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.5);
+}
+[data-os-skin='samsung'] .oneui-icon {
+  border-radius: 32%;
+  box-shadow: inset 0 0.5px 0 rgb(255 255 255 / 0.25);
+}
+[data-os-skin='samsung'] [data-mobile='launcher'] [data-mobile='icon'] {
+  transition: transform 140ms ease-out;
+}
+[data-os-skin='samsung'] [data-mobile='launcher']:active [data-mobile='icon'] {
+  transform: scale(0.92);
+}
+[data-os-skin='samsung'] [data-mobile='launcher']:focus-visible [data-mobile='icon'] {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+  border-radius: 32%;
+}
+[data-os-skin='samsung'] [data-mobile='page-dots'] {
+  gap: 7px;
+  padding: 22px 0 18px;
+}
+[data-os-skin='samsung'] [data-mobile='page-dots'] span {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: #fff;
+}
+[data-os-skin='samsung'] [data-mobile='dock'] {
+  margin: 0 14px 10px;
+}
+/* No labels in the dock (the name stays on the button for assistive tech). */
+[data-os-skin='samsung'] [data-mobile='dock'] [data-mobile='label'] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-os-skin='samsung'] [data-mobile='launcher'] [data-mobile='icon'],
+  [data-os-skin='samsung'] .oneui-boot-dots span {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* App screens: the large-title band, then content */
+[data-os-skin='samsung'] [data-mobile='app'] {
+  background: var(--os-bg);
+}
+[data-os-skin='samsung'] .oneui-header {
+  height: 30%;
+  min-height: 168px;
+}
+[data-os-skin='samsung'] .oneui-large-title {
+  margin: 0;
+  padding: 0 24px;
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+[data-os-skin='samsung'] .oneui-up {
+  color: var(--os-fg);
+}
+[data-os-skin='samsung'] .oneui-up:active {
+  background: var(--oneui-pressed);
+}
+[data-os-skin='samsung'] .oneui-up:focus-visible {
+  outline: 2px solid var(--os-accent);
+}
+[data-os-skin='samsung'] .os-app {
+  padding: 4px 14px 28px;
+  font-size: 16px;
+}
+/* The large title is the screen's heading; drop an app's top heading only where it repeats it. */
+[data-os-skin='samsung'] .os-app .os-app-title {
+  display: none;
+}
+[data-os-skin='samsung'] .os-app .os-btn-inline {
+  text-decoration: none;
+}
+[data-os-skin='samsung'] .os-app .os-card {
+  background: var(--oneui-surface);
+  border: 0;
+  padding: 16px 20px;
+}
+[data-os-skin='samsung'] .os-app .os-btn:active {
+  background: #202026;
+}
+[data-os-skin='samsung'] .os-app .os-chip {
+  background: var(--oneui-surface);
+  border: 0;
+  border-radius: 9999px;
+  padding: 0.25rem 0.8rem;
+}
+[data-os-skin='samsung'] .os-app.os-mono {
+  font-size: 13px;
+  background: #000;
+}
+
+/* Settings-style cards (Switch OS) */
+[data-os-skin='samsung'] .oneui-note {
+  color: var(--os-muted);
+  font-size: 14px;
+  padding: 0 10px 12px;
+}
+[data-os-skin='samsung'] .oneui-group {
+  background: var(--oneui-surface);
+  border-radius: 26px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+[data-os-skin='samsung'] .oneui-group ul {
+  gap: 0;
+}
+[data-os-skin='samsung'] .oneui-group li + li {
+  box-shadow: inset 20px 0 0 var(--oneui-surface), inset -20px 0 0 var(--oneui-surface), inset 0 1px 0 var(--oneui-divider);
+}
+[data-os-skin='samsung'] .oneui-group a,
+[data-os-skin='samsung'] .oneui-group span[aria-disabled] {
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  padding: 14px 20px;
+  border-radius: 0;
+  color: var(--os-fg);
+  font-size: 17px;
+  text-decoration: none;
+}
+[data-os-skin='samsung'] .oneui-group a:active {
+  background: var(--oneui-pressed);
+}
+[data-os-skin='samsung'] .oneui-group a:focus-visible {
+  outline: 2px solid var(--os-accent);
+  outline-offset: -2px;
+}
+[data-os-skin='samsung'] .oneui-group a[aria-current='page'] {
+  color: var(--os-accent);
+  font-weight: 600;
+}
+[data-os-skin='samsung'] .oneui-group a.oneui-row-action {
+  color: var(--os-accent);
+}
+
+/* Navigation bar: transparent over the home screen, solid under an app */
+[data-os-skin='samsung'] .oneui-nav {
+  color: #fff;
+}
+[data-os-skin='samsung'] [data-mobile='screen']:has([data-mobile='app']) [data-mobile='nav-bar'] {
+  background: #000;
+}
+[data-os-skin='samsung'] .oneui-nav-btn {
+  border-radius: 9999px;
+}
+[data-os-skin='samsung'] .oneui-nav-btn:active {
+  background: var(--oneui-pressed);
+}
+[data-os-skin='samsung'] .oneui-nav-btn:focus-visible {
+  outline: 2px solid var(--os-accent);
+  outline-offset: -6px;
+}

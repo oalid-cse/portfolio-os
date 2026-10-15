@@ -42,10 +42,21 @@ test('tapping About opens it; Go home returns to the grid', async ({ page }) => 
 test('the header back button returns home; Projects opens a detail view', async ({ page }) => {
   await dock(page).getByRole('button', { name: 'Projects' }).click();
   const projects = appScreen(page, 'Projects');
-  await projects.getByRole('button').nth(1).click(); // first project card (after ‹ Back)
+  await projects.locator('.os-card').first().click();
   await expect(projects.getByRole('button', { name: '← All projects' })).toBeVisible();
   await projects.getByRole('button', { name: '‹ Back' }).click();
   await expect(projects).toHaveCount(0);
+});
+
+test('the large title is the heading; app headings that differ stay visible', async ({ page }) => {
+  await dock(page).getByRole('button', { name: 'Projects' }).click();
+  const projects = appScreen(page, 'Projects');
+  await expect(projects.getByRole('heading', { level: 1 })).toHaveText('Projects');
+  await page.getByRole('button', { name: 'Go home' }).click();
+  await home(page).getByRole('button', { name: 'Browser' }).click();
+  const browser = appScreen(page, 'Browser');
+  await expect(browser.getByRole('heading', { level: 1, name: 'Browser' })).toBeVisible();
+  await expect(browser.getByRole('heading', { level: 1, name: 'Blog' })).toBeVisible();
 });
 
 test('Terminal `open skills` switches to the Skills app', async ({ page }) => {
@@ -63,7 +74,7 @@ test('Switch OS lists every skin and the classic view', async ({ page }) => {
   await expect(nav.getByRole('link', { name: 'iPhone' })).toHaveAttribute('aria-current', 'page');
   await expect(nav.getByRole('link', { name: 'Windows 11' })).toHaveAttribute('href', '/os/windows11');
   await expect(nav.getByRole('link', { name: 'macOS' })).toHaveAttribute('href', '/os/macos');
-  await expect(nav.getByText('Samsung One UI')).toBeVisible();
+  await expect(nav.getByRole('link', { name: 'Samsung One UI' })).toHaveAttribute('href', '/os/samsung');
   await expect(appScreen(page, 'Switch OS').getByRole('link', { name: 'Back to classic view' })).toHaveAttribute(
     'href',
     '/',

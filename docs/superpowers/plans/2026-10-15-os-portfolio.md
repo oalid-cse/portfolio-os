@@ -693,7 +693,7 @@ it('open twice → one window, focused', ...);
 - `suggestSkinFor('samsung')` and `suggestSkinFor('android')` → Samsung. Update the registry test. Desktop skins whose `mobileAlternative` is `'iphone'` stay as is.
 - Look (One UI): status bar (time left, icons right), punch-hole camera circle in the device frame; home screen: 4-column grid of rounded "squircle" icons with labels, dock row, page dots; app view: One UI large header (title in the top ~30% of the screen, content below) with back arrow; bottom 3-button nav bar (Recents ▢ as a no-op, Home ○ labelled `Go home`, Back ‹ labelled `Back`); `Switch OS` pseudo-app via `extraApps` (OsSwitcher list + BackToClassic); font `system-ui, 'Roboto', sans-serif`; wallpaper original soft gradient blobs.
 
-- [ ] **Step 1–5:** engine tests first, then as the shared recipe. **Commit:** `feat(os): add Samsung One UI skin and nav-bar back`
+- [x] **Step 1–5:** engine tests first, then as the shared recipe. **Commit:** `feat(os): add Samsung One UI skin and nav-bar back`
 
 ---
 

@@ -8,7 +8,7 @@ export function ContactApp({ data }: AppProps) {
   const { profile, features } = data;
   return (
     <div className="os-app os-stack">
-      <h1>Contact</h1>
+      <h1 className="os-app-title">Contact</h1>
       <p>
         <a href={`mailto:${profile.email}`}>{profile.email}</a>
       </p>

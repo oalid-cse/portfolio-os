@@ -3,7 +3,7 @@ import type { AppProps } from './app-props';
 export function SkillsApp({ data }: AppProps) {
   return (
     <div className="os-app os-stack">
-      <h1>Skills</h1>
+      <h1 className="os-app-title">Skills</h1>
       {data.skills.map((group) => (
         <section key={group.id} className="os-stack" style={{ gap: '0.5rem' }}>
           <h2>{group.label}</h2>

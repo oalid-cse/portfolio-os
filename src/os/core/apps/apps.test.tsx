@@ -17,6 +17,17 @@ describe('shared apps', () => {
     expect(screen.getByText('Senior Backend Engineer')).toBeInTheDocument();
   });
 
+  it('only a top heading that repeats the app name is marked os-app-title (skins with a large title may drop it)', () => {
+    for (const id of Object.keys(apps) as (keyof typeof apps)[]) {
+      const { container, unmount } = renderApp(id);
+      for (const h of container.querySelectorAll('.os-app-title')) expect(h.textContent).toBe(apps[id].title);
+      unmount();
+    }
+    const { container } = renderApp('browser');
+    expect(screen.getByRole('heading', { level: 1, name: 'Blog' })).not.toHaveClass('os-app-title');
+    expect(container.querySelector('.os-app-title')).toBeNull();
+  });
+
   it('Experience shows 3 companies in order', () => {
     renderApp('experience');
     const names = screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent);

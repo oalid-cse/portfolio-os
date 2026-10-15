@@ -57,7 +57,7 @@ export function ProjectsApp({ data }: AppProps) {
 
   return (
     <div className="os-app os-stack">
-      <h1>Projects</h1>
+      <h1 className="os-app-title">Projects</h1>
       <ul className="os-stack" style={{ gap: '0.5rem' }}>
         {data.projects.map((p) => (
           <li key={p.slug}>

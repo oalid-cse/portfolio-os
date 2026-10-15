@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 2340" preserveAspectRatio="xMidYMid slice">
+  <!-- Original abstract artwork for this portfolio ("Dusk drift"): soft colour blobs drifting on a deep indigo dusk. Not derived from any OS wallpaper. -->
+  <defs>
+    <linearGradient id="dusk" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#0d0a24"/>
+      <stop offset="0.55" stop-color="#1b1240"/>
+      <stop offset="1" stop-color="#2a1236"/>
+    </linearGradient>
+    <radialGradient id="peach" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffb994" stop-opacity="0.95"/>
+      <stop offset="0.5" stop-color="#ff8a7a" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#ff8a7a" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rose" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ff6f9c" stop-opacity="0.85"/>
+      <stop offset="0.55" stop-color="#d9407f" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#d9407f" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="violet" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#8f74ff" stop-opacity="0.9"/>
+      <stop offset="0.55" stop-color="#5b3fe0" stop-opacity="0.38"/>
+      <stop offset="1" stop-color="#5b3fe0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="teal" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#4fe0cf" stop-opacity="0.75"/>
+      <stop offset="0.55" stop-color="#1f9fb0" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="#1f9fb0" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="40"/>
+    </filter>
+  </defs>
+  <rect width="1080" height="2340" fill="url(#dusk)"/>
+  <g filter="url(#soft)">
+    <ellipse cx="860" cy="520" rx="560" ry="520" fill="url(#violet)"/>
+    <ellipse cx="180" cy="1120" rx="620" ry="560" fill="url(#rose)"/>
+    <ellipse cx="820" cy="1560" rx="600" ry="540" fill="url(#peach)"/>
+    <ellipse cx="240" cy="2140" rx="560" ry="460" fill="url(#teal)"/>
+    <ellipse cx="560" cy="860" rx="260" ry="240" fill="url(#peach)" opacity="0.5"/>
+  </g>
+  <rect width="1080" height="2340" fill="#000" opacity="0.12"/>
+</svg>

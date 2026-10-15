@@ -11,16 +11,15 @@ describe('suggestSkinFor', () => {
     ['ipad', 'macos'],
     ['iphone', 'iphone'],
     ['linux', 'ubuntu'],
+    ['samsung', 'samsung'],
+    ['android', 'samsung'],
   ] as const)('%s -> %s', (detected, id) => {
     expect(suggestSkinFor(detected)?.id).toBe(id);
   });
 
-  it.each(['android', 'samsung', 'unknown'] as const satisfies readonly DetectedOs[])(
-    '%s -> null while its skin is coming soon',
-    (detected) => {
-      expect(suggestSkinFor(detected)).toBeNull();
-    },
-  );
+  it.each(['unknown'] as const satisfies readonly DetectedOs[])('%s -> null', (detected) => {
+    expect(suggestSkinFor(detected)).toBeNull();
+  });
 });
 
 describe('registry', () => {
@@ -32,15 +31,15 @@ describe('registry', () => {
     expect(isReadyOsId('windows7')).toBe(true);
     expect(isReadyOsId('windowsxp')).toBe(true);
     expect(isReadyOsId('ubuntu')).toBe(true);
-    expect(isReadyOsId('samsung')).toBe(false);
+    expect(isReadyOsId('samsung')).toBe(true);
     expect(isReadyOsId('nope')).toBe(false);
   });
 
-  it('ready ids are unique and coming-soon entries are listed', () => {
+  it('ready ids are unique and nothing is coming soon', () => {
     const ready = skins.filter((s) => s.status === 'ready').map((s) => s.id);
     expect(new Set(ready).size).toBe(ready.length);
-    expect(ready).toEqual(['windows11', 'macos', 'iphone', 'windows10', 'windows7', 'windowsxp', 'ubuntu']);
-    expect(skins.filter((s) => s.status === 'coming-soon').map((s) => s.id)).toEqual(['samsung']);
+    expect(ready).toEqual(['windows11', 'macos', 'iphone', 'windows10', 'windows7', 'windowsxp', 'ubuntu', 'samsung']);
+    expect(skins.filter((s) => s.status === 'coming-soon')).toEqual([]);
   });
 
   it('getSkinMeta looks up by id', () => {
@@ -50,7 +49,7 @@ describe('registry', () => {
     expect(getSkinMeta('windows7')).toMatchObject({ name: 'Windows 7', kind: 'desktop' });
     expect(getSkinMeta('windowsxp')).toMatchObject({ name: 'Windows XP', kind: 'desktop' });
     expect(getSkinMeta('ubuntu')).toMatchObject({ name: 'Ubuntu', kind: 'desktop' });
-    expect(getSkinMeta('samsung')?.kind).toBe('mobile');
+    expect(getSkinMeta('samsung')).toMatchObject({ name: 'Samsung One UI', kind: 'mobile' });
     expect(getSkinMeta('missing')).toBeUndefined();
   });
 });

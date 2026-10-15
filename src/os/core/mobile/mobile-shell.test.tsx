@@ -100,6 +100,17 @@ describe('MobileShell', () => {
     await expectHome();
   });
 
+  it('the nav-bar back slot leaves an open app, and does nothing on the home screen', async () => {
+    render(<MobileShell data={data} skin={skin} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+    expect(screen.queryByRole('region')).toBeNull();
+    expect(within(home()).getByRole('button', { name: 'Projects' })).toBeInTheDocument();
+    fireEvent.click(within(home()).getByRole('button', { name: 'Terminal' }));
+    expect(openScreen('Terminal')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+    await expectHome();
+  });
+
   it('the home screen is inert while an app is open', () => {
     render(<MobileShell data={data} skin={skin} />);
     fireEvent.click(within(home()).getByRole('button', { name: 'Projects' }));

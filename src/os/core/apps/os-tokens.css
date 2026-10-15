@@ -61,3 +61,6 @@
   border: 0; border-radius: var(--os-radius, 8px); padding: 0.4rem 0.9rem; cursor: pointer;
 }
 .os-app label { color: var(--os-muted, #9a9aa5); }
+/* `.os-app-title` marks an app's top heading when it only repeats the app's name. Skins whose
+   header already shows that name as the page heading (mobile large titles) may hide it; any other
+   heading, e.g. Browser's "Blog", stays visible. */

@@ -11,4 +11,5 @@ export const skinLoaders: Record<OsId, () => Promise<SkinModule>> = {
   windows7: () => import('../skins/windows7'),
   windowsxp: () => import('../skins/windowsxp'),
   ubuntu: () => import('../skins/ubuntu'),
+  samsung: () => import('../skins/samsung'),
 };

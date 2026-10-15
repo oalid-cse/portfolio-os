@@ -14,6 +14,7 @@ vi.mock('./loaders', () => {
       windows7: mockSkin('windows7'),
       windowsxp: mockSkin('windowsxp'),
       ubuntu: mockSkin('ubuntu'),
+      samsung: mockSkin('samsung'),
     },
   };
 });

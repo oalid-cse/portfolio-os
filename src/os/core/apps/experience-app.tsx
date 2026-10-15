@@ -4,7 +4,7 @@ import type { AppProps } from './app-props';
 export function ExperienceApp({ data }: AppProps) {
   return (
     <div className="os-app os-stack">
-      <h1>Experience</h1>
+      <h1 className="os-app-title">Experience</h1>
       <ol className="os-stack" style={{ margin: 0, padding: 0, listStyle: 'none' }}>
         {data.experience.map((job) => (
           <li key={job.id} className="os-card os-stack" style={{ gap: '0.5rem' }}>

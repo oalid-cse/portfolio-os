@@ -172,6 +172,7 @@
   outline: 2px solid var(--os-accent);
 }
 [data-os-skin='iphone'] .ios-large-title {
+  margin: 0;
   font-size: 34px;
   font-weight: 700;
   line-height: 1.2;
@@ -182,14 +183,9 @@
   font-size: 17px;
   letter-spacing: -0.01em;
 }
-/* The large title already names the app; keep an app's matching top heading for screen readers only. */
-[data-os-skin='iphone'] .os-app > h1:first-child {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
+/* The large title is the screen's heading; drop an app's top heading only where it repeats it. */
+[data-os-skin='iphone'] .os-app .os-app-title {
+  display: none;
 }
 [data-os-skin='iphone'] .os-app .os-btn-inline {
   text-decoration: none;
