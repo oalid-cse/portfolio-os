@@ -67,6 +67,9 @@ test('/os shows the disclaimer, tiles and back link', async ({ page }) => {
     ),
   ).toBeVisible();
   await expect(page.getByRole('link', { name: 'Open' })).toHaveCount(8);
+  for (const link of await page.getByRole('link', { name: 'Open' }).all()) {
+    await expect(link).toHaveAttribute('rel', 'nofollow');
+  }
   await expect(page.getByText('Coming soon')).toHaveCount(0);
   await page.getByRole('link', { name: 'Back to classic view' }).click();
   await expect(page).toHaveURL(/\/$/);

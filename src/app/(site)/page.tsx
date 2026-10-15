@@ -16,6 +16,9 @@ import {
 } from '@/lib/content';
 import { buildMetadata, personJsonLd, profilePageJsonLd, truncateDescription } from '@/lib/seo';
 
+// Re-render daily so experience durations ("3 yrs 2 mos") stay current; still prerendered (ISR).
+export const revalidate = 86400;
+
 export async function generateMetadata(): Promise<Metadata> {
   const profile = await getProfile();
   return buildMetadata({ description: truncateDescription(profile.summary), path: '/', type: 'profile' });

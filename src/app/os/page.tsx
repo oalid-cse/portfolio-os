@@ -33,6 +33,7 @@ export default function OsGalleryPage() {
               {s.status === 'ready' ? (
                 <Link
                   href={`/os/${s.id}`}
+                  rel="nofollow"
                   className="rounded-md border border-border px-3 py-1.5 text-sm font-medium hover:bg-fg/10"
                 >
                   Open
