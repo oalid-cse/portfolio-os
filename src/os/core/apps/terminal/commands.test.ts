@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { portfolioFixture as d } from '../../__fixtures__/portfolio-data';
-import { runCommand } from './commands';
+import { ALL_APP_IDS } from '..';
+import { promptFor, runCommand } from './commands';
 
 describe('runCommand', () => {
   it('trims and lowercases the command word', () => expect(runCommand('  WHOAMI  ', d).output[0]).toContain('Abu Bin Oalid'));
@@ -37,4 +38,22 @@ describe('runCommand', () => {
     for (const c of ['help', 'whoami', 'about', 'ls', 'skills', 'experience', 'contact', 'open', 'resume', 'exit', 'clear'])
       expect(out).toContain(c);
   });
+});
+
+describe('promptFor', () => {
+  it('uses the last name token, lowercased', () => {
+    expect(promptFor({ name: 'Abu Bin Oalid' })).toBe('oalid@portfolio:~$');
+    expect(promptFor({ name: '  Jane   Doe ' })).toBe('doe@portfolio:~$');
+  });
+  it('strips characters a shell user name would not have, with a fallback', () => {
+    expect(promptFor({ name: "Seán O'Brien" })).toBe('obrien@portfolio:~$');
+    expect(promptFor({ name: '' })).toBe('guest@portfolio:~$');
+  });
+});
+
+describe('ALL_APP_IDS', () => {
+  it('lists every app once, in a stable order', () =>
+    expect(ALL_APP_IDS).toEqual(['about', 'projects', 'experience', 'skills', 'resume', 'contact', 'terminal', 'browser']));
+  it('help lists every app id for open', () =>
+    expect(runCommand('help', d).output.join('\n')).toContain(ALL_APP_IDS.join(', ')));
 });

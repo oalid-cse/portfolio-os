@@ -1,21 +1,20 @@
-import type { PortfolioData } from '@/content/types';
+import type { PortfolioData, Profile } from '@/content/types';
 import type { AppId } from '../../types';
+// Circular (index → terminal-app → commands → index): ALL_APP_IDS is only read inside functions,
+// never at module load, so whichever module loads first, it is initialised before use.
+import { ALL_APP_IDS } from '..';
 
 export type TermEffect = { type: 'open'; app: AppId } | { type: 'clear' } | { type: 'navigate'; href: string };
 export type TermResult = { output: string[]; effect?: TermEffect };
 
-export const APP_IDS: readonly AppId[] = [
-  'about',
-  'projects',
-  'experience',
-  'skills',
-  'resume',
-  'contact',
-  'terminal',
-  'browser',
-];
+/** Shell prompt from the owner's name, e.g. `oalid@portfolio:~$` for "Abu Bin Oalid". */
+export function promptFor(profile: Pick<Profile, 'name'>): string {
+  const last = profile.name.trim().split(/\s+/).at(-1) ?? '';
+  const user = last.toLowerCase().replace(/[^a-z0-9_-]/g, '') || 'guest';
+  return `${user}@portfolio:~$`;
+}
 
-const HELP: [string, string][] = [
+const helpLines = (): [string, string][] => [
   ['help', 'show this list'],
   ['whoami', 'name and title'],
   ['about', 'short summary (also: cat about.txt)'],
@@ -23,7 +22,7 @@ const HELP: [string, string][] = [
   ['skills', 'skills by group'],
   ['experience', 'work history'],
   ['contact', 'email and socials'],
-  ['open <app>', `open an app (${APP_IDS.join(', ')})`],
+  ['open <app>', `open an app (${ALL_APP_IDS.join(', ')})`],
   ['resume', 'open the resume PDF'],
   ['exit', 'back to the classic site'],
   ['clear', 'clear the terminal'],
@@ -38,7 +37,7 @@ export function runCommand(input: string, data: PortfolioData): TermResult {
 
   switch (cmd) {
     case 'help':
-      return { output: HELP.map(([name, desc]) => `${name.padEnd(12)} ${desc}`) };
+      return { output: helpLines().map(([name, desc]) => `${name.padEnd(12)} ${desc}`) };
     case 'whoami':
       return { output: [`${profile.name} - ${profile.title}`] };
     case 'about':
@@ -62,7 +61,7 @@ export function runCommand(input: string, data: PortfolioData): TermResult {
       return { output: [`email: ${profile.email}`, ...profile.socials.map((s) => `${s.label}: ${s.url}`)] };
     case 'open': {
       const target = args[0]?.toLowerCase() ?? '';
-      const app = APP_IDS.find((id) => id === target);
+      const app = ALL_APP_IDS.find((id) => id === target);
       if (!app) return { output: [`open: no such app: ${args[0] ?? ''}`] };
       return { output: [`Opening ${app}...`], effect: { type: 'open', app } };
     }

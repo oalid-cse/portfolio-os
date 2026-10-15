@@ -2,14 +2,14 @@
 
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import type { AppProps } from '../app-props';
-import { runCommand } from './commands';
+import { promptFor, runCommand } from './commands';
 
 type Line = { id: number; text: string; kind: 'input' | 'output' };
 
-const PROMPT = 'oalid@portfolio:~$';
 const WELCOME = "Welcome! Type 'help' to see available commands.";
 
 export function TerminalApp({ data, openApp }: AppProps) {
+  const prompt = promptFor(data.profile);
   const [lines, setLines] = useState<Line[]>([]);
   const [value, setValue] = useState('');
   const [past, setPast] = useState<string[]>([]);
@@ -36,7 +36,7 @@ export function TerminalApp({ data, openApp }: AppProps) {
   const submit = () => {
     const input = value;
     const result = runCommand(input, data);
-    const add: Line[] = [{ id: nextId.current++, text: `${PROMPT} ${input}`, kind: 'input' }];
+    const add: Line[] = [{ id: nextId.current++, text: `${prompt} ${input}`, kind: 'input' }];
     for (const text of result.output) add.push({ id: nextId.current++, text, kind: 'output' });
     setLines((prev) => (result.effect?.type === 'clear' ? [] : [...prev, ...add]));
     if (input.trim()) setPast((p) => [...p, input]);
@@ -90,8 +90,8 @@ export function TerminalApp({ data, openApp }: AppProps) {
         ))}
       </div>
       <div className="os-row" style={{ flexWrap: 'nowrap', gap: '0.5rem' }}>
-        <label htmlFor="os-terminal-input" style={{ whiteSpace: 'nowrap', color: 'var(--os-accent, #4cc2ff)' }}>
-          {PROMPT}
+        <label htmlFor="os-terminal-input" className="os-terminal-prompt">
+          {prompt}
         </label>
         <input
           id="os-terminal-input"
@@ -104,7 +104,7 @@ export function TerminalApp({ data, openApp }: AppProps) {
           autoComplete="off"
           autoCapitalize="off"
           spellCheck={false}
-          style={{ border: 0, padding: 0, flex: 1, outline: 'none' }}
+          className="os-terminal-input"
         />
       </div>
       <div ref={endRef} />
